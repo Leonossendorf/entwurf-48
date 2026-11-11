@@ -1,0 +1,38 @@
+/* Demo Schophuis: Ergaenzungen zur kopierten Seite. Farben und Schriften stammen aus dem bestehenden Theme. */
+:root {
+  --sh-gruen: #779e00;
+  --sh-hell: #80b245;
+  --sh-dunkel: #1f2a12;
+  --sh-schwarz: #111;
+  --sh-holz: #d8a866;
+  --sh-papier: #f4f2ea;
+  --sh-linie: #d9d6c8;
+}
+
+/* ---------- Startbilder (ersetzen das Slider-Plugin) ---------- */
+.sh-hero { position: relative; width: 100%; overflow: hidden; }
+.sh-ebene { position: absolute; display: block; opacity: 0; transition-property: opacity, transform; transition-timing-function: cubic-bezier(.2, .7, .2, 1); will-change: transform, opacity; }
+.sh-ebene img { display: block; width: 100%; height: 100%; max-width: none; }
+.sh-von-left { transform: translateX(-90px); }
+.sh-von-right { transform: translateX(90px); }
+.sh-von-bottom { transform: translateY(110px); }
+.sh-von-top { transform: translateY(-90px); }
+.sh-da .sh-ebene { opacity: 1; transform: none; }
+a.sh-ebene { transition-property: opacity, transform, filter; }
+a.sh-ebene:hover { filter: brightness(1.12); }
+@media (prefers-reduced-motion: reduce) { .sh-ebene { transition: none !important; opacity: 1; transform: none; } }
+
+/* ---------- Instagram: feste Vorschau ---------- */
+.demo-insta { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; max-width: 1100px; margin: 0 auto; padding-bottom: 20px; }
+.demo-insta a { display: block; aspect-ratio: 1 / 1; overflow: hidden; }
+.demo-insta img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s ease; }
+.demo-insta a:hover img { transform: scale(1.04); }
+@media (max-width: 600px) { .demo-insta { grid-template-columns: 1fr; } }
+
+/* ---------- Entwurf-Hinweis, Platzhalter ---------- */
+p.demo-hinweis { margin: 0; padding: .6rem 1rem 1rem; text-align: center; font-size: 14px !important; color: #cfd3c4; background: var(--wp--preset--color--foreground, #000); }
+.demo-platzhalter { max-width: 760px; margin: 0 auto; padding: 120px 24px; text-align: center; }
+.demo-klick { cursor: pointer; }
+.demo-klick .zimm-acc-img img { transition: transform .5s ease; }
+.demo-klick:hover .zimm-acc-img img { transform: scale(1.03); }
+.wp-block-navigation-item__content[aria-current="page"] { text-decoration: underline; text-underline-offset: 6px; text-decoration-thickness: 3px; }

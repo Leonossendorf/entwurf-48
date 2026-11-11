@@ -1,0 +1,75 @@
+/* Unterseite Dachstuehle, Kachel auf der Startseite, Hinweis auf der Zimmerei-Seite */
+
+/* ---------- Startbild mit Foto ---------- */
+.ds-hero { position: relative; min-height: min(78vh, 720px); overflow: hidden; background: #002e18; display: flex; align-items: center; }
+.ds-hero-bild { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 40%; filter: saturate(1.05); }
+.ds-hero::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(0, 46, 24, .78) 0%, rgba(0, 46, 24, .35) 48%, rgba(0, 46, 24, 0) 75%); }
+.ds-hero-text { position: relative; z-index: 2; padding: 130px 4vw 170px; }
+.ds p.ds-pfad { margin: 0 0 18px; color: #fff; font-size: 16px; }
+.ds p.ds-pfad a { color: #fff; font-size: 16px; text-underline-offset: 4px; }
+.ds .ds-hero .la-hero-kante { z-index: 3; }
+.ds .ds-hero em.ds-foto-hinweis { position: absolute; right: 16px; top: 84px; z-index: 4; margin: 0; }
+
+/* ---------- Ablauf mit Text ---------- */
+.la ol.ds-ablauf li p { margin: 8px 0 0; font-size: 16px; color: #333; }
+
+/* ---------- Dachformen ---------- */
+.ds-formen-raster { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); gap: 34px; margin-top: 44px; align-items: start; }
+.ds-text { margin: 24px 0 6px; min-height: 150px; }
+.ds-text h3 { font-size: clamp(30px, 3vw, 44px); color: #a6d04a; margin-bottom: 10px; }
+.ds-text p { margin: 0; color: #e6efd5; }
+.la .ds-regler label, .la .ds-regler label > span { color: #fff; }
+.la .ds-regler output { color: #a6d04a; }
+.la .ds-regler input[type="range"] { accent-color: #9fca4a; }
+
+/* ---------- Beispiele ---------- */
+.ds-galerie { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-top: 46px; }
+.ds-galerie figure { margin: 0; background: var(--papier); display: flex; flex-direction: column; }
+.ds-galerie figure.ds-gross { grid-column: span 2; grid-row: span 2; }
+.ds-galerie img { display: block; width: 100%; height: 100%; min-height: 200px; object-fit: cover; flex: 1; transition: transform .6s ease; }
+.ds-galerie figure { overflow: hidden; }
+.ds-galerie figure:hover img { transform: scale(1.03); }
+.ds .ds-galerie figcaption { position: relative; background: var(--papier); padding: 12px 14px; font-size: 15px; text-align: left; }
+.ds .ds-galerie figcaption strong { display: block; font-size: 17px; }
+.ds-leer { border: 3px dashed #b9b9a8; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; gap: 10px; padding: 18px; min-height: 200px; text-align: left; }
+.ds .ds-leer p { margin: 0; font-size: 15px; color: #555; }
+.ds .ds-leer strong { display: block; font-size: 17px; color: #222; }
+.ds .ds-leer em.demo-offen { margin-left: 0; }
+
+/* ---------- Fragen ---------- */
+.ds-fragen { max-width: 860px; margin-top: 40px; text-align: left; }
+.ds-fragen details { background: #fff; border-left: 8px solid var(--gruen); margin-bottom: 12px; }
+.ds .ds-fragen summary { cursor: pointer; padding: 16px 20px; font-family: "Akko Std Bold", sans-serif; font-size: 20px; list-style-position: inside; }
+.ds .ds-fragen details p { margin: 0; padding: 0 20px 18px; font-size: 18px; }
+.ds .ds-fragen a { font-size: inherit; color: var(--tief); font-family: "Akko Std Bold", sans-serif !important; }
+.ds #ds-form { max-width: 1180px; margin-top: 60px; }
+
+/* ---------- Kachel Startseite ---------- */
+.demo-kachel-la { position: relative; background: #80b245 !important; cursor: pointer; overflow: hidden; }
+.demo-kachel-la::before { content: ""; position: absolute; inset: 0; background: url("/wp-content/uploads/2022/08/1-SCH_grounge.png") center / cover no-repeat; opacity: .9; pointer-events: none; }
+.demo-kachel-3d { position: absolute; inset: 0; pointer-events: none; }
+p.demo-kachel-zeile { position: absolute; top: 28px; left: 25px; margin: 0; z-index: 2; background: #fff; color: #779e00; font-family: "Akko Std Bold", sans-serif !important; font-size: clamp(16px, 1.6vw, 24px); padding: .3em .7em; transform: rotate(-2deg); }
+.demo-kachel-la .wp-block-cover__inner-container { position: static; }
+
+/* ---------- Hinweis auf der Zimmerei-Seite ---------- */
+.demo-teaser { padding: 60px 0 10px; }
+.demo-teaser-innen { max-width: 1180px; margin: 0 auto; background: #002e18; color: #fff; padding: 34px 38px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 24px; }
+.la.demo-teaser h3 { font-size: clamp(30px, 3.2vw, 46px); color: #fff; }
+.la.demo-teaser h3 span { font-family: "Black Ground", sans-serif !important; font-size: inherit; line-height: inherit; color: #a6d04a; }
+.la.demo-teaser p { margin: 10px 0 0; max-width: 640px; color: #dfe9c8; }
+.la.demo-teaser a.la-knopf { background: #fff; color: #0d0d0d !important; }
+.la.demo-teaser a.la-knopf:hover { background: #a6d04a; }
+
+@media (max-width: 980px) {
+  .ds-formen-raster { grid-template-columns: minmax(0, 1fr); }
+  .ds-formen-raster > * { min-width: 0; }
+  .ds-formen-raster > div:last-child { order: -1; }
+  .ds-galerie { grid-template-columns: 1fr 1fr; }
+  .ds-hero-text { padding: 110px 20px 120px; }
+  .ds-hero::after { background: linear-gradient(180deg, rgba(0, 46, 24, .7) 0%, rgba(0, 46, 24, .35) 100%); }
+  .demo-teaser-innen { padding: 26px 20px; }
+}
+@media (max-width: 560px) {
+  .ds-galerie { grid-template-columns: 1fr; }
+  .ds-galerie figure.ds-gross { grid-column: auto; grid-row: auto; }
+}
