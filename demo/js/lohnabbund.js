@@ -222,6 +222,11 @@
     zeigeAuswahl($('#la-auswahl'), zeile >= 0 ? zustand.modell.zeilen[zeile] : null, function () { waehle(zustand.wahl, false); });
   }
 
+  function farbe(modus) {
+    $$('#la-farbe button').forEach(function (x) { x.setAttribute('aria-pressed', x.dataset.farbe === modus ? 'true' : 'false'); });
+    zustand.viewer.setFarbmodus(modus);
+  }
+
   function reiter(name) {
     $$('.la-reiter button').forEach(function (b) { b.setAttribute('aria-selected', b.dataset.reiter === name ? 'true' : 'false'); });
     ['liste', 'quer', 'bearb', 'roh', 'datei'].forEach(function (n) { $('#la-reiter-' + n).hidden = n !== name; });
@@ -289,13 +294,18 @@
 
     $('#la-farbe').addEventListener('click', function (e) {
       var b = e.target.closest('button'); if (!b) return;
-      $$('#la-farbe button').forEach(function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
-      zustand.viewer.setFarbmodus(b.dataset.farbe);
-      if (b.dataset.farbe === 'querschnitt') reiter('quer'); else if (b.dataset.farbe === 'bearbeitung') reiter('bearb');
+      farbe(b.dataset.farbe);
+      if (b.dataset.farbe === 'querschnitt') reiter('quer'); else if (b.dataset.farbe === 'bearbeitung') reiter('bearb'); else reiter('liste');
     });
     $('#la-ansicht').addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) { zustand.viewer.controls.autoRotate = false; zustand.viewer.ansicht(b.dataset.ansicht); } });
     $('#la-explosion').addEventListener('input', function () { zustand.viewer.controls.autoRotate = false; zustand.viewer.setExplosion(this.value / 100); });
-    $('.la-reiter').addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) reiter(b.dataset.reiter); });
+    // Reiter und Farbfilter gehoeren zusammen: Querschnitte und Bearbeitungen faerben das Modell passend ein, die Stueckliste zeigt wieder Holz.
+    $('.la-reiter').addEventListener('click', function (e) {
+      var b = e.target.closest('button'); if (!b) return;
+      reiter(b.dataset.reiter);
+      var f = { liste: 'holz', quer: 'querschnitt', bearb: 'bearbeitung' }[b.dataset.reiter];
+      if (f && zustand.viewer && zustand.modell) farbe(f);
+    });
     var liste = $('#la-reiter-liste');
     liste.addEventListener('click', function (e) { var tr = e.target.closest('tr[data-zeile]'); if (tr) waehle(+tr.dataset.zeile, false); });
     liste.addEventListener('keydown', function (e) { var tr = e.target.closest('tr[data-zeile]'); if (tr && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); waehle(+tr.dataset.zeile, false); } });
@@ -337,8 +347,6 @@
       pakete: [['3 × 3 m', 3000, 3000, 2200], ['3 × 4 m', 3000, 4000, 2200], ['3 × 6 m', 3000, 6000, 2200]] },
     carport: { name: 'Carport', bau: H.carport, b: [2700, 6500], t: [4500, 8000], h: [2000, 2800], bn: 'Einfahrtsbreite', hn: 'Durchfahrtshöhe', start: 1,
       pakete: [['Einzel 3 × 5,5 m', 3000, 5500, 2300], ['Einzel 3 × 6 m', 3000, 6000, 2300], ['Doppel 6 × 6 m', 6000, 6000, 2300]] },
-    pergola: { name: 'Pergola', bau: H.pergola, b: [2500, 5000], t: [2500, 6000], h: [2100, 2700], bn: 'Breite', hn: 'Durchgangshöhe', start: 1,
-      pakete: [['3 × 3 m', 3000, 3000, 2300], ['3,5 × 3,5 m', 3500, 3500, 2300], ['4 × 5 m', 4000, 5000, 2300]] },
     terrassendach: { name: 'Terrassendach', bau: H.terrassendach, b: [3000, 8000], t: [2000, 4500], h: [2100, 2700], bn: 'Breite an der Hauswand', hn: 'Durchgangshöhe vorn', start: 0,
       pakete: [['4 × 3 m', 4000, 3000, 2200], ['5 × 3 m', 5000, 3000, 2200], ['6 × 3,5 m', 6000, 3500, 2200]] }
   };

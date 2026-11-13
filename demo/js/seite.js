@@ -10,7 +10,20 @@
     return ersatz;
   }
 
+  // Wie im Original: das Startbild reicht immer ueber die ganze Seitenbreite, auch wenn es in einem schmaleren Kasten steckt.
+  function volleBreite(hero) {
+    var rahmen = document.querySelector('.wp-site-blocks') || document.documentElement;
+    var r = rahmen.getBoundingClientRect();
+    hero.style.setProperty('max-width', 'none', 'important');
+    hero.style.setProperty('margin-left', '0px', 'important');
+    hero.style.setProperty('margin-right', '0px', 'important');
+    hero.style.width = rahmen.clientWidth + 'px';
+    var links = hero.getBoundingClientRect().left;
+    hero.style.setProperty('margin-left', (r.left - links) + 'px', 'important');
+  }
+
   function heroLage(hero) {
+    volleBreite(hero);
     var gw = JSON.parse(hero.dataset.gw), gh = JSON.parse(hero.dataset.gh);
     var ww = window.innerWidth, l = 3;
     for (var i = 0; i < STUFEN.length; i++) { if (ww >= STUFEN[i]) { l = i; break; } }
@@ -55,6 +68,24 @@
       }, { threshold: 0.15 });
       for (var i = 0; i < alle.length; i++) io.observe(alle[i]);
     } else { for (var j = 0; j < alle.length; j++) alle[j].classList.add('sh-da'); }
+  }
+
+  // Die Einblend-Animation der alten Seite zeigt ein Element nur, wenn seine Oberkante beim Rollen durchs Bild laeuft.
+  // Bei einem Sprung (Direktlink, Anker) bliebe es unsichtbar. Darum hier zusaetzlich: sichtbar, sobald es im Bild ist.
+  function einblenden() {
+    if (!('IntersectionObserver' in window)) return;
+    var io = new IntersectionObserver(function (ein) {
+      ein.forEach(function (x) {
+        if (!x.isIntersecting) return;
+        var el = x.target; io.unobserve(el);
+        if (!el.classList.contains('hidden-animated')) return;
+        (el.animationClasses || []).forEach(function (c) { el.classList.add(c); });
+        el.animationClasses = [];
+        el.classList.remove('hidden-animated');
+      });
+    }, { rootMargin: '0px 0px -5% 0px' });
+    function sammeln() { var a = document.querySelectorAll('.hidden-animated'); for (var i = 0; i < a.length; i++) io.observe(a[i]); }
+    window.addEventListener('load', function () { setTimeout(sammeln, 80); setTimeout(sammeln, 1200); });
   }
 
   function kacheln() {
@@ -103,6 +134,6 @@
     for (var i = 0; i < k.length; i++) io.observe(k[i]);
   }
 
-  function start() { heros(); kacheln(); menue(); modellKacheln(); }
+  function start() { heros(); kacheln(); menue(); modellKacheln(); einblenden(); }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
 })();

@@ -195,10 +195,11 @@ background: none;
         :root :where(.is-layout-constrained) > * {
             margin-block-start: 0 !important;
         }
-    </style><link rel="stylesheet" href="/demo/css/demo.css?v=11131413">
-<link rel="stylesheet" href="/demo/css/la.css?v=11131413">
-<link rel="stylesheet" href="/demo/css/ds.css?v=11131413">
-<link rel="stylesheet" href="/demo/css/wege.css?v=11131413">
+    </style><link rel="stylesheet" href="/demo/css/demo.css?v=11131441">
+<link rel="stylesheet" href="/demo/css/la.css?v=11131441">
+<link rel="stylesheet" href="/demo/css/ds.css?v=11131441">
+<link rel="stylesheet" href="/demo/css/wege.css?v=11131441">
+<link rel="stylesheet" href="/demo/css/bewerbung.css?v=11131441">
 </head>
 
 <body data-rsssl=1 data-cmplz=1 class="wp-singular page-template page-template-blank page page-id-169 wp-custom-logo wp-embed-responsive wp-theme-twentytwentytwo wp-child-theme-schophuis">
@@ -521,6 +522,26 @@ background: none;
 
 
 <p class="wp-block-paragraph">Du kannst was du Tust?<br>Dann tu was du kannst!<br>Bei uns, für uns und mit uns. Bewirb dich jetzt!</p>
+
+<div class="bw" id="bewerben-geselle">
+<p class="bw-titel">Direkt bewerben</p>
+<p class="bw-kurz">Ein paar Angaben reichen. Wir melden uns bei dir. <em class="demo-offen">Felder: Vorschlag</em></p>
+<form class="bw-form" data-stelle="Dachdecker und Zimmerer (m/w/d)" novalidate>
+<div class="bw-gruppe"><span class="bw-frage" id="bw-geselle-beru">Ich bin</span><div class="bw-chips" role="group" aria-labelledby="bw-geselle-beru" data-titel="Beruf"><button type="button" aria-pressed="false">Dachdecker</button><button type="button" aria-pressed="false">Zimmerer</button><button type="button" aria-pressed="false">Beides</button><button type="button" aria-pressed="false">Quereinsteiger</button></div></div>
+<div class="bw-gruppe"><span class="bw-frage" id="bw-geselle-führ">Führerschein Klasse B</span><div class="bw-chips" role="group" aria-labelledby="bw-geselle-führ" data-titel="Führerschein Klasse B"><button type="button" aria-pressed="false">Ja</button><button type="button" aria-pressed="false">Nein</button></div></div>
+<div class="bw-felder">
+<label class="bw-pflicht">Dein Name<input type="text" name="name" autocomplete="name" required></label>
+<label class="bw-pflicht">Telefon oder E-Mail<input type="text" name="kontakt" autocomplete="tel" required></label>
+<label>Ab wann kannst du anfangen?<input type="text" name="extra" data-titel="Start" placeholder="z. B. ab sofort"></label>
+<label>Lebenslauf oder Zeugnis, wenn du magst<input type="file" name="datei" data-titel="Anhang" multiple accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"></label>
+<label class="bw-breit">Möchtest du uns noch etwas sagen?<textarea name="nachricht" rows="3"></textarea></label>
+</div>
+<p class="bw-fehler" role="alert" hidden>Bitte trag deinen Namen und eine Telefonnummer oder E-Mail-Adresse ein.</p>
+<button type="submit" class="bw-knopf">Bewerbung abschicken &gt;</button>
+<p class="bw-entwurf">Entwurf: wird nicht versendet. Der Hinweis zum Datenschutz steht in der fertigen Website direkt am Formular.</p>
+</form>
+<div class="bw-danke" tabindex="-1" hidden></div>
+</div>
 </div></div>
 
 
@@ -535,12 +556,51 @@ background: none;
 
 
 <p class="wp-block-paragraph">Bewirb dich jetzt und beginne deine Ausbildung bei uns.</p>
+
+<div class="bw" id="bewerben-azubi">
+<p class="bw-titel">Direkt bewerben</p>
+<p class="bw-kurz">Ein paar Angaben reichen. Wir melden uns bei dir. <em class="demo-offen">Felder: Vorschlag</em></p>
+<form class="bw-form" data-stelle="Ausbildung Dachdecker und Zimmerer (m/w/d)" novalidate>
+<div class="bw-gruppe"><span class="bw-frage" id="bw-azubi-ausb">Ausbildung als</span><div class="bw-chips" role="group" aria-labelledby="bw-azubi-ausb" data-titel="Ausbildung als"><button type="button" aria-pressed="false">Dachdecker</button><button type="button" aria-pressed="false">Zimmerer</button><button type="button" aria-pressed="false">Noch offen</button></div></div>
+<div class="bw-felder">
+<label class="bw-pflicht">Dein Name<input type="text" name="name" autocomplete="name" required></label>
+<label class="bw-pflicht">Telefon oder E-Mail<input type="text" name="kontakt" autocomplete="tel" required></label>
+<label>Wann möchtest du anfangen?<input type="text" name="extra" data-titel="Start" placeholder="z. B. Sommer 2027"></label>
+<label>Lebenslauf oder Zeugnis, wenn du magst<input type="file" name="datei" data-titel="Anhang" multiple accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"></label>
+<label class="bw-breit">Möchtest du uns noch etwas sagen?<textarea name="nachricht" rows="3"></textarea></label>
+</div>
+<p class="bw-fehler" role="alert" hidden>Bitte trag deinen Namen und eine Telefonnummer oder E-Mail-Adresse ein.</p>
+<button type="submit" class="bw-knopf">Bewerbung abschicken &gt;</button>
+<p class="bw-entwurf">Entwurf: wird nicht versendet. Der Hinweis zum Datenschutz steht in der fertigen Website direkt am Formular.</p>
+</form>
+<div class="bw-danke" tabindex="-1" hidden></div>
+</div>
 </div></div>
 
 
 
 <div class="wp-block-advgb-accordion-item advgb-accordion-item animated fadeInUp" style="margin-bottom:15px"><div class="advgb-accordion-header" style="background-color:#ffffff;color:#000000;border-style:solid;border-width:0px"><span class="advgb-accordion-header-icon accordion-state"><svg class="advgb-icon-closed" fill="#000000" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="none" d="M0,0h24v24H0V0z"></path><path d="M19,13h-6v6h-2v-6H5v-2h6V5h2v6h6V13z"></path></svg><svg class="advgb-icon-opened" fill="#000000" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="none" d="M0,0h24v24H0V0z"></path><path d="M19,13H5v-2h14V13z"></path></svg></span><h4 class="advgb-accordion-header-title" style="color:inherit">Praktikant (M,W,D)</h4></div><div class="advgb-accordion-body" style="background-color:#ffffff;border-style:solid !important;border-width:0px !important;border-color:undefined !important;border-top:none !important">
 <p class="wp-block-paragraph">Lust in die Welt der Dachdecker und Zimmerer reinzuschnuppern? Perfekt! Wir sind der ideale Partner für dein Schülerpraktikum. Sende uns gerne deine Bewerbung zum Schüler- oder Jahrespraktikum <strong>oder ruf uns einfach an!</strong></p>
+
+<div class="bw" id="bewerben-praktikum">
+<p class="bw-titel">Direkt bewerben</p>
+<p class="bw-kurz">Ein paar Angaben reichen. Wir melden uns bei dir. <em class="demo-offen">Felder: Vorschlag</em></p>
+<form class="bw-form" data-stelle="Praktikum (m/w/d)" novalidate>
+<div class="bw-gruppe"><span class="bw-frage" id="bw-praktikum-art">Was für ein Praktikum?</span><div class="bw-chips" role="group" aria-labelledby="bw-praktikum-art" data-titel="Art"><button type="button" aria-pressed="false">Schülerpraktikum</button><button type="button" aria-pressed="false">Jahrespraktikum</button></div></div>
+<div class="bw-gruppe"><span class="bw-frage" id="bw-praktikum-bere">Was interessiert dich?</span><div class="bw-chips" role="group" aria-labelledby="bw-praktikum-bere" data-titel="Bereich"><button type="button" aria-pressed="false">Dachdeckerei</button><button type="button" aria-pressed="false">Zimmerei</button><button type="button" aria-pressed="false">Beides</button></div></div>
+<div class="bw-felder">
+<label class="bw-pflicht">Dein Name<input type="text" name="name" autocomplete="name" required></label>
+<label class="bw-pflicht">Telefon oder E-Mail<input type="text" name="kontakt" autocomplete="tel" required></label>
+<label>Wann und wie lange?<input type="text" name="extra" data-titel="Zeitraum" placeholder="z. B. 2 Wochen im März"></label>
+<label>Lebenslauf oder Zeugnis, wenn du magst<input type="file" name="datei" data-titel="Anhang" multiple accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"></label>
+<label class="bw-breit">Möchtest du uns noch etwas sagen?<textarea name="nachricht" rows="3"></textarea></label>
+</div>
+<p class="bw-fehler" role="alert" hidden>Bitte trag deinen Namen und eine Telefonnummer oder E-Mail-Adresse ein.</p>
+<button type="submit" class="bw-knopf">Bewerbung abschicken &gt;</button>
+<p class="bw-entwurf">Entwurf: wird nicht versendet. Der Hinweis zum Datenschutz steht in der fertigen Website direkt am Formular.</p>
+</form>
+<div class="bw-danke" tabindex="-1" hidden></div>
+</div>
 </div></div>
 </div>
 </div>
@@ -626,6 +686,7 @@ var njt_wa = {"gdprStatus":"","accounts":[{"accountId":935,"accountName":"Steffe
 <script id="nta-js-popup-js" src="/wp-content/plugins/wp-whatsapp/assets/js/whatsapp-popup.js?ver=3.8.2"></script>
 
 
-<script src="/demo/js/seite.js?v=11131413"></script>
+<script src="/demo/js/bewerbung.js?v=11131441"></script>
+<script src="/demo/js/seite.js?v=11131441"></script>
 </body>
 </html>
