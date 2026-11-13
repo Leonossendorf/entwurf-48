@@ -91,7 +91,7 @@
 @keyframes la-puls { from { opacity: .4; } to { opacity: 1; } }
 
 .la-modell { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 26px; margin-top: 22px; align-items: start; }
-.la-buehne { position: relative; height: clamp(360px, 46vw, 600px); background: radial-gradient(ellipse at 50% 38%, #3f7a45 0%, #1b4a2a 55%, #062a17 100%); overflow: hidden; touch-action: none; }
+.la-buehne { position: relative; height: clamp(360px, 46vw, 600px); background: radial-gradient(ellipse at 50% 38%, #3f7a45 0%, #1b4a2a 55%, #062a17 100%); overflow: hidden; touch-action: pan-y; }
 .la-buehne canvas { display: block; cursor: grab; }
 .la-leiste { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; padding: 12px 0 0; }
 .la-gruppe { display: inline-flex; border: 1px solid #5d7d3a; }

@@ -62,20 +62,36 @@
     this.ray = new THREE.Raycaster();
     this.maus = new THREE.Vector2();
     var dom = r.domElement, bewegt = false, unten = null;
+    var finger = null;
+    dom.style.touchAction = 'pan-y';
+    ['touchstart', 'touchmove', 'touchend'].forEach(function (n) {
+      el.addEventListener(n, function (e) { e.stopPropagation(); }, { capture: true, passive: true });
+    });
     dom.addEventListener('pointermove', function (e) {
       if (unten && (Math.abs(e.clientX - unten[0]) + Math.abs(e.clientY - unten[1]) > 6)) bewegt = true;
+      if (finger && e.pointerId === finger.id) {
+        var dx = e.clientX - finger.x; finger.x = e.clientX;
+        if (self.drehbar !== false) self.dreheUm(-dx / Math.max(dom.clientWidth, 1) * Math.PI);
+        return;
+      }
       self._zeigeAuf(e);
     });
-    dom.addEventListener('pointerdown', function (e) { unten = [e.clientX, e.clientY]; bewegt = false; });
+    dom.addEventListener('pointerdown', function (e) {
+      unten = [e.clientX, e.clientY]; bewegt = false;
+      if (e.pointerType === 'touch') { finger = { id: e.pointerId, x: e.clientX }; self.controls.autoRotate = false; }
+    });
+    dom.addEventListener('pointercancel', function () { finger = null; unten = null; });
     dom.addEventListener('pointerup', function (e) {
-      if (!bewegt) { self._zeigeAuf(e); self.onSelect(self.hover); }
-      unten = null;
+      if (!bewegt && unten) { self._zeigeAuf(e); self.onSelect(self.hover); }
+      if (finger) { self._setHover(-1); }
+      unten = null; finger = null;
     });
     dom.addEventListener('pointerleave', function () { self._setHover(-1); });
 
     if (window.ResizeObserver) { new ResizeObserver(function () { self.resize(); }).observe(el); }
     window.addEventListener('resize', function () { self.resize(); });
     this.resize();
+    if (Holz3D.alle) Holz3D.alle.push(this);
     this._lauf = true;
     (function loop(zeit) {
       if (!self._lauf) return;
@@ -195,6 +211,7 @@
         var f = me.userData.nb / maxNb;
         c = new THREE.Color().setHSL(0.24 - 0.24 * f, 0.62, 0.62 - 0.14 * f);
       } else c = new THREE.Color(HOLZ[i % HOLZ.length]);
+      me.userData.farbe = c;
       me.material.color.copy(c);
     }
     this._emissiv();
@@ -217,10 +234,25 @@
     this.renderer.domElement.style.cursor = zeile >= 0 ? 'pointer' : 'grab';
   };
   Holz3D.prototype._emissiv = function () {
+    var wahl = this.markiert >= 0;
     for (var i = 0; i < this.meshes.length; i++) {
-      var me = this.meshes[i], z = me.userData.zeile;
-      me.material.emissive.setHex(z === this.markiert ? 0x6f3d00 : (z === this.hover ? 0x3d2a10 : 0x000000));
+      var me = this.meshes[i], z = me.userData.zeile, an = wahl && z === this.markiert, hv = z === this.hover;
+      if (an) { me.material.color.setHex(0xff7a00); me.material.emissive.setHex(0x8a3200); }
+      else { if (me.userData.farbe) me.material.color.copy(me.userData.farbe); me.material.emissive.setHex(hv ? 0x5a3c12 : 0x000000); }
+      var blass = wahl && !an;
+      if (!this.animiert) me.material.opacity = blass ? 0.14 : 1;
+      me.material.depthWrite = !blass;
+      me.castShadow = !blass;
+      me.renderOrder = an ? 2 : (blass ? 1 : 0);
+      var k = me.children[0];
+      if (k) { if (!this.animiert) k.material.opacity = blass ? 0.1 : (an ? 1 : 0.55); k.material.color.setHex(an ? 0x2a0f00 : 0x4a3620); }
     }
+  };
+  /* Kamera waagerecht um das Modell drehen (Handy: Wischen) */
+  Holz3D.prototype.dreheUm = function (winkel) {
+    var ziel = this.controls.target, v = this.camera.position.clone().sub(ziel);
+    v.applyAxisAngle(new THREE.Vector3(0, 1, 0), winkel);
+    this.camera.position.copy(ziel).add(v);
   };
   Holz3D.prototype._zeigeAuf = function (e) {
     var r = this.renderer.domElement.getBoundingClientRect();
@@ -246,7 +278,7 @@
         me.position.z += (1 - k) * fall;
         if (me.children[0]) me.children[0].material.opacity = 0.55 * k;
       }
-      if (fertig) this.animiert = false;
+      if (fertig) { this.animiert = false; this._emissiv(); }
     }
     this.controls.update();
     this.renderer.render(this.scene, this.camera);
@@ -259,5 +291,6 @@
 
   Holz3D.prototype.stopp = function () { this._lauf = false; };
   Holz3D.PALETTE = PALETTE;
+  Holz3D.alle = [];
   window.Holz3D = Holz3D;
 })();

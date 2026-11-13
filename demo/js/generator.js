@@ -280,6 +280,56 @@
     return fertig(T, 'Gartenhaus ' + Holz.zahl(Bx / 1000, 2) + ' × ' + Holz.zahl(Ty / 1000, 2) + ' m');
   };
 
+  /* Pergola, freistehend: vier Pfosten, zwei Pfetten, Auflagehoelzer, Kopfbaender. breite (X), tiefe (Y), hoehe = Durchgangshoehe */
+  Holz.pergola = function (o) {
+    o = o || {};
+    var Bx = o.breite || 3500, Ty = o.tiefe || 3500, Hh = o.hoehe || 2300, pf = 120, pB = 120, pH = 160, sB = 80, sH = 120, ue = 300, T = [];
+    [-1, 1].forEach(function (s) {
+      var x = s * (Bx / 2 - pf / 2);
+      T.push(Holz.balken('Pfette', new V3(x, -ue, Hh + pH / 2), new V3(x, Ty + ue, Hh + pH / 2), pB, pH, { bearb: ['Mortise', 'Mortise', 'Lap', 'Lap'] }));
+      [pf / 2, Ty - pf / 2].forEach(function (y, yi) {
+        T.push(Holz.balken('Pfosten', new V3(x, y, 0), new V3(x, y, Hh), pf, pf, { bearb: ['Tenon', 'Drilling'] }));
+        var d = yi === 0 ? 1 : -1;
+        T.push(Holz.balken('Kopfband', new V3(x, y, Hh - 650), new V3(x, y + d * 650, Hh), 80, 100, { bearb: ['JackRafterCut', 'JackRafterCut', 'Tenon', 'Tenon'] }));
+        T.push(Holz.balken('Kopfband', new V3(x, y, Hh - 650), new V3(x - s * 650, y, Hh + pH), 80, 100, { hoch: new V3(0, 1, 0), bearb: ['JackRafterCut', 'JackRafterCut', 'Tenon', 'Tenon'] }));
+      });
+    });
+    var n = Math.max(3, Math.round((Ty - pf) / 600) + 1);
+    for (var i = 0; i < n; i++) {
+      var ys = pf / 2 + i * (Ty - pf) / (n - 1);
+      T.push(Holz.balken('Auflageholz', new V3(-Bx / 2 - ue, ys, Hh + pH + sH / 2), new V3(Bx / 2 + ue, ys, Hh + pH + sH / 2), sB, sH, { bearb: ['Lap', 'Lap'] }));
+    }
+    return fertig(T, 'Pergola ' + Holz.zahl(Bx / 1000, 2) + ' × ' + Holz.zahl(Ty / 1000, 2) + ' m');
+  };
+
+  /* Terrassendach an der Hauswand: Wandpfette, vordere Pfette auf Pfosten, geneigte Sparren. breite = an der Wand (X), tiefe (Y), hoehe = Durchgang vorn */
+  Holz.terrassendach = function (o) {
+    o = o || {};
+    var Bx = o.breite || 4000, Ty = o.tiefe || 3000, Hh = o.hoehe || 2200, al = rad(8), tan = Math.tan(al), cos = Math.cos(al);
+    var pf = 120, vB = 120, vH = 200, wB = 80, wH = 160, sB = 80, sH = 160, ue = 300, T = [];
+    var zV = Hh + vH;                                   // Oberkante vordere Pfette
+    var zAchse = function (y) { return zV + (sH / 2) / cos + (Ty - pf / 2 - y) * tan; };   // Sparrenachse, faellt nach vorn
+    var zW = zAchse(wB / 2) - (sH / 2) / cos;            // Oberkante Wandpfette
+    T.push(Holz.balken('Wandpfette', new V3(-Bx / 2, wB / 2, zW - wH / 2), new V3(Bx / 2, wB / 2, zW - wH / 2), wB, wH, { bearb: ['Drilling', 'Drilling', 'Drilling', 'Drilling'] }));
+    T.push(Holz.balken('Pfette', new V3(-Bx / 2 - 150, Ty - pf / 2, Hh + vH / 2), new V3(Bx / 2 + 150, Ty - pf / 2, Hh + vH / 2), vB, vH, { bearb: ['Mortise', 'Mortise'] }));
+    var np = Bx > 7000 ? 4 : (Bx > 4500 ? 3 : 2);
+    for (var p2 = 0; p2 < np; p2++) {
+      var x = -Bx / 2 + pf / 2 + p2 * (Bx - pf) / (np - 1);
+      T.push(Holz.balken('Pfosten', new V3(x, Ty - pf / 2, 0), new V3(x, Ty - pf / 2, Hh), pf, pf, { bearb: ['Tenon', 'Drilling'] }));
+      [-1, 1].forEach(function (d) {
+        var x2 = x + d * 650;
+        if (x2 < -Bx / 2 - 10 || x2 > Bx / 2 + 10) return;
+        T.push(Holz.balken('Kopfband', new V3(x, Ty - pf / 2, Hh - 650), new V3(x2, Ty - pf / 2, Hh), 80, 100, { bearb: ['JackRafterCut', 'JackRafterCut', 'Tenon', 'Tenon'] }));
+      });
+    }
+    var n = Math.max(3, Math.round((Bx - sB) / 700) + 1);
+    for (var i = 0; i < n; i++) {
+      var xs = -Bx / 2 + sB / 2 + i * (Bx - sB) / (n - 1), y1 = Ty + ue;
+      T.push(Holz.balken('Sparren', new V3(xs, 0, zAchse(0)), new V3(xs, y1, zAchse(y1)), sB, sH, { lot: [true, true], bearb: ['JackRafterCut', 'JackRafterCut', 'BirdsMouth', 'BirdsMouth'] }));
+    }
+    return fertig(T, 'Terrassendach ' + Holz.zahl(Bx / 1000, 2) + ' × ' + Holz.zahl(Ty / 1000, 2) + ' m');
+  };
+
   function fertig(T, name) {
     T.forEach(function (t, i) { t.nr = i + 1; });
     return { quelle: 'generator', format: 'Beispielmodell', name: name, teile: T, zeilen: Holz.gruppieren(T), hinweise: [] };
