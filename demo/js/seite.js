@@ -28,6 +28,21 @@
     var ww = window.innerWidth, l = 3;
     for (var i = 0; i < STUFEN.length; i++) { if (ww >= STUFEN[i]) { l = i; break; } }
     var cw = hero.clientWidth, s = Math.min(1, cw / gw[l]), H = gh[l] * s, gl = (cw - gw[l] * s) / 2;
+    // Handy: Ist der Hintergrund ein Foto, bekommt das Startbild dessen Seitenverhaeltnis. So wird nichts abgeschnitten.
+    if (l === 3 && hero.style.backgroundImage) {
+      if (hero._verh) {
+        // Liegt das Startbild ganz oben, verdeckt die feste Kopfleiste seinen Anfang: Das Foto beginnt darum erst darunter.
+        var kopf = document.querySelector('header'), kh = 0;
+        if (kopf && hero.getBoundingClientRect().top + window.scrollY < 10) kh = Math.min(120, kopf.getBoundingClientRect().height);
+        H = Math.max(200, cw / hero._verh) + kh;
+        hero.style.backgroundSize = '100% auto'; hero.style.backgroundPosition = 'center bottom'; hero.style.backgroundRepeat = 'no-repeat';
+      }
+      else if (!hero._laedt) {
+        hero._laedt = 1;
+        var m = /url\(["']?([^"')]+)["']?\)/.exec(hero.style.backgroundImage);
+        if (m) { var im = new Image(); im.onload = function () { hero._verh = im.naturalWidth / im.naturalHeight; heroLage(hero); }; im.src = m[1]; }
+      }
+    }
     hero.style.height = Math.round(H) + 'px';
     var ebenen = hero.querySelectorAll('.sh-ebene');
     for (var k = 0; k < ebenen.length; k++) {
@@ -40,10 +55,22 @@
       if (w === null && h === null) { w = d.iw * s; h = d.ih * s; }
       else if (w === null) { w = ratio ? h / ratio : d.iw * s; }
       else if (h === null) { h = ratio ? w * ratio : d.ih * s; }
+      // Hochformat-Foto (Person) mit fester Breite und Hoehe: Hoehe behalten, Breite aus dem Bild rechnen, damit nichts verzogen wird.
+      var schmal = 0;
+      if (ratio > 1.15 && e.w !== null && e.h !== null && typeof e.w === 'number' && Math.abs(h / w - ratio) / ratio > 0.08) { schmal = w - h / ratio; w = h / ratio; }
+      // Handy: Fotos (keine Flaechen, keine breiten Banner) bleiben ganz im Bild. Etwas zu breite werden eingepasst, die Unterkante bleibt.
+      var foto = l === 3 && !slide && typeof e.w === 'number' && typeof e.h === 'number' && d.iw >= 400 && ratio > 0.6, runter = 0;
+      if (foto && w > cw && w <= cw * 1.3) { var fk = cw / w; runter = h * (1 - fk); w = cw; h = h * fk; }
       var xo = (typeof e.xo === 'number' ? e.xo : 0) * s, yo = (typeof e.yo === 'number' ? e.yo : 0) * s;
       var x = e.ax === 'c' ? bx + (bw - w) / 2 + xo : (e.ax === 'r' ? bx + bw - w - xo : bx + xo);
       var y = e.ay === 'm' ? (H - h) / 2 + yo : (e.ay === 'b' ? H - h - yo : yo);
       x += (typeof e.fx === 'number' ? e.fx : 0) * s;
+      if (schmal && e.ax !== 'c') x += (e.ax === 'r' ? -1 : 1) * schmal / 2;
+      if (foto) {
+        if (w <= cw && x + w > cw) x = cw - w;
+        if (w <= cw && x < 0) x = 0;
+        if (runter) y += e.ay === 'b' ? 0 : (e.ay === 'm' ? runter / 2 : runter);
+      }
       y += (typeof e.fy === 'number' ? e.fy : 0) * s;
       el.style.left = x.toFixed(1) + 'px'; el.style.top = y.toFixed(1) + 'px';
       el.style.width = w.toFixed(1) + 'px'; el.style.height = h.toFixed(1) + 'px';

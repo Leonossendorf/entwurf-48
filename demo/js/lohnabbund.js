@@ -273,6 +273,13 @@
 
   function betriebe() {
     var drop = $('#la-drop'); if (!drop) return;
+    // Am Handy gibt es kein Ziehen: Der Text sagt dort, was wirklich passiert.
+    if (window.matchMedia && matchMedia('(hover: none) and (pointer: coarse)').matches) {
+      var dt = $('#la-drop-titel');
+      if (dt) { dt.dataset.datei = 'Datei hochladen'; dt.dataset.planung = 'Plan hochladen'; dt.textContent = dt.dataset[zustand.modus] || dt.dataset.datei; }
+      var du = drop.querySelector('span');
+      if (du && /klicken/.test(du.textContent)) du.textContent = 'antippen und Datei wählen';
+    }
     $('#la-datei').addEventListener('change', function (e) { nimm(e.target.files); });
     ['dragenter', 'dragover'].forEach(function (n) { drop.addEventListener(n, function (e) { e.preventDefault(); drop.classList.add('la-drueber'); }); });
     ['dragleave', 'drop'].forEach(function (n) { drop.addEventListener(n, function (e) { e.preventDefault(); drop.classList.remove('la-drueber'); }); });

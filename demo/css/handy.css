@@ -1,0 +1,60 @@
+/* 13.11.: Handy und kleines Tablet. Texte mit Seitenrand und gut lesbar, Bilder im richtigen Verhaeltnis, nichts gequetscht.
+   Die Regeln greifen nur bis 780 px Breite; am PC aendert sich nichts. */
+@media (max-width: 780px) {
+
+  /* ---------- Seitenrand: Text klebt nicht mehr am Bildschirmrand ---------- */
+  .entry-content .wp-block-group.container-medium,
+  .entry-content .wp-block-group.home-1 { padding-left: 22px !important; padding-right: 22px !important; box-sizing: border-box; max-width: 100% !important; }
+  .entry-content .wp-block-group.home-1 .wp-block-group.home-1,
+  .entry-content .wp-block-group.container-medium .wp-block-group.container-medium { padding-left: 0 !important; padding-right: 0 !important; }
+  .wp-site-blocks footer .footer-inner { padding-left: 22px !important; padding-right: 22px !important; box-sizing: border-box; }
+
+  /* ---------- Ueberschriften und Fliesstext der alten Seiten ---------- */
+  .entry-content h2:not(.la h2) { font-size: clamp(30px, 8.4vw, 45px) !important; line-height: 1.14 !important; overflow-wrap: break-word; text-wrap: balance; }
+  .entry-content > .wp-block-group > h2:not(.la h2) { padding-left: 16px; padding-right: 16px; box-sizing: border-box; }
+  .entry-content p:not(.la p), .entry-content li:not(.la li) { overflow-wrap: break-word; }
+  .entry-content .wp-block-group.container-medium p:not(.la p),
+  .entry-content .wp-block-group.home-1 p:not(.la p) { font-size: 18px; line-height: 1.6; hyphens: manual; -webkit-hyphens: manual; }
+
+  /* ---------- Startseite: Kacheln ueber die ganze Breite statt als schmaler Streifen ---------- */
+  .entry-content .wp-block-columns.wrap-columns { padding-left: 0 !important; padding-right: 0 !important; }
+  .entry-content .wp-block-cover.homepoints { min-height: 300px !important; }
+  /* Beschriftung unten, damit sie keine Gesichter verdeckt */
+  .entry-content .wp-block-cover.homepoints { align-items: flex-end !important; padding-bottom: 26px !important; }
+  .entry-content .wp-block-cover.homepoints h4 { font-size: clamp(30px, 9vw, 44px) !important; line-height: 1.05; overflow-wrap: normal; word-break: normal; hyphens: none; -webkit-hyphens: none; }
+  .entry-content .wp-block-cover.homepoints .homepoints-declare { max-width: 100%; }
+  .entry-content .wp-block-cover.demo-kachel-la { min-height: 380px !important; }
+  p.demo-kachel-zeile { max-width: calc(100% - 50px); font-size: 17px; }
+
+  /* ---------- Karriere: Stellen ---------- */
+  .advgb-accordion-wrapper { max-width: 100%; box-sizing: border-box; }
+  .advgb-accordion-wrapper .advgb-accordion-header { box-sizing: border-box; max-width: 100%; }
+  .advgb-accordion-wrapper h4.advgb-accordion-header-title { font-size: clamp(19px, 5.4vw, 24px) !important; line-height: 1.25; overflow-wrap: break-word; }
+
+  /* ---------- Dachstuehle: Foto oben ganz zeigen, Titel darunter ---------- */
+  .ds-hero { display: block; min-height: 0; padding-top: 80px; }   /* 80 px: Hoehe der festen Kopfleiste, sonst verdeckt sie das Foto */
+  .ds-hero .ds-hero-bild { position: relative; inset: auto; display: block; width: 100%; height: auto; aspect-ratio: 2560 / 2070; object-fit: cover; }
+  .ds-hero::after { display: none; }
+  .ds-hero .ds-hero-text { padding: 26px 20px 96px; }
+  .ds .ds-hero em.ds-foto-hinweis { top: 90px; right: 10px; }
+
+  /* ---------- Schritt-Listen: Text neben der Zahl, nicht in der schmalen Zahlenspalte ---------- */
+  .la ol.la-ablauf li { align-items: start; column-gap: 4px; }
+  .la ol.la-ablauf li b { grid-row: 1 / span 3; align-self: start; }
+  .la ol.la-ablauf li span, .la ol.la-ablauf li p, .la ol.la-ablauf li em { grid-column: 2; }
+  .la ol.la-ablauf li span { align-self: center; margin-top: 10px; }
+  .la ol.la-ablauf li p { margin: 4px 0 10px; }
+
+  /* ---------- Tabellen: jede Zeile einzeilig und gleich hoch; die Tabelle laesst sich seitlich wischen ---------- */
+  .la .la-tabelle th, .la .la-tabelle td { white-space: nowrap; }
+
+  /* ---------- Lohnabbund: Startbild kompakter, Modell groesser ---------- */
+  .la-hero-innen { padding-bottom: 96px; }
+  .la-hero-klein .la-hero-3d { height: 280px; }
+}
+
+@media (max-width: 420px) {
+  .entry-content .wp-block-group.container-medium,
+  .entry-content .wp-block-group.home-1 { padding-left: 18px !important; padding-right: 18px !important; }
+  .entry-content .wp-block-cover.homepoints { min-height: 260px !important; }
+}

@@ -36,3 +36,6 @@ p.demo-hinweis { margin: 0; padding: .6rem 1rem 1rem; text-align: center; font-s
 .demo-klick .zimm-acc-img img { transition: transform .5s ease; }
 .demo-klick:hover .zimm-acc-img img { transform: scale(1.03); }
 .wp-block-navigation-item__content[aria-current="page"] { text-decoration: underline; text-underline-offset: 6px; text-decoration-thickness: 3px; }
+
+/* Kachel mit Link (Dachstuehle): Beschriftung sieht aus wie bei den anderen Kacheln */
+.demo-klick h4 a { font-family: inherit !important; font-size: inherit !important; font-weight: inherit; line-height: inherit; letter-spacing: inherit; color: inherit !important; text-decoration: none; text-transform: uppercase; }
