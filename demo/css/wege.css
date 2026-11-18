@@ -86,6 +86,10 @@
 }
 
 
-/* Übersicht: Block Lohnabbund mit derselben Kratz-Struktur wie der Bausatz-Block, nur auf dunklem Grün */
-.la-tuer:not(.la-tuer-privat) { background: radial-gradient(120% 90% at 15% 0%, #0d4a2a 0%, #003a1f 45%, #00240f 100%); }
-.la-tuer:not(.la-tuer-privat)::before { content: ""; position: absolute; inset: 0; background: url("/wp-content/uploads/2022/08/1-SCH_grounge.png") center / cover no-repeat; opacity: .16; mix-blend-mode: screen; pointer-events: none; }
+/* Übersicht: beide Blöcke mit den Kreide-Hintergründen der alten Seite (bg.png und bg-bright.png, unverändert) */
+.la-tuer, .la-tuer-privat { color: #0d0d0d; }
+.la-tuer:not(.la-tuer-privat) { background: #80b245 url("/wp-content/uploads/2022/08/bg.png") top left / 100% repeat; }
+.la-tuer-privat { background: #a3c244 url("/wp-content/uploads/2022/08/bg-bright.png") top left / 100% repeat !important; }
+.la-tuer-privat::before { display: none; }
+.la .la-tuer h3, .la .la-tuer-privat h3 { color: #0d0d0d; }
+.la .la-tuer > p:not(.la-tuer-fuer) { color: #0d0d0d; }
