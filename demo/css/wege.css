@@ -86,10 +86,5 @@
 }
 
 
-/* Übersicht: beide Blöcke mit den Kreide-Hintergründen der alten Seite (bg.png und bg-bright.png, unverändert) */
-.la-tuer, .la-tuer-privat { color: #0d0d0d; }
-.la-tuer:not(.la-tuer-privat) { background: #80b245 url("/wp-content/uploads/2022/08/bg.png") top left / 100% repeat; }
-.la-tuer-privat { background: #a3c244 url("/wp-content/uploads/2022/08/bg-bright.png") top left / 100% repeat !important; }
-.la-tuer-privat::before { display: none; }
-.la .la-tuer h3, .la .la-tuer-privat h3 { color: #0d0d0d; }
-.la .la-tuer > p:not(.la-tuer-fuer) { color: #0d0d0d; }
+/* Übersicht: Block Lohnabbund dunkelgrün wie bisher, ohne Verlauf, mit derselben Kreide-Struktur wie der Bausatz-Block (1-SCH_grounge.png der alten Seite) */
+.la-tuer:not(.la-tuer-privat)::before { content: ""; position: absolute; inset: 0; background: url("/wp-content/uploads/2022/08/1-SCH_grounge.png") center / cover no-repeat; opacity: .22; pointer-events: none; }
