@@ -109,12 +109,44 @@
     return k;
   };
 
+  /* Unverbindliche Preisschaetzung, netto ab Werk. Faustwerte aus zwei Angeboten von Schophuis (Nov. 2026):
+     Arbeitsvorbereitung pauschal + Holz je m3 (mit Verschnitt, bei grossen Mengen guenstiger) + Abbund je Laufmeter
+     (je mehr Teile pro Meter, desto aufwendiger: 2,96 bis 5,49 EUR). opt.abbundSatz ueberschreibt den Satz. */
+  Holz.preis = function (k, opt) {
+    opt = opt || {};
+    var m3 = k.m3 * 1.08;
+    var eurM3 = Math.round(Math.max(520, Math.min(600, 600 - (m3 - 1.6) / 9.24 * 78)));
+    var dichte = k.teile / Math.max(k.lfm, 1);
+    var eurLfm = opt.abbundSatz || Math.max(2.96, Math.min(5.49, 2.96 + (dichte - 0.24) / 0.15 * 2.53));
+    var av = opt.av == null ? 850 : opt.av, holz = m3 * eurM3, abbund = k.lfm * eurLfm, summe = av + holz + abbund;
+    return { av: av, m3: m3, eurM3: eurM3, holz: holz, lfm: k.lfm, eurLfm: eurLfm, abbund: abbund, summe: summe,
+      von: Math.floor(summe * 0.88 / 50) * 50, bis: Math.ceil(summe * 1.12 / 50) * 50 };
+  };
+
   Holz.zahl = function (x, n) {
     return (Math.round(x * Math.pow(10, n || 0)) / Math.pow(10, n || 0)).toLocaleString('de-DE', { minimumFractionDigits: n || 0, maximumFractionDigits: n || 0 });
   };
 
   /* ---------- Modelle ---------- */
   function rad(g) { return g * Math.PI / 180; }
+
+  /* Faustregel fuer Querschnitte, nur fuer Vorschau und Schaetzung (ersetzt keine Statik):
+     groessere Spannweite oder groesserer Abstand -> hoeherer Querschnitt, gerundet auf uebliche KVH-Masse. */
+  var HOEHEN = [100, 120, 140, 160, 180, 200, 220, 240, 260, 280];
+  function stufe(x, liste) { for (var i = 0; i < liste.length; i++) if (liste[i] >= x - 1) return liste[i]; return liste[liste.length - 1]; }
+  Holz.faustregel = {
+    // Sparren und Balken: Hoehe etwa Spannweite / 21, waechst mit der Wurzel aus dem Abstand (Bezug 80 cm)
+    sparren: function (spann, abstand, min) {
+      var h = stufe(Math.max(min || 120, spann / 21 * Math.sqrt((abstand || 800) / 800)), HOEHEN);
+      return { b: h <= 160 ? 60 : (h <= 220 ? 80 : 100), h: h };
+    },
+    // Pfetten und Wechsel: Hoehe etwa Spannweite / 16, waechst mit der Wurzel aus der Lastbreite (Bezug 2,5 m)
+    pfette: function (spann, lastbreite, min) {
+      var h = stufe(Math.max(min || 160, spann / 16 * Math.sqrt((lastbreite || 2500) / 2500)), HOEHEN);
+      return { b: stufe(h * 0.5, [100, 120, 140, 160]), h: h };
+    },
+    pfosten: function (hoehe, flaeche) { return hoehe > 2600 || flaeche > 12e6 ? 140 : 120; }
+  };
 
   /* Dachstuhl. typ: 'pfetten' (Pfettendach mit Mittelpfetten), 'kehl' (Kehlbalkendach), 'pult' (Pultdach) */
   Holz.dachstuhl = function (o) {
@@ -201,10 +233,11 @@
   /* Carport: Pfosten, zwei Pfetten, Sparren, Kopfbaender. breite = Einfahrtsbreite (X), tiefe (Y), hoehe = lichte Hoehe */
   Holz.carport = function (o) {
     o = o || {};
-    var Bx = o.breite || 3000, Ty = o.tiefe || 6000, Hh = o.hoehe || 2300, gross = Bx > 4500;
-    var pf = gross ? 140 : 120, pB = gross ? 120 : 100, pH = gross ? 240 : 200, sB = gross ? 80 : 60, sH = gross ? 200 : 160;
+    var Bx = o.breite || 3000, Ty = o.tiefe || 6000, Hh = o.hoehe || 2300, F = Holz.faustregel;
+    var np = Ty > 4500 ? 3 : 2, pf = F.pfosten(Hh, Bx * Ty);
+    var pq = F.pfette((Ty - pf) / (np - 1), Bx / 2 + 200, 180), pB = pq.b, pH = pq.h;
+    var sq = F.sparren(Bx + pf, 750, 140), sB = sq.b, sH = sq.h;
     var gef = Bx * 0.03, T = [];
-    var np = Ty > 4500 ? 3 : 2;
     [-1, 1].forEach(function (s) {
       var zU = Hh + (s < 0 ? gef : 0);              // Unterkante Pfette (linke Seite hoeher fuer das Gefaelle)
       var x = s * (Bx / 2 + pf / 2);
@@ -233,7 +266,9 @@
   Holz.gartenhaus = function (o) {
     o = o || {};
     var Bx = o.breite || 3000, Ty = o.tiefe || 6000, Hw = o.hoehe || 2200, al = rad(o.neigung || 25), q = 100, T = [];
-    var cos = Math.cos(al), tan = Math.tan(al), sB = 60, sH = 140, ue = 300, tuer = 1000, tuerH = 2000;
+    var cos = Math.cos(al), tan = Math.tan(al), ue = 300, tuer = 1000, tuerH = 2000;
+    var sq = Holz.faustregel.sparren((Bx / 2) / cos, 750, 120), sB = sq.b, sH = sq.h;
+    var fq = Holz.faustregel.pfette(Ty, Bx / 2, 160);
     var x0 = -Bx / 2 + q / 2, x1 = Bx / 2 - q / 2;
     // Schwellen und Raehm
     [[0, 'Schwelle', q / 2], [1, 'Rähm', Hw - q / 2]].forEach(function (e) {
@@ -258,7 +293,7 @@
       });
     });
     // Giebelwaende: Tuerstaender, Sturz, Mittelstaender
-    var zF = Hw + (Bx / 2) * tan, fpH = 160;           // Firsthoehe (Unterkante Sparren am First ~ zF)
+    var zF = Hw + (Bx / 2) * tan, fpH = fq.h;           // Firsthoehe (Unterkante Sparren am First ~ zF)
     var zFp = zF - (sH / 2) / cos * 0 - fpH / 2 - 20;   // Mitte Firstpfette
     T.push(Holz.balken('Türständer', new V3(-tuer / 2 - q / 2, q / 2, q), new V3(-tuer / 2 - q / 2, q / 2, Hw - q), q, q, { bearb: ['Tenon', 'Tenon', 'Mortise'] }));
     T.push(Holz.balken('Türständer', new V3(tuer / 2 + q / 2, q / 2, q), new V3(tuer / 2 + q / 2, q / 2, Hw - q), q, q, { bearb: ['Tenon', 'Tenon', 'Mortise'] }));
@@ -266,7 +301,7 @@
     T.push(Holz.balken('Giebelständer', new V3(0, q / 2, Hw), new V3(0, q / 2, zFp - fpH / 2), q, q, { bearb: ['Tenon', 'Tenon'] }));
     T.push(Holz.balken('Giebelständer', new V3(0, Ty - q / 2, q), new V3(0, Ty - q / 2, Hw - q), q, q, { bearb: ['Tenon', 'Tenon'] }));
     T.push(Holz.balken('Giebelständer', new V3(0, Ty - q / 2, Hw), new V3(0, Ty - q / 2, zFp - fpH / 2), q, q, { bearb: ['Tenon', 'Tenon'] }));
-    T.push(Holz.balken('Firstpfette', new V3(0, -ue, zFp), new V3(0, Ty + ue, zFp), q, fpH, { bearb: ['Mortise', 'Mortise'] }));
+    T.push(Holz.balken('Firstpfette', new V3(0, -ue, zFp), new V3(0, Ty + ue, zFp), fq.b, fpH, { bearb: ['Mortise', 'Mortise'] }));
     // Sparren
     var zAchse = function (x) { return Hw + (sH / 2) / cos + (Bx / 2 - Math.abs(x)) * tan; };
     var ns = Math.max(3, Math.round((Ty + 2 * ue - sB) / 750) + 1);
@@ -306,13 +341,14 @@
   Holz.terrassendach = function (o) {
     o = o || {};
     var Bx = o.breite || 4000, Ty = o.tiefe || 3000, Hh = o.hoehe || 2200, al = rad(8), tan = Math.tan(al), cos = Math.cos(al);
-    var pf = 120, vB = 120, vH = 200, wB = 80, wH = 160, sB = 80, sH = 160, ue = 300, T = [];
+    var F = Holz.faustregel, np = Bx > 7000 ? 4 : (Bx > 4500 ? 3 : 2), pf = F.pfosten(Hh, Bx * Ty);
+    var vq = F.pfette((Bx - pf) / (np - 1), Ty / 2 + 300, 180), vB = vq.b, vH = vq.h;
+    var sq = F.sparren(Ty, 700, 140), sB = sq.b, sH = sq.h, wB = 80, wH = 160, ue = 300, T = [];
     var zV = Hh + vH;                                   // Oberkante vordere Pfette
     var zAchse = function (y) { return zV + (sH / 2) / cos + (Ty - pf / 2 - y) * tan; };   // Sparrenachse, faellt nach vorn
     var zW = zAchse(wB / 2) - (sH / 2) / cos;            // Oberkante Wandpfette
     T.push(Holz.balken('Wandpfette', new V3(-Bx / 2, wB / 2, zW - wH / 2), new V3(Bx / 2, wB / 2, zW - wH / 2), wB, wH, { bearb: ['Drilling', 'Drilling', 'Drilling', 'Drilling'] }));
     T.push(Holz.balken('Pfette', new V3(-Bx / 2 - 150, Ty - pf / 2, Hh + vH / 2), new V3(Bx / 2 + 150, Ty - pf / 2, Hh + vH / 2), vB, vH, { bearb: ['Mortise', 'Mortise'] }));
-    var np = Bx > 7000 ? 4 : (Bx > 4500 ? 3 : 2);
     for (var p2 = 0; p2 < np; p2++) {
       var x = -Bx / 2 + pf / 2 + p2 * (Bx - pf) / (np - 1);
       T.push(Holz.balken('Pfosten', new V3(x, Ty - pf / 2, 0), new V3(x, Ty - pf / 2, Hh), pf, pf, { bearb: ['Tenon', 'Drilling'] }));
@@ -328,6 +364,82 @@
       T.push(Holz.balken('Sparren', new V3(xs, 0, zAchse(0)), new V3(xs, y1, zAchse(y1)), sB, sH, { lot: [true, true], bearb: ['JackRafterCut', 'JackRafterCut', 'BirdsMouth', 'BirdsMouth'] }));
     }
     return fertig(T, 'Terrassendach ' + Holz.zahl(Bx / 1000, 2) + ' × ' + Holz.zahl(Ty / 1000, 2) + ' m');
+  };
+
+  /* Dachgaube auf einem bestehenden Dach. art: 'schlepp' (Schleppgaube) oder 'flach' (Flachdachgaube).
+     breite (X) = Gaubenbreite, neigung = Neigung des bestehenden Dachs, hoehe = Hoehe der Gaubenfront.
+     Traufe bei y = 0, das Dach steigt nach +y. Das Bestandsdach (grau) liegt in modell.kontext und zaehlt nicht mit. */
+  Holz.dachgaube = function (o) {
+    o = o || {};
+    var art = o.art === 'flach' ? 'flach' : 'schlepp', F = Holz.faustregel;
+    var Bx = o.breite || 3000, Hf = o.hoehe || 1400, ag = o.neigung || 45, al = rad(ag), tA = Math.tan(al), cA = Math.cos(al);
+    var bg = art === 'flach' ? 3 : Math.max(12, Math.min(25, ag - 18)), tB = Math.tan(rad(bg)), cB = Math.cos(rad(bg));
+    var T = [], K = [], q = 100, ue = 350, ueS = 150, sbB = 80, sbH = 180, dz = sbH / cA;
+    var yF = 1300, zF = yF * tA, zT = zF + Hf;            // Gaubenfront: Fusspunkt auf der Dachoberkante, Oberkante Raehm
+    var yO = (zT - yF * tB) / (tA - tB);                   // hier trifft die Gaube oben auf das Bestandsdach
+    var yR = yO + 900, W = Bx / 2 + 1000;
+    function dachZ(y) { return y * tA; }                   // Oberkante Bestandssparren
+    function gaubeZ(y) { return zT + (y - yF) * tB; }      // Unterkante Gaubensparren
+    function alt(t, flaeche) { t.bestand = true; if (flaeche) t.flaeche = true; K.push(t); }
+    var hoch = new V3(0, -Math.sin(al), Math.cos(al));     // Querschnittshoehe senkrecht zur Dachflaeche
+    function bestandsSparren(x, y0, y1) {
+      alt(Holz.balken('Sparren (Bestand)', new V3(x, y0, dachZ(y0) - dz / 2), new V3(x, y1, dachZ(y1) - dz / 2), sbB, sbH, { hoch: hoch, lot: [true, true] }));
+    }
+    // Bestandssparren: im Bereich der Gaube unten und oben gekuerzt, daneben die Wechselsparren
+    var xs = [], xr = Bx / 2 + sbB / 2 + 20;
+    for (var x = xr; x <= W; x += 800) { xs.push(x); xs.push(-x); }
+    var ni = Math.max(1, Math.round((2 * xr) / 800) - 1);
+    for (var i = 1; i <= ni; i++) xs.push(-xr + i * (2 * xr) / (ni + 1));
+    xs.forEach(function (x) {
+      if (Math.abs(x) < xr - 1) { bestandsSparren(x, -300, yF - 60); bestandsSparren(x, yO + 60, yR); }
+      else bestandsSparren(x, -300, yR);
+    });
+    // Dachflaeche (nur angedeutet, durchscheinend), mit Oeffnung fuer die Gaube
+    var Wd = W + 300;
+    function flaeche(x0, x1, y0, y1) {
+      if (x1 - x0 < 10 || y1 - y0 < 10) return;
+      var xm = (x0 + x1) / 2, d = 45 / 2 / cA;
+      alt(Holz.balken('Dachfläche (Bestand)', new V3(xm, y0, dachZ(y0) + d), new V3(xm, y1, dachZ(y1) + d), x1 - x0, 45, { hoch: hoch, lot: [true, true] }), true);
+    }
+    flaeche(-Wd, -Bx / 2, -300, yR); flaeche(Bx / 2, Wd, -300, yR);
+    flaeche(-Bx / 2, Bx / 2, -300, yF); flaeche(-Bx / 2, Bx / 2, yO, yR);
+
+    // Neu: Wechsel zwischen den Wechselsparren, unten unter der Front und oben am Anschluss
+    var wq = F.pfette(2 * xr, 1500, 160);
+    [[yF, 'Wechsel unten'], [yO, 'Wechsel oben']].forEach(function (e) {
+      T.push(Holz.balken(e[1], new V3(-xr + sbB / 2, e[0], dachZ(e[0]) - dz / 2), new V3(xr - sbB / 2, e[0], dachZ(e[0]) - dz / 2), wq.b, Math.min(wq.h, sbH), { bearb: ['House', 'House', 'Drilling', 'Drilling'] }));
+    });
+    // Gaubenfront: Schwelle, Raehm, Staender (Oeffnungen fuer Fenster bleiben frei)
+    var yW = yF + q / 2;
+    T.push(Holz.balken('Schwelle', new V3(-Bx / 2, yW, zF + q / 2), new V3(Bx / 2, yW, zF + q / 2), q, q, { bearb: ['Lap', 'Lap', 'Mortise', 'Mortise', 'Drilling', 'Drilling'] }));
+    T.push(Holz.balken('Rähm', new V3(-Bx / 2, yW, zT - q / 2), new V3(Bx / 2, yW, zT - q / 2), q, q, { bearb: ['Lap', 'Lap', 'Mortise', 'Mortise'] }));
+    var nf = Math.max(2, Math.ceil((Bx - q) / 1300) + 1);
+    for (var f = 0; f < nf; f++) {
+      var xf = -Bx / 2 + q / 2 + f * (Bx - q) / (nf - 1);
+      T.push(Holz.balken(f === 0 || f === nf - 1 ? 'Eckständer' : 'Fensterständer', new V3(xf, yW, zF + q), new V3(xf, yW, zT - q), q, q, { bearb: ['Tenon', 'Tenon'] }));
+    }
+    // Gaubenwangen: Schwelle auf dem Dach, Raehm unter den Gaubensparren, Staender dazwischen
+    var yA = yF + q, yE = yO - 80;
+    [-1, 1].forEach(function (s) {
+      var xw = s * (Bx / 2 - q / 2);
+      T.push(Holz.balken('Wangenschwelle', new V3(xw, yA, dachZ(yA) + q / 2 / cA), new V3(xw, yE, dachZ(yE) + q / 2 / cA), q, q, { hoch: hoch, lot: [true, true], bearb: ['JackRafterCut', 'JackRafterCut', 'Mortise', 'Mortise'] }));
+      T.push(Holz.balken('Wangenrähm', new V3(xw, yA, gaubeZ(yA) - q / 2 / cB), new V3(xw, yE, gaubeZ(yE) - q / 2 / cB), q, q, { lot: [true, true], bearb: ['JackRafterCut', 'JackRafterCut', 'Mortise', 'Mortise'] }));
+      for (var y = yA + 550; y < yE - 150; y += 625) {
+        var z0 = dachZ(y) + q / cA, z1 = gaubeZ(y) - q / cB;
+        if (z1 - z0 > 120) T.push(Holz.balken('Wangenständer', new V3(xw, y, z0), new V3(xw, y, z1), q, 60, { hoch: new V3(0, 1, 0), bearb: ['JackRafterCut', 'JackRafterCut'] }));
+      }
+    });
+    // Gaubensparren (Schleppgaube) bzw. Gaubenbalken (Flachdachgaube)
+    var sq = F.sparren((yO - yF + ue) / cB, 650, 140), n = Math.max(3, Math.round((Bx + 2 * ueS - sq.b) / 650) + 1);
+    for (var j = 0; j < n; j++) {
+      var xg = -Bx / 2 - ueS + sq.b / 2 + j * (Bx + 2 * ueS - sq.b) / (n - 1), y0 = yF - ue, y1 = yO;
+      var off = sq.h / 2 / cB;
+      T.push(Holz.balken(art === 'flach' ? 'Gaubenbalken' : 'Gaubensparren', new V3(xg, y0, gaubeZ(y0) + off), new V3(xg, y1, gaubeZ(y1) + off), sq.b, sq.h, { lot: [true, false], bearb: ['JackRafterCut', 'JackRafterCut', 'BirdsMouth', 'BirdsMouth'] }));
+    }
+    var m = fertig(T, (art === 'flach' ? 'Flachdachgaube ' : 'Schleppgaube ') + Holz.zahl(Bx / 1000, 2) + ' m breit, Dach ' + ag + '°');
+    m.kontext = K;
+    m.gaube = { art: art, neigungGaube: bg, tiefe: yO - yF, frontHoehe: Hf };
+    return m;
   };
 
   function fertig(T, name) {

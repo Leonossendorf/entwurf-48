@@ -54,6 +54,28 @@
     el.querySelector('button').addEventListener('click', abwahl);
   }
 
+  /* ---------- Preisschaetzung (unverbindlich, netto ab Werk) ---------- */
+  function euro(x) { return z(x, 0) + ' €'; }
+  function preisHtml(p, extra) {
+    return '<p class="la-preis-spanne"><span>Geschätzt, netto ab Werk</span><b>' + euro(p.von) + ' bis ' + euro(p.bis) + '</b><small>zzgl. 19 % MwSt.</small></p>' +
+      '<table class="la-preis-tab"><tbody>' +
+      '<tr><td>Arbeitsvorbereitung, pauschal</td><td class="r">' + euro(p.av) + '</td></tr>' +
+      '<tr><td>Holz: ' + z(p.m3, 2) + ' m³ mit Verschnitt × ' + euro(p.eurM3) + '</td><td class="r">' + euro(p.holz) + '</td></tr>' +
+      '<tr><td>Abbund: ' + z(p.lfm, 0) + ' m × ' + z(p.eurLfm, 2) + ' €</td><td class="r">' + euro(p.abbund) + '</td></tr>' +
+      '</tbody></table>' +
+      '<p class="la-klein">Nicht enthalten: ' + (extra || 'Verbindungsmittel, Lieferung') + '. Unverbindliche Schätzung aus der Holzmenge, das genaue Angebot macht Schophuis. <em class="demo-offen" title="Werte aus zwei Angeboten von Schophuis abgeleitet">Faustwerte: mit Schophuis abstimmen</em></p>';
+  }
+  function preisText(p) { return euro(p.von) + ' bis ' + euro(p.bis) + ' netto ab Werk (unverbindliche Schätzung)'; }
+  /* Kasten mit Knopf "Preisschätzung kalkulieren"; rechne() liefert {p, extra} oder null */
+  function preisKasten(el, rechne) {
+    if (!el) return function () { };
+    el.innerHTML = '<button type="button" class="la-knopf la-preis-knopf">Was kostet das? &gt;</button><div class="la-preis-ergebnis" aria-live="polite" hidden></div>';
+    var knopf = el.querySelector('button'), box = el.querySelector('.la-preis-ergebnis'), offen = false;
+    function zeige() { var r = rechne(); if (!r) return; box.innerHTML = preisHtml(r.p, r.extra); }
+    knopf.addEventListener('click', function () { offen = true; knopf.hidden = true; box.hidden = false; zeige(); });
+    return function (zu) { if (zu) { offen = false; knopf.hidden = false; box.hidden = true; } else if (offen) zeige(); };
+  }
+
   /* ---------- Anfrage als Mail ---------- */
   function alsText(html) { var d = document.createElement('div'); d.innerHTML = String(html).replace(/<br\s*\/?>/gi, ', '); return d.textContent.trim(); }
   function mailText(zeilen, zusatz) {
@@ -87,13 +109,14 @@
     try {
       var v = new Holz3D(c, {});
       v.controls.enableZoom = false; v.controls.enablePan = false;
-      v.laden(c.dataset.modell === 'gartenhaus' ? H.gartenhaus({ breite: 3000, tiefe: 5000 }) : H.dachstuhl({ breite: 8000, laenge: 8800, neigung: 40 }), {});
+      var hm = c.dataset.modell;
+      v.laden(hm === 'carport' ? H.carport({ breite: 3000, tiefe: 5500 }) : (hm === 'gartenhaus' ? H.gartenhaus({ breite: 3000, tiefe: 5000 }) : H.dachstuhl({ breite: 8000, laenge: 8800, neigung: 40 })), {});
       v.controls.addEventListener('end', function () { v.controls.autoRotate = !v.reduziert; });
     } catch (e) { c.style.display = 'none'; }
   }
 
   /* ================= Unternehmen: Upload ================= */
-  var zustand = { dateien: [], modell: null, viewer: null, erg: null, modus: 'datei', wahl: -1 };
+  var zustand = { dateien: [], modell: null, viewer: null, erg: null, modus: 'datei', wahl: -1, preisNeu: function () { } };
 
   function setModus(m, rollen) {
     zustand.modus = m = m === 'planung' ? 'planung' : 'datei';
@@ -163,6 +186,8 @@
       ['Teile', z(k.teile)], ['Laufmeter', z(k.lfm, 1) + ' m'], ['Holz', z(k.m3, 2) + ' m³'],
       ['Gewicht, etwa', z(k.gewicht / 10, 0) + '0 kg', 'gerechnet mit 470 kg/m³'], ['Bearbeitungen', z(k.bearbSumme)], ['Längstes Teil', meter(k.maxL)]
     ]);
+
+    zustand.preisNeu(true);
 
     var p = [], det = r.details || {};
     p.push(['ok', 'Datei gelesen: ' + esc(r.format) + (det.programm ? ', erzeugt mit ' + esc(det.programm) : '')]);
@@ -273,6 +298,7 @@
 
   function betriebe() {
     var drop = $('#la-drop'); if (!drop) return;
+    zustand.preisNeu = preisKasten($('#la-preis'), function () { return zustand.k ? { p: H.preis(zustand.k), extra: 'Verbindungsmittel, Lieferung, Planung' } : null; });
     // Am Handy gibt es kein Ziehen: Der Text sagt dort, was wirklich passiert.
     if (window.matchMedia && matchMedia('(hover: none) and (pointer: coarse)').matches) {
       var dt = $('#la-drop-titel');
@@ -336,6 +362,7 @@
       var zeilen = [['Weg', esc((w.umfang || []).join(''))]];
       zeilen.push(['Dateien', zustand.dateien.length ? zustand.dateien.map(function (d) { return esc(d.name) + ' (' + esc(d.r ? d.r.format : 'Datei') + ', ' + groesse(d.groesse) + ')'; }).join('<br>') : 'keine, Unterlagen folgen']);
       if (m) zeilen.push(['Aus der Datei gelesen', z(k.teile) + ' Teile, ' + z(k.lfm, 1) + ' m, ' + z(k.m3, 2) + ' m³, ' + z(k.bearbSumme) + ' Bearbeitungen, längstes Teil ' + meter(k.maxL) + ', größter Querschnitt ' + z(k.maxB) + ' × ' + z(k.maxH) + ' mm']);
+      if (m) zeilen.push(['Preisschätzung', preisText(H.preis(k))]);
       if (m && zustand.wahl >= 0) zeilen.push(['Markiertes Bauteil', esc(auswahlText(m.zeilen[zustand.wahl]))]);
       zeilen.push(['Holz', esc((w.holz || []).join(''))], ['Übergabe', esc((w.uebergabe || []).join(''))]);
       if (form.termin.value) zeilen.push(['Wunschtermin', new Date(form.termin.value).toLocaleDateString('de-DE')]);
@@ -349,44 +376,69 @@
   }
 
   /* ================= Privat: Bausatz-Planer ================= */
+  /* r: Regler b/t/h = [min, max, schritt, Name, 'grad' fuer Winkel]; pakete: [Name, b, t (null = behalten), h] */
   var TYPEN = {
-    gartenhaus: { name: 'Gartenhaus', bau: H.gartenhaus, b: [2000, 5000], t: [2000, 8000], h: [2000, 2600], bn: 'Breite', hn: 'Wandhöhe', start: 2,
-      pakete: [['3 × 3 m', 3000, 3000, 2200], ['3 × 4 m', 3000, 4000, 2200], ['3 × 6 m', 3000, 6000, 2200]] },
-    carport: { name: 'Carport', bau: H.carport, b: [2700, 6500], t: [4500, 8000], h: [2000, 2800], bn: 'Einfahrtsbreite', hn: 'Durchfahrtshöhe', start: 1,
-      pakete: [['Einzel 3 × 5,5 m', 3000, 5500, 2300], ['Einzel 3 × 6 m', 3000, 6000, 2300], ['Doppel 6 × 6 m', 6000, 6000, 2300]] },
-    terrassendach: { name: 'Terrassendach', bau: H.terrassendach, b: [3000, 8000], t: [2000, 4500], h: [2100, 2700], bn: 'Breite an der Hauswand', hn: 'Durchgangshöhe vorn', start: 0,
-      pakete: [['4 × 3 m', 4000, 3000, 2200], ['5 × 3 m', 5000, 3000, 2200], ['6 × 3,5 m', 6000, 3500, 2200]] }
+    carport: { name: 'Carport', bau: function (w) { return H.carport({ breite: w.b, tiefe: w.t, hoehe: w.h }); },
+      r: { b: [2700, 6500, 100, 'Einfahrtsbreite'], t: [4500, 8000, 100, 'Tiefe'], h: [2000, 2800, 50, 'Durchfahrtshöhe'] }, start: 1,
+      pakete: [['Einzel 3 × 5,5 m', 3000, 5500, 2300], ['Einzel 3 × 6 m', 3000, 6000, 2300], ['Doppel 6 × 6 m', 6000, 6000, 2300]],
+      tipp: 'Gezeigt wird das Holzgerüst ohne Dachhaut.' },
+    dachgaube: { name: 'Dachgaube', bau: function (w) { return H.dachgaube({ art: bs.art, breite: w.b, neigung: w.t, hoehe: w.h }); },
+      r: { b: [1500, 6000, 100, 'Gaubenbreite'], t: [30, 60, 1, 'Neigung Ihres Dachs', 'grad'], h: [1000, 2000, 50, 'Höhe der Front'] }, start: 1,
+      pakete: [['Schmal 2 m', 2000, null, 1300], ['Mittel 3 m', 3000, null, 1400], ['Breit 4,5 m', 4500, null, 1500]],
+      tipp: 'Grau ist Ihr vorhandenes Dach, nur angedeutet. Die Gaube bauen wir in der Halle vor und setzen sie an einem Tag aufs Dach.' },
+    terrassendach: { name: 'Terrassendach', bau: function (w) { return H.terrassendach({ breite: w.b, tiefe: w.t, hoehe: w.h }); },
+      r: { b: [3000, 8000, 100, 'Breite an der Hauswand'], t: [2000, 4500, 100, 'Tiefe'], h: [2100, 2700, 50, 'Durchgangshöhe vorn'] }, start: 0,
+      pakete: [['4 × 3 m', 4000, 3000, 2200], ['5 × 3 m', 5000, 3000, 2200], ['6 × 3,5 m', 6000, 3500, 2200]],
+      tipp: 'Gezeigt wird das Holzgerüst ohne Dachhaut.' },
+    gartenhaus: { name: 'Gartenhaus', bau: function (w) { return H.gartenhaus({ breite: w.b, tiefe: w.t, hoehe: w.h }); },
+      r: { b: [2000, 5000, 100, 'Breite'], t: [2000, 8000, 100, 'Tiefe'], h: [2000, 2600, 50, 'Wandhöhe'] }, start: 2,
+      pakete: [['3 × 3 m', 3000, 3000, 2200], ['3 × 4 m', 3000, 4000, 2200], ['3 × 6 m', 3000, 6000, 2200]],
+      tipp: 'Gezeigt wird das Holzgerüst ohne Verkleidung und Dachhaut.' }
   };
-  var bs = { typ: 'gartenhaus', viewer: null, modell: null, erst: true, warte: 0, wahl: -1 };
+  var ARTEN = { schlepp: 'Schleppgaube', flach: 'Flachdachgaube' };
+  var bs = { typ: 'carport', art: 'schlepp', viewer: null, modell: null, erst: true, warte: 0, wahl: -1, preisNeu: function () { } };
 
+  function bsWert(n, v) { return TYPEN[bs.typ].r[n][4] === 'grad' ? v + '°' : meter(v); }
   function bsWerte() { return { b: +$('#bs-breite').value, t: +$('#bs-tiefe').value, h: +$('#bs-hoehe').value }; }
-  function bsLink() { var w = bsWerte(); return location.origin + location.pathname + '?typ=' + bs.typ + '&b=' + w.b + '&t=' + w.t + '&h=' + w.h + '#planer'; }
+  function bsQuery() { var w = bsWerte(); return '?typ=' + bs.typ + (bs.typ === 'dachgaube' ? '&art=' + bs.art : '') + '&b=' + w.b + '&t=' + w.t + '&h=' + w.h; }
+  function bsLink() { return location.origin + location.pathname + bsQuery() + '#planer'; }
+  function bsName() { return bs.typ === 'dachgaube' ? ARTEN[bs.art] : TYPEN[bs.typ].name; }
+  function bsPreis() { return { p: H.preis(bs.k, { abbundSatz: 5.49 }), extra: bs.typ === 'dachgaube' ? 'Eindeckung, Fenster, Dämmung, Montage' : 'Verbindungsmittel, Eindeckung, Lieferung, Aufbau' }; }
   function bsBau(animiert) {
     var w = bsWerte(), T = TYPEN[bs.typ];
-    $('#bs-breite-wert').textContent = meter(w.b); $('#bs-tiefe-wert').textContent = meter(w.t); $('#bs-hoehe-wert').textContent = meter(w.h);
-    var m = bs.modell = T.bau({ breite: w.b, tiefe: w.t, hoehe: w.h });
+    $('#bs-breite-wert').textContent = bsWert('b', w.b); $('#bs-tiefe-wert').textContent = bsWert('t', w.t); $('#bs-hoehe-wert').textContent = bsWert('h', w.h);
+    var m = bs.modell = T.bau(w);
     var k = bs.k = H.kennzahlen(m.teile);
     bs.wahl = -1; zeigeAuswahl($('#bs-auswahl'), null);
     if (bs.viewer) bs.viewer.laden(m, { animiert: !!animiert, kamera: animiert || bs.erst, drehen: true });
     bs.erst = false;
-    $('#bs-kpi').innerHTML = kpiHtml([['Grundfläche', z(w.b * w.t / 1e6, 1) + ' m²'], ['Holzteile', z(k.teile)], ['Laufmeter Holz', z(k.lfm, 0) + ' m'], ['Holz', z(k.m3, 2) + ' m³']]);
+    var erste = bs.typ === 'dachgaube' ? ['Gaubenbreite', meter(w.b)] : ['Grundfläche', z(w.b * w.t / 1e6, 1) + ' m²'];
+    $('#bs-kpi').innerHTML = kpiHtml([erste, ['Holzteile', z(k.teile)], ['Laufmeter Holz', z(k.lfm, 0) + ' m'], ['Holz', z(k.m3, 2) + ' m³']]);
     $('#bs-liste').innerHTML = listeHtml(m.zeilen);
-    $('#bs-uebersicht').textContent = T.name + ' ' + meter(w.b) + ' × ' + meter(w.t) + ', ' + T.hn + ' ' + meter(w.h) + ' · ' + z(k.teile) + ' Holzteile, ' + z(k.lfm, 0) + ' m Holz';
-    $$('#bs-paket button').forEach(function (x) { x.setAttribute('aria-pressed', (+x.dataset.b === w.b && +x.dataset.t === w.t) ? 'true' : 'false'); });
-    try { history.replaceState(null, '', location.pathname + '?typ=' + bs.typ + '&b=' + w.b + '&t=' + w.t + '&h=' + w.h + location.hash); } catch (e) { }
+    $('#bs-uebersicht').textContent = bsName() + ': ' + ['b', 't', 'h'].map(function (n) { return T.r[n][3] + ' ' + bsWert(n, w[n]); }).join(', ') + ' · ' + z(k.teile) + ' Holzteile, ' + z(k.lfm, 0) + ' m Holz';
+    $$('#bs-paket button').forEach(function (x) { x.setAttribute('aria-pressed', (+x.dataset.b === w.b && (x.dataset.t === '' || +x.dataset.t === w.t) && +x.dataset.h === w.h) ? 'true' : 'false'); });
+    bs.preisNeu();
+    try { history.replaceState(null, '', location.pathname + bsQuery() + location.hash); } catch (e) { }
   }
   function bsTyp(typ, werte) {
-    if (!TYPEN[typ]) typ = 'gartenhaus';
+    if (!TYPEN[typ]) typ = 'carport';
     bs.typ = typ; var T = TYPEN[typ];
     $$('#bs-typ button').forEach(function (x) { x.setAttribute('aria-pressed', x.dataset.typ === typ ? 'true' : 'false'); });
-    [['breite', T.b], ['tiefe', T.t], ['hoehe', T.h]].forEach(function (x) { var r = $('#bs-' + x[0]); r.min = x[1][0]; r.max = x[1][1]; });
-    $('#bs-breite-name').textContent = T.bn; $('#bs-hoehe-name').textContent = T.hn;
-    $('#bs-paket').innerHTML = T.pakete.map(function (p) { return '<button type="button" aria-pressed="false" data-b="' + p[1] + '" data-t="' + p[2] + '" data-h="' + p[3] + '">' + p[0] + '</button>'; }).join('');
+    $$('#bs-art button').forEach(function (x) { x.setAttribute('aria-pressed', x.dataset.art === bs.art ? 'true' : 'false'); });
+    // Felder nur fuer bestimmte Bauwerke ein- oder ausblenden
+    $$('[data-nur]').forEach(function (el) { el.hidden = el.dataset.nur.split(' ').indexOf(typ) < 0; });
+    $$('[data-nicht]').forEach(function (el) { el.hidden = el.dataset.nicht.split(' ').indexOf(typ) >= 0; });
+    [['breite', 'b'], ['tiefe', 't'], ['hoehe', 'h']].forEach(function (x) {
+      var r = $('#bs-' + x[0]), g = T.r[x[1]]; r.min = g[0]; r.max = g[1]; r.step = g[2];
+      $('#bs-' + x[0] + '-name').textContent = g[3];
+    });
+    $('#bs-tipp').textContent = 'Ziehen oder wischen dreht das Modell. Ein Bauteil antippen hebt es hervor. ' + T.tipp;
+    $('#bs-paket').innerHTML = T.pakete.map(function (p) { return '<button type="button" aria-pressed="false" data-b="' + p[1] + '" data-t="' + (p[2] == null ? '' : p[2]) + '" data-h="' + p[3] + '">' + p[0] + '</button>'; }).join('');
     var p0 = T.pakete[T.start];
     function grenze(v, g, d) { v = +v; return isFinite(v) && v > 0 ? Math.min(g[1], Math.max(g[0], v)) : d; }
-    $('#bs-breite').value = werte ? grenze(werte.b, T.b, p0[1]) : p0[1];
-    $('#bs-tiefe').value = werte ? grenze(werte.t, T.t, p0[2]) : p0[2];
-    $('#bs-hoehe').value = werte ? grenze(werte.h, T.h, p0[3]) : p0[3];
+    $('#bs-breite').value = werte ? grenze(werte.b, T.r.b, p0[1]) : p0[1];
+    $('#bs-tiefe').value = werte ? grenze(werte.t, T.r.t, p0[2] == null ? 45 : p0[2]) : (p0[2] == null ? 45 : p0[2]);
+    $('#bs-hoehe').value = werte ? grenze(werte.h, T.r.h, p0[3]) : p0[3];
     bs.erst = true; bsBau(true);
   }
   function bsWaehle(zeile) {
@@ -399,16 +451,19 @@
   function privat() {
     var buehne = $('#bs-buehne'); if (!buehne) return;
     var q = new URLSearchParams(location.search);
+    if (q.get('art') === 'flach') bs.art = 'flach';
+    bs.preisNeu = preisKasten($('#bs-preis'), function () { return bs.k ? bsPreis() : null; });
     function los() {
       if (bs.viewer) return;
       try { bs.viewer = new Holz3D(buehne, { onSelect: bsWaehle }); bs.viewer.controls.enableZoom = false; } catch (e) { buehne.textContent = 'Die 3D-Vorschau braucht einen aktuellen Browser.'; }
-      bsTyp(q.get('typ') || 'gartenhaus', q.has('b') ? { b: q.get('b'), t: q.get('t'), h: q.get('h') } : null);
+      bsTyp(q.get('typ') || 'carport', q.has('b') ? { b: q.get('b'), t: q.get('t'), h: q.get('h') } : null);
     }
     if ('IntersectionObserver' in window && !q.has('typ')) { var io = new IntersectionObserver(function (e) { if (e[0].isIntersecting) { io.disconnect(); los(); } }, { rootMargin: '300px' }); io.observe(buehne); } else los();
     chips($('#bs-typ'), function (b) { bsTyp(b.dataset.typ); });
+    chips($('#bs-art'), function (b) { bs.art = b.dataset.art; bs.erst = true; bsBau(true); });
     $('#bs-paket').addEventListener('click', function (e) {
       var b = e.target.closest('button'); if (!b) return;
-      $('#bs-breite').value = b.dataset.b; $('#bs-tiefe').value = b.dataset.t; $('#bs-hoehe').value = b.dataset.h; bs.erst = true; bsBau(true);
+      $('#bs-breite').value = b.dataset.b; if (b.dataset.t !== '') $('#bs-tiefe').value = b.dataset.t; $('#bs-hoehe').value = b.dataset.h; bs.erst = true; bsBau(true);
     });
     ['breite', 'tiefe', 'hoehe'].forEach(function (n) {
       $('#bs-' + n).addEventListener('input', function () { if (bs.warte) return; bs.warte = requestAnimationFrame(function () { bs.warte = 0; bsBau(false); }); });
@@ -424,17 +479,25 @@
       if (!kontakt) { form.kontakt.focus(); return; }
       var w = chipWerte(form), v = bsWerte(), T = TYPEN[bs.typ], bild = '';
       try { bild = bs.viewer.bild(); } catch (err) { bild = ''; }
-      var zl = [['Weg', 'Online geplant'], ['Bausatz', esc(T.name)], [T.bn, meter(v.b)], ['Tiefe', meter(v.t)], [T.hn, meter(v.h)],
-        ['Holzgerüst', z(bs.k.teile) + ' Teile, ' + z(bs.k.lfm, 0) + ' m Holz, ' + z(bs.k.m3, 2) + ' m³']];
+      var zl = [['Weg', 'Online geplant'], ['Bauwerk', esc(bsName())]];
+      ['b', 't', 'h'].forEach(function (n) { zl.push([T.r[n][3], bsWert(n, v[n])]); });
+      zl.push(['Holzgerüst', z(bs.k.teile) + ' Teile, ' + z(bs.k.lfm, 0) + ' m Holz, ' + z(bs.k.m3, 2) + ' m³']);
+      zl.push(['Preisschätzung', preisText(bsPreis().p)]);
       if (bs.wahl >= 0) zl.push(['Markiertes Bauteil', esc(auswahlText(bs.modell.zeilen[bs.wahl]))]);
       zl.push(['Aufbau', esc((w.aufbau || []).join(''))]);
+      // Erweiterte Optionen: nur, was sichtbar ist und gewaehlt wurde
+      $$('.bs-mehr .la-chips[data-titel]', form).forEach(function (g) {
+        if (g.closest('[hidden]')) return;
+        var x = $$('button[aria-pressed="true"]', g).map(function (b) { return b.dataset.wert; }).filter(function (t) { return t !== 'Noch offen'; });
+        if (x.length) zl.push([g.dataset.titel, esc(x.join(', '))]);
+      });
       if (form.name.value) zl.push(['Name', esc(form.name.value)]);
       if (form.ort.value) zl.push(['Ort', esc(form.ort.value)]);
       zl.push(['Rückmeldung an', esc(kontakt)]);
       if (form.nachricht.value) zl.push(['Wünsche', esc(form.nachricht.value)]);
       zl.push(['Link zur Planung', '<a href="' + esc(bsLink()) + '">' + esc(bsLink()) + '</a>']);
       danke($('#la-danke-privat'), form, zl, bild, 'Schophuis bekommt Maße, Stückliste und Vorschaubild per E-Mail und meldet sich mit einem Angebot.',
-        { betreff: 'Bausatz ' + T.name + ' ' + meter(v.b) + ' × ' + meter(v.t), zusatz: 'Stückliste:\n' + listeText(bs.modell.zeilen, 14) });
+        { betreff: bsName() + ' ' + meter(v.b) + (bs.typ === 'dachgaube' ? ' breit' : ' × ' + meter(v.t)), zusatz: 'Stückliste:\n' + listeText(bs.modell.zeilen, 14) });
     });
   }
 

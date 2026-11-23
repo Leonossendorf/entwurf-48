@@ -1,0 +1,141 @@
+/* Dachfenster-Planer (Schophuis), baut auf la.css auf */
+.df-hero-foto { margin: 0; justify-self: center; max-width: 560px; transform: rotate(2deg); background: #fff; padding: 12px 12px 14px; box-shadow: 0 18px 50px rgba(0, 46, 24, .28); animation: la-rein .8s .35s both cubic-bezier(.2, .7, .2, 1); }
+.df-hero-foto img { display: block; width: 100%; height: auto; }
+
+.df-planer { max-width: 1320px; margin: 0 auto; display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: clamp(24px, 3.5vw, 56px); align-items: start; }
+.la .df-h2 { text-align: left; }
+.la p.df-intro { margin: 14px 0 6px; font-size: 18px; max-width: 620px; }
+
+.df-schritt { border: 0; margin: 26px 0 0; padding: 22px 0 0; border-top: 2px solid rgba(0, 46, 24, .18); min-width: 0; scroll-margin-top: 120px; }
+.df-schritt legend { display: flex; align-items: center; gap: 12px; font-family: "Black Ground", sans-serif !important; font-size: clamp(24px, 2.2vw, 32px); line-height: 1; color: var(--schwarz); padding: 0 0 14px; }
+.df-schritt legend > * { font-family: inherit !important; }
+.df-schritt legend b { display: inline-grid; place-items: center; width: 1.45em; height: 1.45em; background: var(--schwarz); color: #fff; transform: rotate(-4deg); font-size: .8em; }
+.df-schritt legend .df-klein { font-family: "Akko Std", sans-serif !important; font-size: 15px; }
+.la .df-klein, .df-klein { font-size: 14px; color: #3d4a2a; }
+.la p.df-klein { margin: 8px 0 0; }
+.la p.df-zeile-titel { margin: 18px 0 8px; font-family: "Akko Std Bold", sans-serif !important; font-size: 17px; }
+
+/* Karten zum Antippen */
+.df-karten { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.df-karten-klein { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.la .df-karte { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 6px; text-align: left; padding: 14px 14px 16px; background: #fff; border: 2px solid transparent; border-bottom: 4px solid rgba(0, 46, 24, .2); color: var(--schwarz); cursor: pointer; transition: transform .2s, border-color .2s, box-shadow .2s; }
+.la .df-karte:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0, 46, 24, .1); }
+.la .df-karte[aria-pressed="true"] { border-color: var(--schwarz); border-bottom-color: var(--gruen); box-shadow: 0 8px 24px rgba(0, 46, 24, .14); }
+.la .df-karte strong { font-family: "Akko Std Bold", sans-serif !important; font-size: 17px; line-height: 1.2; }
+.la .df-karte span { font-size: 14px; line-height: 1.35; color: #4c5a35; }
+.df-karte svg { width: 58px; height: 44px; fill: none; stroke: var(--schwarz); stroke-width: 2.4; stroke-linejoin: round; stroke-linecap: round; }
+.df-karte svg .df-ico-akzent { stroke: var(--gruen); stroke-width: 3; }
+.df-karte[aria-pressed="true"] svg rect { fill: #cfe0b0; }
+.la .df-karte em.df-empf { position: absolute; top: -10px; right: 8px; font-style: normal; background: var(--gruen); color: #fff; font-size: 12px; padding: 2px 8px; transform: rotate(3deg); font-family: "Akko Std Bold", sans-serif !important; }
+
+.df-tipp-gaube { margin-top: 14px; background: var(--tief); color: #fff; padding: 18px 20px; border-left: 6px solid var(--gruen); }
+.la .df-tipp-gaube p { margin: 0 0 12px; color: #fff; }
+.la .df-tipp-gaube p:last-child { margin: 0; display: flex; flex-wrap: wrap; gap: 14px; align-items: center; }
+.la .df-tipp-gaube .la-link-dunkel { color: #cfe0b0; }
+
+.df-feld { display: grid; gap: 6px; font-family: "Akko Std Bold", sans-serif; font-size: 17px; }
+.df-feld input { font: 20px "Akko Std", sans-serif; letter-spacing: .06em; padding: 12px 14px; border: 2px solid var(--schwarz); background: #fff; text-transform: uppercase; max-width: 360px; }
+#df-code-ok b { color: #3f6b00; }
+
+/* Groessen als massstaebliche Kacheln */
+.df-groessen { display: grid; grid-template-columns: repeat(auto-fill, minmax(78px, 1fr)); gap: 8px; }
+.la .df-groessen button { position: relative; display: flex; flex-direction: column; align-items: center; padding: 8px 4px 6px; background: #fff; border: 2px solid transparent; cursor: pointer; color: var(--schwarz); }
+.la .df-groessen button[aria-pressed="true"] { border-color: var(--schwarz); background: #f3f7ea; }
+.df-groessen svg { width: 40px; height: 46px; }
+.df-groessen svg rect { fill: #dfe9cc; stroke: var(--schwarz); stroke-width: 1.6; }
+.df-groessen button[aria-pressed="true"] svg rect { fill: #9fca4a; }
+.la .df-groessen strong { font-family: "Akko Std Bold", sans-serif !important; font-size: 13px; white-space: nowrap; }
+.la .df-groessen small { font-size: 11px; color: #6a7458; }
+.la .df-groessen em { position: absolute; top: -9px; left: 50%; transform: translateX(-50%) rotate(-3deg); font-style: normal; font-size: 11px; background: var(--gruen); color: #fff; padding: 1px 6px; white-space: nowrap; }
+
+.df-zwei { display: flex; flex-wrap: wrap; gap: 10px 40px; align-items: flex-end; }
+.df-zaehler { display: inline-flex; align-items: center; border: 2px solid var(--schwarz); background: #fff; }
+.la .df-zaehler button { width: 46px; height: 46px; border: 0; background: transparent; font-size: 26px; cursor: pointer; color: var(--schwarz); }
+.la .df-zaehler button:hover { background: #e8efd9; }
+.df-zaehler output { min-width: 44px; text-align: center; font-family: "Black Ground", sans-serif; font-size: 30px; }
+
+.df-extras { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.la .df-extras button { text-align: left; display: flex; flex-direction: column; gap: 3px; padding: 12px 14px 12px 40px; background: #fff; border: 2px solid transparent; cursor: pointer; position: relative; color: var(--schwarz); }
+.la .df-extras button::before { content: ""; position: absolute; left: 12px; top: 14px; width: 18px; height: 18px; border: 2px solid var(--schwarz); background: #fff; }
+.la .df-extras button[aria-pressed="true"] { border-color: var(--schwarz); }
+.la .df-extras button[aria-pressed="true"]::before { background: var(--gruen) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M4 10l4 4 8-9' fill='none' stroke='white' stroke-width='3'/%3E%3C/svg%3E") center / 14px no-repeat; border-color: var(--gruen); }
+.la .df-extras strong { font-family: "Akko Std Bold", sans-serif !important; font-size: 15px; }
+.la .df-extras span { font-size: 13px; color: #4c5a35; }
+
+/* Rechte Seite */
+.df-seite { position: sticky; top: 100px; display: grid; gap: 18px; }
+.df-blatt { background: #fff; padding: 12px 14px 14px; box-shadow: 0 14px 40px rgba(0, 46, 24, .12); border-top: 6px solid var(--schwarz); }
+.df-ansicht { display: flex; gap: 4px; margin-bottom: 6px; }
+.la .df-ansicht button { flex: 1; padding: 9px 10px; background: #eef2e4; border: 0; cursor: pointer; font-family: "Akko Std Bold", sans-serif; font-size: 15px; color: var(--schwarz); }
+.la .df-ansicht button[aria-selected="true"] { background: var(--schwarz); color: #fff; }
+.df-svg { display: block; width: 100%; height: auto; }
+.df-svg text { font-family: "Akko Std", sans-serif; font-size: 15px; fill: var(--schwarz); }
+.df-svg .df-mass-stark { font-family: "Akko Std Bold", sans-serif; fill: #3f6b00; }
+.df-svg .df-mass-klein { font-size: 12px; fill: #5a6a3c; }
+.df-svg .df-boden { stroke: var(--schwarz); stroke-width: 3; }
+.df-svg .df-dach { fill: url(#df-schraff); stroke: var(--schwarz); stroke-width: 2; stroke-linejoin: round; }
+.df-svg .df-rahmen { fill: #f6f5ef; stroke: var(--gruen); stroke-width: 3; stroke-linejoin: round; }
+.df-svg .df-glas { stroke: #7fb2c6; stroke-width: 5; stroke-linecap: round; }
+.df-svg .df-licht { fill: #ffe680; opacity: .45; }
+.df-svg .df-person { fill: #002e18; opacity: .78; }
+.df-svg .df-blick { stroke: var(--gruen); stroke-width: 2.4; stroke-dasharray: 6 5; }
+.df-svg .df-blick-nein { stroke: #b0583a; }
+.df-svg .df-mass-linie { stroke: #8a9478; stroke-width: 1; stroke-dasharray: 3 4; }
+.df-svg .df-masspfeil { stroke: #3f6b00; stroke-width: 2; }
+.df-svg .df-eindeck { fill: #779e00; }
+.df-svg .df-rahmen2 { fill: #2b2f2c; }
+
+.df-hinweise { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 6px; }
+.df-hinweise li { position: relative; padding: 8px 10px 8px 34px; font-size: 14.5px; line-height: 1.4; background: #f3f7ea; }
+.df-hinweise li::before { content: ""; position: absolute; left: 11px; top: 11px; width: 14px; height: 14px; border-radius: 50%; background: var(--gruen); }
+.df-hinweise li.df-h-warn { background: #fdf1df; }
+.df-hinweise li.df-h-warn::before { background: #d9822b; }
+.df-hinweise li.df-h-info::before { background: #7fb2c6; }
+
+/* Bauzettel: wie ein Zettel auf der Baustelle */
+.df-zettel { position: relative; background: #fffdf4; padding: 18px 20px 20px; transform: rotate(-.6deg); box-shadow: 0 10px 30px rgba(0, 46, 24, .12); border-left: 6px solid var(--gruen); }
+.df-zettel::before { content: ""; position: absolute; top: -12px; left: 50%; width: 90px; height: 24px; margin-left: -45px; background: rgba(159, 202, 74, .55); transform: rotate(2deg); }
+.la p.df-zettel-kopf { margin: 0 0 8px; font-family: "Black Ground", sans-serif !important; font-size: 28px; line-height: 1; }
+.df-zettel dl { margin: 0; display: grid; gap: 0; }
+.df-zettel dl > div { display: grid; grid-template-columns: 104px 1fr; gap: 10px; padding: 7px 0; border-bottom: 1px dashed #c9c6b4; }
+.df-zettel dt { font-family: "Akko Std Bold", sans-serif; font-size: 14px; color: #5a6a3c; }
+.df-zettel dd { margin: 0; font-size: 15px; }
+.la a.df-aendern { font-size: 13px; color: #3f6b00; margin-left: 4px; }
+.la p.df-preis { margin: 12px 0 14px; font-family: "Akko Std Bold", sans-serif !important; font-size: 15px; }
+.la .df-zur-anfrage { display: inline-block; }
+.la p.df-foto-tipp { margin: 4px 0 14px; }
+
+@media (max-width: 1080px) {
+  .df-planer { grid-template-columns: 1fr; }
+  .df-seite { position: static; order: -1; }
+  .df-zettel { display: none; }
+}
+@media (max-width: 640px) {
+  .df-karten, .df-karten-klein, .df-extras { grid-template-columns: 1fr 1fr; }
+  .df-karten .df-karte:last-child:nth-child(odd) { grid-column: 1 / -1; }
+  .df-hero-foto { max-width: 92%; }
+}
+.df-schritt legend span#df-s2-titel { font-size: inherit; line-height: 1; }
+@media (max-width: 1080px) {
+  .df-seite { position: sticky; top: 62px; z-index: 6; }
+  .df-blatt { padding: 6px 8px 8px; box-shadow: 0 8px 18px rgba(0, 46, 24, .22); }
+  .la .df-ansicht button { padding: 6px; font-size: 13px; }
+  .df-svg { max-height: 30vh; margin: 0 auto; }
+  .df-hinweise li { padding: 5px 8px 5px 28px; font-size: 13px; }
+  .df-hinweise li::before { left: 9px; top: 8px; width: 11px; height: 11px; }
+  .df-hinweise li:not(:first-child) { display: none; }
+}
+
+/* Mitlaufende Zeichnung: hidden der Vorlage verhindert sticky, clip schneidet genauso ab */
+.wp-site-blocks:has(.df) { overflow: clip !important; }
+@media (min-width: 1081px) {
+  .df-seite { gap: 14px; top: 92px; }
+  .df-svg { max-height: 36vh; margin: 0 auto; }
+  .df-hinweise li:nth-child(n+3) { display: none; }
+  .df-zettel { padding: 12px 18px 14px; }
+  .la p.df-zettel-kopf { font-size: 24px; margin-bottom: 4px; }
+  .df-zettel dl > div { padding: 4px 0; }
+  .df-zettel dd { font-size: 14px; }
+  .la p.df-preis { margin: 8px 0 10px; }
+  .la .df-zur-anfrage { font-size: 22px; padding: 10px 18px; }
+}

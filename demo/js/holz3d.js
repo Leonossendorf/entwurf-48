@@ -154,6 +154,19 @@
         this.kanten.push(ls);
       }
     }
+    // Bestand (z. B. vorhandenes Dach bei der Gaube): grau, nicht anklickbar, nicht in Liste und Kennzahlen
+    (modell.kontext || []).forEach(function (t) {
+      var g2 = new THREE.BufferGeometry();
+      g2.setAttribute('position', new THREE.BufferAttribute(t.tri, 3));
+      g2.computeVertexNormals();
+      var fl = !!t.flaeche;
+      var m2 = new THREE.MeshStandardMaterial({ color: fl ? 0x8f8a82 : 0xc4beb3, roughness: 0.9, metalness: 0, transparent: true, opacity: fl ? 0.28 : 0.95, depthWrite: !fl, side: THREE.DoubleSide });
+      var me2 = new THREE.Mesh(g2, m2);
+      me2.applyMatrix4(new THREE.Matrix4().fromArray(t.m));
+      me2.castShadow = !fl; me2.receiveShadow = true;
+      if (!fl) me2.add(new THREE.LineSegments(new THREE.EdgesGeometry(g2, 24), new THREE.LineBasicMaterial({ color: 0x8a857c, transparent: true, opacity: 0.5 })));
+      this.gruppe.add(me2);
+    }, this);
     // Rahmen
     this.gruppe.updateMatrixWorld(true);
     var box = this.box = new THREE.Box3().setFromObject(this.gruppe);

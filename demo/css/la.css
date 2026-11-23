@@ -234,3 +234,29 @@
   .la h1.la-schild span, .la p.la-unterzeile, .la p.la-knoepfe { animation: none; }
   .la a.la-knopf, .la button.la-knopf { transition: none; }
 }
+
+/* ---------- Preisschaetzung (23.11.) ---------- */
+.la-preis { margin-top: 14px; }
+.la .la-preis-knopf { width: 100%; }
+.la-preis-ergebnis { background: rgba(255, 255, 255, .08); padding: 16px 18px 12px; border-left: 4px solid #9fca4a; }
+.la-preis-hell .la-preis-ergebnis { background: #fff; border-left-color: var(--gruen); }
+.la p.la-preis-spanne { margin: 0 0 10px; display: flex; flex-direction: column; }
+.la-preis-spanne span { font-size: 14px; opacity: .8; }
+.la .la-preis-spanne b { font-family: "Black Ground", sans-serif !important; font-size: clamp(26px, 2.6vw, 38px); line-height: 1.1; }
+.la-preis-spanne small { font-size: 13px; opacity: .75; }
+.la-preis-tab { width: 100%; border-collapse: collapse; font-size: 14px; }
+.la-preis-tab td { padding: 5px 0; border-top: 1px solid rgba(127, 127, 127, .3); }
+.la-preis-tab td.r { text-align: right; white-space: nowrap; padding-left: 12px; }
+.la-preis-ergebnis p.la-klein { margin: 8px 0 0; font-size: 13px; }
+
+/* ---------- Erweiterte Optionen im Planer ---------- */
+.la details.bs-mehr { margin: 22px 0 8px; border-top: 2px solid rgba(0, 46, 24, .2); border-bottom: 2px solid rgba(0, 46, 24, .2); }
+.la details.bs-mehr summary { cursor: pointer; font-family: "Akko Std Bold", sans-serif; font-size: 17px; padding: 12px 0; }
+.la details.bs-mehr summary span { font-family: inherit; font-weight: normal; opacity: .7; font-size: 15px; }
+.bs-mehr-innen { padding: 0 0 16px; }
+.bs-mehr-innen p.la-form-zeile-titel { margin-top: 12px; }
+.la .bs-mehr-innen .la-chips button { padding: 7px 13px; font-size: 15px; }
+.bs-mehr-text { display: grid; gap: 4px; margin-top: 14px; }
+.bs-mehr-text textarea { width: 100%; }
+[data-nur][hidden] { display: none !important; }
+.la .la-preis-knopf[hidden] { display: none !important; }
