@@ -261,13 +261,14 @@
 [data-nur][hidden] { display: none !important; }
 .la .la-preis-knopf[hidden] { display: none !important; }
 
-/* Holzstaerken live */
-.la .bs-staerken{margin:14px 0 0;padding:14px 16px;border-left:4px solid var(--hell,#80b245);background:rgba(255,255,255,.06);color:#f3f1e8}
-.la .bs-staerken-titel{margin:0 0 6px;font-family:"Akko Std Bold",sans-serif;font-size:15px}
-.la .bs-staerken ul{list-style:none;margin:0;padding:0}
-.la .bs-staerken li{display:flex;justify-content:space-between;gap:12px;padding:3px 0;border-bottom:1px solid rgba(255,255,255,.12);font-size:15px}
-.la .bs-staerken li b{font-family:"Akko Std Bold",sans-serif;font-weight:normal;white-space:nowrap}
-.la .bs-staerken li em{font-style:normal;font-size:12px;background:var(--hell,#80b245);color:#0d0d0d;padding:1px 6px;margin-left:6px;border-radius:2px}
-.la .bs-staerken li.bs-neu{animation:bsNeu 1.6s ease-out}
-@keyframes bsNeu{0%{background:rgba(128,178,69,.55)}100%{background:transparent}}
-.la .bs-staerken-info{margin:8px 0 0;font-size:13px;opacity:.8}
+/* Holzstaerken: helle Karte wie die Preisschaetzung */
+.la .bs-staerken { margin: 16px 0 0; padding: 16px 20px 14px; background: #fff; border-left: 6px solid var(--gruen, #779e00); color: #0d0d0d; box-shadow: 0 8px 22px rgba(0, 46, 24, .1); }
+.la p.bs-staerken-titel { margin: 0 0 6px; font-family: "Akko Std Bold", sans-serif !important; font-size: 21px; line-height: 1.2; color: #0d0d0d; }
+.la .bs-staerken ul { list-style: none; margin: 0; padding: 0; }
+.la .bs-staerken li { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; padding: 9px 0; border-bottom: 1px solid #dfe3d4; font-size: 18px; line-height: 1.25; color: #0d0d0d; }
+.la .bs-staerken li span { color: #0d0d0d; }
+.la .bs-staerken li b { font-family: "Akko Std Bold", sans-serif; font-weight: normal; font-size: 19px; white-space: nowrap; color: #002e18; }
+.la .bs-staerken li em { font-style: normal; font-size: 13px; background: var(--hell, #80b245); color: #0d0d0d; padding: 2px 7px; margin-left: 8px; }
+.la .bs-staerken li.bs-neu { animation: bsNeu 1.6s ease-out; }
+@keyframes bsNeu { 0% { background: rgba(128, 178, 69, .45); } 100% { background: transparent; } }
+.la p.bs-staerken-info { margin: 10px 0 0; font-size: 14px; line-height: 1.4; color: #3d4a2a; opacity: 1; }

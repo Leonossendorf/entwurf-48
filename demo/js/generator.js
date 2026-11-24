@@ -130,21 +130,42 @@
   /* ---------- Modelle ---------- */
   function rad(g) { return g * Math.PI / 180; }
 
-  /* Faustregel fuer Querschnitte, nur fuer Vorschau und Schaetzung (ersetzt keine Statik):
-     groessere Spannweite oder groesserer Abstand -> hoeherer Querschnitt, gerundet auf uebliche KVH-Masse. */
-  var HOEHEN = [100, 120, 140, 160, 180, 200, 220, 240, 260, 280];
-  function stufe(x, liste) { for (var i = 0; i < liste.length; i++) if (liste[i] >= x - 1) return liste[i]; return liste[liste.length - 1]; }
+  /* Querschnitte ueberschlaegig nach Eurocode 5 (DIN EN 1995-1-1 mit Nationalem Anhang). Nur fuer Vorschau und Schaetzung, ersetzt keine Statik.
+     Annahmen:
+     - Nadelholz C24 nach DIN EN 338: Biegefestigkeit fm,k = 24 N/mm2, Elastizitaetsmodul E0,mean = 11000 N/mm2, Wichte 4,2 kN/m3
+     - Einfeldtraeger mit Gleichlast
+     - Schnee nach DIN EN 1991-1-3: sk = 0,85 kN/m2 (Schneelastzone 2 angenommen), Formbeiwert 0,8 bis 30 Grad Dachneigung
+     - Eigengewicht des Dachaufbaus g je Bauwerk (Annahme, kN/m2) plus Eigengewicht des Balkens
+     Nachweise:
+     - Biegung: Bemessungslast 1,35 g + 1,5 s; kmod = 0,9 (Schnee, kurz); gammaM = 1,3
+     - Durchbiegung: winst <= l/300, wfin <= l/200, wnet,fin <= l/300; kdef = 0,8 (aussen ueberdacht) bzw. 0,6 (Gaube)
+     Nicht nachgewiesen: Schub, Auflager, Wind, Kippen, Stuetzen, Verbindungen. */
+  var EC5 = { fmk: 24, E: 11000, kmod: 0.9, gM: 1.3, sk: 0.85, wichte: 4.2e-6 };   // N/mm2, N/mm2, -, -, kN/m2, N/mm3
+  // Uebliche Querschnitte (Breite, Hoehe in mm), nach Holzmenge aufsteigend
+  var Q_SPARREN = [[60, 120], [60, 140], [60, 160], [60, 180], [80, 160], [60, 200], [80, 180], [80, 200], [60, 240], [80, 220], [80, 240], [100, 220], [100, 240], [120, 240], [120, 280], [140, 280]];
+  var Q_PFETTE = [[100, 160], [100, 180], [100, 200], [120, 200], [120, 220], [120, 240], [140, 240], [140, 260], [140, 280], [160, 280], [160, 320], [180, 360]];
+  // Kleinster Querschnitt aus der Liste, der Biegung und Durchbiegung einhaelt. L = Stuetzweite, breite = Lasteinzugsbreite (beides mm)
+  function ec5(liste, L, breite, min, o) {
+    o = o || {};
+    var grad = o.neigung || 0, cos = Math.cos(grad * Math.PI / 180), mu = grad <= 30 ? 0.8 : Math.max(0, 0.8 * (60 - grad) / 30);
+    var gl = (o.g == null ? 0.3 : o.g) * cos * breite / 1000, sl = EC5.sk * mu * cos * cos * breite / 1000;   // N/mm quer zum Balken
+    var kdef = o.kdef == null ? 0.8 : o.kdef, fmd = EC5.kmod * EC5.fmk / EC5.gM, wahl = liste[liste.length - 1];
+    for (var i = 0; i < liste.length; i++) {
+      var b = liste[i][0], h = liste[i][1];
+      if (h < (min || 0)) continue;
+      var ge = gl + EC5.wichte * b * h * cos, W = b * h * h / 6, I = b * h * h * h / 12;
+      var sigma = (1.35 * ge + 1.5 * sl) * L * L / 8 / W;
+      var k = 5 * Math.pow(L, 4) / (384 * EC5.E * I), wg = k * ge, ws = k * sl;
+      if (sigma <= fmd && wg + ws <= L / 300 && wg * (1 + kdef) + ws <= L / 200 && wg * (1 + kdef) <= L / 300) { wahl = liste[i]; break; }
+    }
+    return { b: wahl[0], h: wahl[1] };
+  }
   Holz.faustregel = {
-    // Sparren und Balken: Hoehe etwa Spannweite / 21, waechst mit der Wurzel aus dem Abstand (Bezug 80 cm)
-    sparren: function (spann, abstand, min) {
-      var h = stufe(Math.max(min || 120, spann / 21 * Math.sqrt((abstand || 800) / 800)), HOEHEN);
-      return { b: h <= 160 ? 60 : (h <= 220 ? 80 : 100), h: h };
-    },
-    // Pfetten und Wechsel: Hoehe etwa Spannweite / 16, waechst mit der Wurzel aus der Lastbreite (Bezug 2,5 m)
-    pfette: function (spann, lastbreite, min) {
-      var h = stufe(Math.max(min || 160, spann / 16 * Math.sqrt((lastbreite || 2500) / 2500)), HOEHEN);
-      return { b: stufe(h * 0.5, [100, 120, 140, 160]), h: h };
-    },
+    // Sparren und Balken: spann = Stuetzweite, abstand = Sparrenabstand, min = kleinste Hoehe aus Gruenden der Ausfuehrung
+    sparren: function (spann, abstand, min, o) { return ec5(Q_SPARREN, spann, abstand || 800, min || 120, o); },
+    // Pfetten und Wechsel: lastbreite = Breite des Dachstreifens, den der Balken traegt
+    pfette: function (spann, lastbreite, min, o) { return ec5(Q_PFETTE, spann, lastbreite || 2500, min || 160, o); },
+    // Pfosten: nicht berechnet, uebliche Masse
     pfosten: function (hoehe, flaeche) { return hoehe > 2600 || flaeche > 12e6 ? 140 : 120; }
   };
 
@@ -235,8 +256,8 @@
     o = o || {};
     var Bx = o.breite || 3000, Ty = o.tiefe || 6000, Hh = o.hoehe || 2300, F = Holz.faustregel;
     var np = Ty > 4500 ? 3 : 2, pf = F.pfosten(Hh, Bx * Ty);
-    var pq = F.pfette((Ty - pf) / (np - 1), Bx / 2 + 200, 180), pB = pq.b, pH = pq.h;
-    var sq = F.sparren(Bx + pf, 750, 140), sB = sq.b, sH = sq.h;
+    var pq = F.pfette((Ty - pf) / (np - 1), Bx / 2 + 200, 180, { g: 0.3 }), pB = pq.b, pH = pq.h;
+    var sq = F.sparren(Bx + pf, 750, 140, { g: 0.3 }), sB = sq.b, sH = sq.h;
     var gef = Bx * 0.03, T = [];
     [-1, 1].forEach(function (s) {
       var zU = Hh + (s < 0 ? gef : 0);              // Unterkante Pfette (linke Seite hoeher fuer das Gefaelle)
@@ -267,8 +288,8 @@
     o = o || {};
     var Bx = o.breite || 3000, Ty = o.tiefe || 6000, Hw = o.hoehe || 2200, al = rad(o.neigung || 25), q = 100, T = [];
     var cos = Math.cos(al), tan = Math.tan(al), ue = 300, tuer = 1000, tuerH = 2000;
-    var sq = Holz.faustregel.sparren((Bx / 2) / cos, 750, 120), sB = sq.b, sH = sq.h;
-    var fq = Holz.faustregel.pfette(Ty, Bx / 2, 160);
+    var sq = Holz.faustregel.sparren((Bx / 2) / cos, 750, 120, { g: 0.35, neigung: o.neigung || 25 }), sB = sq.b, sH = sq.h;
+    var fq = Holz.faustregel.pfette(Ty, Bx / 2, 160, { g: 0.35 });
     var x0 = -Bx / 2 + q / 2, x1 = Bx / 2 - q / 2;
     // Schwellen und Raehm
     [[0, 'Schwelle', q / 2], [1, 'Rähm', Hw - q / 2]].forEach(function (e) {
@@ -342,8 +363,8 @@
     o = o || {};
     var Bx = o.breite || 4000, Ty = o.tiefe || 3000, Hh = o.hoehe || 2200, al = rad(8), tan = Math.tan(al), cos = Math.cos(al);
     var F = Holz.faustregel, np = Bx > 7000 ? 4 : (Bx > 4500 ? 3 : 2), pf = F.pfosten(Hh, Bx * Ty);
-    var vq = F.pfette((Bx - pf) / (np - 1), Ty / 2 + 300, 180), vB = vq.b, vH = vq.h;
-    var sq = F.sparren(Ty, 700, 140), sB = sq.b, sH = sq.h, wB = 80, wH = 160, ue = 300, T = [];
+    var vq = F.pfette((Bx - pf) / (np - 1), Ty / 2 + 300, 180, { g: 0.35 }), vB = vq.b, vH = vq.h;
+    var sq = F.sparren(Ty, 700, 140, { g: 0.35, neigung: 8 }), sB = sq.b, sH = sq.h, wB = 80, wH = 160, ue = 300, T = [];
     var zV = Hh + vH;                                   // Oberkante vordere Pfette
     var zAchse = function (y) { return zV + (sH / 2) / cos + (Ty - pf / 2 - y) * tan; };   // Sparrenachse, faellt nach vorn
     var zW = zAchse(wB / 2) - (sH / 2) / cos;            // Oberkante Wandpfette
@@ -405,7 +426,7 @@
     flaeche(-Bx / 2, Bx / 2, -300, yF); flaeche(-Bx / 2, Bx / 2, yO, yR);
 
     // Neu: Wechsel zwischen den Wechselsparren, unten unter der Front und oben am Anschluss
-    var wq = F.pfette(2 * xr, 1500, 160);
+    var wq = F.pfette(2 * xr, 1500, 160, { g: 1.0, kdef: 0.6 });
     [[yF, 'Wechsel unten'], [yO, 'Wechsel oben']].forEach(function (e) {
       T.push(Holz.balken(e[1], new V3(-xr + sbB / 2, e[0], dachZ(e[0]) - dz / 2), new V3(xr - sbB / 2, e[0], dachZ(e[0]) - dz / 2), wq.b, Math.min(wq.h, sbH), { bearb: ['House', 'House', 'Drilling', 'Drilling'] }));
     });
@@ -430,7 +451,7 @@
       }
     });
     // Gaubensparren (Schleppgaube) bzw. Gaubenbalken (Flachdachgaube)
-    var sq = F.sparren((yO - yF + ue) / cB, 650, 140), n = Math.max(3, Math.round((Bx + 2 * ueS - sq.b) / 650) + 1);
+    var sq = F.sparren((yO - yF + ue) / cB, 650, 140, { g: 1.0, kdef: 0.6, neigung: bg }), n = Math.max(3, Math.round((Bx + 2 * ueS - sq.b) / 650) + 1);
     for (var j = 0; j < n; j++) {
       var xg = -Bx / 2 - ueS + sq.b / 2 + j * (Bx + 2 * ueS - sq.b) / (n - 1), y0 = yF - ue, y1 = yO;
       var off = sq.h / 2 / cB;

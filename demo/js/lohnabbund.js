@@ -416,7 +416,7 @@
     });
     var alt = bs.staerken || {};
     ul.innerHTML = zeilen.map(function (r) {
-      var anders = alt[r.n] && alt[r.n] !== r.q;
+      var anders = bs.typ !== 'dachgaube' && alt[r.n] && alt[r.n] !== r.q;
       return '<li' + (anders ? ' class="bs-neu"' : '') + '><span>' + r.n + '</span><b>' + r.q + (anders ? ' <em>' + (parseFloat(r.q.split('×')[1]) > parseFloat(alt[r.n].split('×')[1]) ? 'dicker' : 'dünner') + '</em>' : '') + '</b></li>';
     }).join('');
     bs.staerken = {}; zeilen.forEach(function (r) { bs.staerken[r.n] = r.q; });
@@ -427,11 +427,10 @@
     var m = bs.modell = T.bau(w);
     var k = bs.k = H.kennzahlen(m.teile);
     bs.wahl = -1; zeigeAuswahl($('#bs-auswahl'), null);
-    if (bs.viewer) bs.viewer.laden(m, { animiert: !!animiert, kamera: animiert || bs.erst, drehen: true });
+    if (bs.viewer) { bs.viewer.klickbar = bs.typ !== 'dachgaube'; bs.viewer.laden(m, { animiert: !!animiert, kamera: animiert || bs.erst, drehen: true }); }
     bs.erst = false;
     var erste = bs.typ === 'dachgaube' ? ['Gaubenbreite', meter(w.b)] : ['Grundfläche', z(w.b * w.t / 1e6, 1) + ' m²'];
     $('#bs-kpi').innerHTML = kpiHtml([erste, ['Holzteile', z(k.teile)], ['Laufmeter Holz', z(k.lfm, 0) + ' m'], ['Holz', z(k.m3, 2) + ' m³']]);
-    $('#bs-liste').innerHTML = listeHtml(m.zeilen);
     $('#bs-uebersicht').textContent = bsName() + ': ' + ['b', 't', 'h'].map(function (n) { return T.r[n][3] + ' ' + bsWert(n, w[n]); }).join(', ') + ' · ' + z(k.teile) + ' Holzteile, ' + z(k.lfm, 0) + ' m Holz';
     $$('#bs-paket button').forEach(function (x) { x.setAttribute('aria-pressed', (+x.dataset.b === w.b && (x.dataset.t === '' || +x.dataset.t === w.t) && +x.dataset.h === w.h) ? 'true' : 'false'); });
     bsStaerken();
@@ -450,7 +449,7 @@
       var r = $('#bs-' + x[0]), g = T.r[x[1]]; r.min = g[0]; r.max = g[1]; r.step = g[2];
       $('#bs-' + x[0] + '-name').textContent = g[3];
     });
-    $('#bs-tipp').textContent = 'Ziehen oder wischen dreht das Modell. Ein Bauteil antippen hebt es hervor. ' + T.tipp;
+    $('#bs-tipp').textContent = 'Ziehen oder wischen dreht das Modell. ' + (typ === 'dachgaube' ? '' : 'Ein Bauteil antippen hebt es hervor. ') + T.tipp;
     $('#bs-paket').innerHTML = T.pakete.map(function (p) { return '<button type="button" aria-pressed="false" data-b="' + p[1] + '" data-t="' + (p[2] == null ? '' : p[2]) + '" data-h="' + p[3] + '">' + p[0] + '</button>'; }).join('');
     var p0 = T.pakete[T.start];
     function grenze(v, g, d) { v = +v; return isFinite(v) && v > 0 ? Math.min(g[1], Math.max(g[0], v)) : d; }
@@ -486,7 +485,6 @@
     ['breite', 'tiefe', 'hoehe'].forEach(function (n) {
       $('#bs-' + n).addEventListener('input', function () { if (bs.warte) return; bs.warte = requestAnimationFrame(function () { bs.warte = 0; bsBau(false); }); });
     });
-    $('#bs-liste').addEventListener('click', function (e) { var tr = e.target.closest('tr[data-zeile]'); if (tr) bsWaehle(+tr.dataset.zeile); });
     $('#bs-link').addEventListener('click', function () { kopiere(bsLink(), this); });
     var form = $('#la-form-privat');
     $$('.la-chips', form).forEach(function (g) { chips(g); });

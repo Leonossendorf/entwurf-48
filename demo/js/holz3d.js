@@ -82,7 +82,7 @@
     });
     dom.addEventListener('pointercancel', function () { finger = null; unten = null; });
     dom.addEventListener('pointerup', function (e) {
-      if (!bewegt && unten) { self._zeigeAuf(e); self.onSelect(self.hover); }
+      if (!bewegt && unten && self.klickbar !== false) { self._zeigeAuf(e); self.onSelect(self.hover); }
       if (finger) { self._setHover(-1); }
       unten = null; finger = null;
     });
@@ -268,6 +268,7 @@
     this.camera.position.copy(ziel).add(v);
   };
   Holz3D.prototype._zeigeAuf = function (e) {
+    if (this.klickbar === false) { this._setHover(-1); return; }
     var r = this.renderer.domElement.getBoundingClientRect();
     this.maus.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
     this.ray.setFromCamera(this.maus, this.camera);
