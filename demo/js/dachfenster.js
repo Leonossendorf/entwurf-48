@@ -127,16 +127,17 @@
   function warum(l) {
     var w = [], g = gr();
     if (l.ho <= 2.1) w.push(['ok', 'Oben endet das Fenster bei ' + m(l.ho) + '. So sehen Sie im Stehen hinaus.']);
-    else w.push(['info', 'Oben endet das Fenster bei ' + m(l.ho) + ', weil die Wand darunter hoch ist.']);
+    else w.push(['info', 'Die Wand unter der Schräge ist hoch. Deshalb sitzt das Fenster höher als üblich und endet oben erst bei ' + m(l.ho) + '. Üblich sind 2,00 m.']);
     if (l.hu <= 1.05) w.push(['ok', 'Unten beginnt es bei ' + m(l.hu) + '. So sehen Sie auch im Sitzen hinaus.']);
-    else w.push(['info', 'Unten beginnt es bei ' + m(l.hu) + (s.neigung <= 30 && l.hu > s.knie + 0.06 ? ', tiefer geht es bei einem flachen Dach nicht' : '') + '. Im Sitzen sehen Sie vor allem Himmel.']);
+    else w.push(['info', 'Unten beginnt das Fenster erst bei ' + m(l.hu) + '. Das ist höher als die Augen im Sitzen: Vom Sofa aus sehen Sie Himmel, aber nicht nach draußen in den Garten.' +
+      (l.hu <= s.knie + 0.06 ? ' Tiefer geht es nicht, weil dort die Wand steht.' : (g[2] >= 160 ? ' Tiefer kommt bei diesem Dach auch das längste Fenster nicht.' : ' Ein längeres Fenster beginnt tiefer.'))]);
     if (s.hat) w.push(['info', 'Der Raum hat schon ein Fenster. Ob beide zusammen genug Licht bringen, rechnen wir vor Ort nach.']);
     else {
       var ziel = s.raum / 8, ok = l.flaeche >= ziel - 0.001;
       w.push([ok ? 'ok' : 'warn', (s.anzahl > 1 ? s.anzahl + ' Fenster ergeben ' : 'Das Fenster hat ') + z(l.flaeche, 1) + ' m². Für ' + s.raum + ' m² Raum sollten es mindestens ' + z(ziel, 1) + ' m² sein' + (ok ? '.' : ': Das ist zu wenig.')]);
     }
-    if (l.hu > 1.35) w.push(['info', 'Die Wand unter der Schräge ist hoch. Wünschen Sie Ausblick im Sitzen, ist eine Gaube die bessere Wahl. Sprechen Sie uns gern an.']);
-    if (g[1] >= 94) w.push(['info', 'Breiter als der Abstand Ihrer Sparren? Dann setzen wir als Zimmerei einen Wechsel ein.']);
+    if (l.hu > 1.35) w.push(['info', 'Wünschen Sie Ausblick im Sitzen, ist hier eine Gaube die bessere Wahl. Sprechen Sie uns gern an.']);
+    if (g[1] >= 94) w.push(['info', 'Dieses Fenster ist breiter als der übliche Abstand zwischen den Dachbalken. Dann wird ein Balken durchtrennt und neu abgefangen. Das erledigen wir als Zimmerei selbst.']);
     if (s.neigungUnklar) w.push(['info', 'Die Dachneigung haben wir geschätzt. Wir messen sie bei Ihnen nach.']);
     return w;
   }
