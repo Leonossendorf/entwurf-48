@@ -199,7 +199,8 @@
     if (k.ohneMaterial === 0) p.push(['ok', 'Holz: ' + esc(Object.keys(k.material).join(', '))]);
     else if (Object.keys(k.material).length) p.push(['warn', 'Holz: ' + esc(Object.keys(k.material).join(', ')) + '. Bei ' + k.ohneMaterial + ' Teilen fehlt die Angabe.']);
     else p.push(['warn', 'Die Datei nennt keine Holzart. Bitte unten bei „Noch etwas?“ angeben.']);
-    p.push(['offen', 'Passt auf die Anlage? Längstes Teil ' + meter(k.maxL) + ', größter Querschnitt ' + z(k.maxB) + ' × ' + z(k.maxH) + ' mm. <em class="demo-offen">Angabe folgt: Grenzwerte der Hundegger</em>']);
+    var passt = Math.min(k.maxB, k.maxH) <= 300 && Math.max(k.maxB, k.maxH) <= 450;
+    p.push([passt ? 'ok' : 'warn', (passt ? 'Passt auf unsere Anlage: längstes Teil ' : 'Bitte vorab klären: längstes Teil ') + meter(k.maxL) + ', größter Querschnitt ' + z(k.maxB) + ' × ' + z(k.maxH) + ' mm.' + (passt ? '' : ' Die Anlage nimmt bis 300 × 450 mm.')]);
     (r.hinweise || []).forEach(function (h) { p.push(['warn', esc(h)]); });
     $('#la-pruefung').innerHTML = '<ul>' + p.map(function (x) { return '<li class="la-p-' + x[0] + '">' + x[1] + '</li>'; }).join('') + '</ul>';
 
@@ -414,20 +415,22 @@
         gesehen[n] = 1; zeilen.push({ n: n, q: cm(t.B) + ' × ' + cm(t.H) + ' cm' });
       });
     });
-    var alt = bs.staerken || {};
-    ul.innerHTML = zeilen.map(function (r) {
-      var anders = bs.typ !== 'dachgaube' && alt[r.n] && alt[r.n] !== r.q;
-      return '<li' + (anders ? ' class="bs-neu"' : '') + '><span>' + r.n + '</span><b>' + r.q + (anders ? ' <em>' + (parseFloat(r.q.split('×')[1]) > parseFloat(alt[r.n].split('×')[1]) ? 'dicker' : 'dünner') + '</em>' : '') + '</b></li>';
-    }).join('');
-    bs.staerken = {}; zeilen.forEach(function (r) { bs.staerken[r.n] = r.q; });
+    ul.innerHTML = zeilen.map(function (r) { return '<li><span>' + r.n + '</span><b>' + r.q + '</b></li>'; }).join('');
   }
   function bsBau(animiert) {
     var w = bsWerte(), T = TYPEN[bs.typ];
     $('#bs-breite-wert').textContent = bsWert('b', w.b); $('#bs-tiefe-wert').textContent = bsWert('t', w.t); $('#bs-hoehe-wert').textContent = bsWert('h', w.h);
+    var gewaehlt = bs.wahl >= 0 && bs.modell && bs.modell.zeilen[bs.wahl] ? bs.modell.zeilen[bs.wahl].name : null;
     var m = bs.modell = T.bau(w);
     var k = bs.k = H.kennzahlen(m.teile);
     bs.wahl = -1; zeigeAuswahl($('#bs-auswahl'), null);
     if (bs.viewer) { bs.viewer.klickbar = bs.typ !== 'dachgaube'; bs.viewer.laden(m, { animiert: !!animiert, kamera: animiert || bs.erst, drehen: true }); }
+    // ein angeklicktes Bauteil bleibt markiert, auch wenn sich die Masse aendern
+    if (gewaehlt && bs.viewer) for (var gi = 0; gi < m.zeilen.length; gi++) if (m.zeilen[gi].name === gewaehlt) {
+      bs.wahl = gi; bs.viewer.markiere(gi);
+      zeigeAuswahl($('#bs-auswahl'), m.zeilen[gi], function () { bsWaehle(bs.wahl); });
+      break;
+    }
     bs.erst = false;
     var erste = bs.typ === 'dachgaube' ? ['Gaubenbreite', meter(w.b)] : ['Grundfläche', z(w.b * w.t / 1e6, 1) + ' m²'];
     $('#bs-kpi').innerHTML = kpiHtml([erste, ['Holzteile', z(k.teile)], ['Laufmeter Holz', z(k.lfm, 0) + ' m'], ['Holz', z(k.m3, 2) + ' m³']]);
@@ -439,7 +442,7 @@
   }
   function bsTyp(typ, werte) {
     if (!TYPEN[typ]) typ = 'carport';
-    bs.typ = typ; var T = TYPEN[typ];
+    bs.typ = typ; bs.wahl = -1; var T = TYPEN[typ];
     $$('#bs-typ button').forEach(function (x) { x.setAttribute('aria-pressed', x.dataset.typ === typ ? 'true' : 'false'); });
     $$('#bs-art button').forEach(function (x) { x.setAttribute('aria-pressed', x.dataset.art === bs.art ? 'true' : 'false'); });
     // Felder nur fuer bestimmte Bauwerke ein- oder ausblenden

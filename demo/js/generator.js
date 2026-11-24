@@ -141,8 +141,8 @@
      - Durchbiegung: winst <= l/300, wfin <= l/200, wnet,fin <= l/300; kdef = 0,8 (aussen ueberdacht) bzw. 0,6 (Gaube)
      Nicht nachgewiesen: Schub, Auflager, Wind, Kippen, Stuetzen, Verbindungen. */
   var EC5 = { fmk: 24, E: 11000, kmod: 0.9, gM: 1.3, sk: 0.85, wichte: 4.2e-6 };   // N/mm2, N/mm2, -, -, kN/m2, N/mm3
-  // Uebliche Querschnitte (Breite, Hoehe in mm), nach Holzmenge aufsteigend
-  var Q_SPARREN = [[60, 120], [60, 140], [60, 160], [60, 180], [80, 160], [60, 200], [80, 180], [80, 200], [60, 240], [80, 220], [80, 240], [100, 220], [100, 240], [120, 240], [120, 280], [140, 280]];
+  // Uebliche Querschnitte (Breite, Hoehe in mm) als Leiter: von Stufe zu Stufe wird weder die Breite noch die Hoehe kleiner
+  var Q_SPARREN = [[60, 120], [60, 140], [60, 160], [60, 180], [60, 200], [80, 200], [80, 220], [80, 240], [100, 240], [120, 240], [120, 280], [140, 280]];
   var Q_PFETTE = [[100, 160], [100, 180], [100, 200], [120, 200], [120, 220], [120, 240], [140, 240], [140, 260], [140, 280], [160, 280], [160, 320], [180, 360]];
   // Kleinster Querschnitt aus der Liste, der Biegung und Durchbiegung einhaelt. L = Stuetzweite, breite = Lasteinzugsbreite (beides mm)
   function ec5(liste, L, breite, min, o) {
@@ -165,8 +165,10 @@
     sparren: function (spann, abstand, min, o) { return ec5(Q_SPARREN, spann, abstand || 800, min || 120, o); },
     // Pfetten und Wechsel: lastbreite = Breite des Dachstreifens, den der Balken traegt
     pfette: function (spann, lastbreite, min, o) { return ec5(Q_PFETTE, spann, lastbreite || 2500, min || 160, o); },
-    // Pfosten: nicht berechnet, uebliche Masse
-    pfosten: function (hoehe, flaeche) { return hoehe > 2600 || flaeche > 12e6 ? 140 : 120; }
+    // Pfosten: uebliche Masse, nicht berechnet. Rechnerisch (Knicknachweis nach Eurocode 5) reichen 12 x 12 cm hier immer:
+    // ein 2,80 m hoher Pfosten 12 x 12 traegt rund 90 kN, auf ihn kommen hoechstens rund 20 kN.
+    // Staerker wird er, damit das Bauwerk steifer steht: ab 2,40 m Hoehe und bei mehr als 6 m2 Dach je Pfosten je 2 cm mehr.
+    pfosten: function (hoehe, dachJePfosten) { return 120 + (hoehe > 2400 ? 20 : 0) + (dachJePfosten > 6e6 ? 20 : 0); }
   };
 
   /* Dachstuhl. typ: 'pfetten' (Pfettendach mit Mittelpfetten), 'kehl' (Kehlbalkendach), 'pult' (Pultdach) */
@@ -255,7 +257,7 @@
   Holz.carport = function (o) {
     o = o || {};
     var Bx = o.breite || 3000, Ty = o.tiefe || 6000, Hh = o.hoehe || 2300, F = Holz.faustregel;
-    var np = Ty > 4500 ? 3 : 2, pf = F.pfosten(Hh, Bx * Ty);
+    var np = Ty > 4500 ? 3 : 2, pf = F.pfosten(Hh, Bx * Ty / (2 * np));
     var pq = F.pfette((Ty - pf) / (np - 1), Bx / 2 + 200, 180, { g: 0.3 }), pB = pq.b, pH = pq.h;
     var sq = F.sparren(Bx + pf, 750, 140, { g: 0.3 }), sB = sq.b, sH = sq.h;
     var gef = Bx * 0.03, T = [];
@@ -362,7 +364,7 @@
   Holz.terrassendach = function (o) {
     o = o || {};
     var Bx = o.breite || 4000, Ty = o.tiefe || 3000, Hh = o.hoehe || 2200, al = rad(8), tan = Math.tan(al), cos = Math.cos(al);
-    var F = Holz.faustregel, np = Bx > 7000 ? 4 : (Bx > 4500 ? 3 : 2), pf = F.pfosten(Hh, Bx * Ty);
+    var F = Holz.faustregel, np = Bx > 7000 ? 4 : (Bx > 4500 ? 3 : 2), pf = F.pfosten(Hh, Bx * Ty / (2 * np));
     var vq = F.pfette((Bx - pf) / (np - 1), Ty / 2 + 300, 180, { g: 0.35 }), vB = vq.b, vH = vq.h;
     var sq = F.sparren(Ty, 700, 140, { g: 0.35, neigung: 8 }), sB = sq.b, sH = sq.h, wB = 80, wH = 160, ue = 300, T = [];
     var zV = Hh + vH;                                   // Oberkante vordere Pfette
