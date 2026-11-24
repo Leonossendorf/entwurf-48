@@ -260,3 +260,14 @@
 .bs-mehr-text textarea { width: 100%; }
 [data-nur][hidden] { display: none !important; }
 .la .la-preis-knopf[hidden] { display: none !important; }
+
+/* Holzstaerken live */
+.la .bs-staerken{margin:14px 0 0;padding:14px 16px;border-left:4px solid var(--hell,#80b245);background:rgba(255,255,255,.06);color:#f3f1e8}
+.la .bs-staerken-titel{margin:0 0 6px;font-family:"Akko Std Bold",sans-serif;font-size:15px}
+.la .bs-staerken ul{list-style:none;margin:0;padding:0}
+.la .bs-staerken li{display:flex;justify-content:space-between;gap:12px;padding:3px 0;border-bottom:1px solid rgba(255,255,255,.12);font-size:15px}
+.la .bs-staerken li b{font-family:"Akko Std Bold",sans-serif;font-weight:normal;white-space:nowrap}
+.la .bs-staerken li em{font-style:normal;font-size:12px;background:var(--hell,#80b245);color:#0d0d0d;padding:1px 6px;margin-left:6px;border-radius:2px}
+.la .bs-staerken li.bs-neu{animation:bsNeu 1.6s ease-out}
+@keyframes bsNeu{0%{background:rgba(128,178,69,.55)}100%{background:transparent}}
+.la .bs-staerken-info{margin:8px 0 0;font-size:13px;opacity:.8}

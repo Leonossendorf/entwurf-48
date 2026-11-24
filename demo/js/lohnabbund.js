@@ -404,6 +404,23 @@
   function bsLink() { return location.origin + location.pathname + bsQuery() + '#planer'; }
   function bsName() { return bs.typ === 'dachgaube' ? ARTEN[bs.art] : TYPEN[bs.typ].name; }
   function bsPreis() { return { p: H.preis(bs.k, { abbundSatz: 5.49 }), extra: bs.typ === 'dachgaube' ? 'Eindeckung, Fenster, Dämmung, Montage' : 'Verbindungsmittel, Eindeckung, Lieferung, Aufbau' }; }
+  var STAERKE_TEILE = ['Sparren', 'Gaubensparren', 'Gaubenbalken', 'Pfette', 'Firstpfette', 'Wechsel unten', 'Wechsel oben', 'Pfosten'];
+  function bsStaerken() {
+    var ul = $('#bs-staerken-liste'); if (!ul) return;
+    var cm = function (x) { return z(x / 10, 0); }, gesehen = {}, zeilen = [];
+    STAERKE_TEILE.forEach(function (n) {
+      bs.modell.teile.forEach(function (t) {
+        if (t.name !== n || gesehen[n]) return;
+        gesehen[n] = 1; zeilen.push({ n: n, q: cm(t.B) + ' × ' + cm(t.H) + ' cm' });
+      });
+    });
+    var alt = bs.staerken || {};
+    ul.innerHTML = zeilen.map(function (r) {
+      var anders = alt[r.n] && alt[r.n] !== r.q;
+      return '<li' + (anders ? ' class="bs-neu"' : '') + '><span>' + r.n + '</span><b>' + r.q + (anders ? ' <em>' + (parseFloat(r.q.split('×')[1]) > parseFloat(alt[r.n].split('×')[1]) ? 'stärker' : 'schlanker') + '</em>' : '') + '</b></li>';
+    }).join('');
+    bs.staerken = {}; zeilen.forEach(function (r) { bs.staerken[r.n] = r.q; });
+  }
   function bsBau(animiert) {
     var w = bsWerte(), T = TYPEN[bs.typ];
     $('#bs-breite-wert').textContent = bsWert('b', w.b); $('#bs-tiefe-wert').textContent = bsWert('t', w.t); $('#bs-hoehe-wert').textContent = bsWert('h', w.h);
@@ -417,6 +434,7 @@
     $('#bs-liste').innerHTML = listeHtml(m.zeilen);
     $('#bs-uebersicht').textContent = bsName() + ': ' + ['b', 't', 'h'].map(function (n) { return T.r[n][3] + ' ' + bsWert(n, w[n]); }).join(', ') + ' · ' + z(k.teile) + ' Holzteile, ' + z(k.lfm, 0) + ' m Holz';
     $$('#bs-paket button').forEach(function (x) { x.setAttribute('aria-pressed', (+x.dataset.b === w.b && (x.dataset.t === '' || +x.dataset.t === w.t) && +x.dataset.h === w.h) ? 'true' : 'false'); });
+    bsStaerken();
     bs.preisNeu();
     try { history.replaceState(null, '', location.pathname + bsQuery() + location.hash); } catch (e) { }
   }
