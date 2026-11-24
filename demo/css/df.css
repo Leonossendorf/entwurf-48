@@ -54,7 +54,7 @@
 .df-sch-fluegel { fill: #cfe3ea; stroke: var(--schwarz); stroke-width: 3; stroke-linejoin: round; }
 .df-sch-schild { fill: var(--gruen); stroke: var(--schwarz); stroke-width: 1.5; }
 .df-sch-pfeil { fill: none; stroke: var(--gruen); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
-.df-eingabe { margin-top: 12px; font: 24px "Akko Std", sans-serif; letter-spacing: .06em; padding: 12px 14px; border: 2px solid var(--schwarz); background: #fff; text-transform: uppercase; width: 100%; max-width: 320px; box-sizing: border-box; }
+.df-eingabe { margin-top: 12px; font: 24px "Akko Std Regular", sans-serif; letter-spacing: .06em; padding: 12px 14px; border: 2px solid var(--schwarz); background: #fff; text-transform: uppercase; width: 100%; max-width: 320px; box-sizing: border-box; }
 .df-eingabe::placeholder { color: #b9bda9; }
 .la p.df-code-ok { margin: 8px 0 0; min-height: 22px; font-size: 15px; }
 .df-code-ok b { color: #3f6b00; }
@@ -125,13 +125,13 @@
 .df-zettel dl > div { display: grid; grid-template-columns: 92px 1fr; gap: 10px; padding: 8px 0; border-bottom: 1px dashed #c9c6b4; }
 .df-zettel dt { font-family: "Akko Std Bold", sans-serif; font-size: 14px; color: #5a6a3c; }
 .df-zettel dd { margin: 0; font-size: 16px; line-height: 1.35; }
-.la button.df-aendern { border: 0; background: none; padding: 0; margin-left: 4px; font: 13px "Akko Std", sans-serif; color: #3f6b00; text-decoration: underline; cursor: pointer; }
+.la button.df-aendern { border: 0; background: none; padding: 0; margin-left: 4px; font: 13px "Akko Std Regular", sans-serif; color: #3f6b00; text-decoration: underline; cursor: pointer; }
 .la p.df-preis { margin: 12px 0 0; font-family: "Akko Std Bold", sans-serif !important; font-size: 15px; }
 .df-form { display: grid; gap: 12px; }
 .df-form label { display: grid; gap: 4px; font-family: "Akko Std Bold", sans-serif; font-size: 15px; color: var(--schwarz); }
-.df-form input[type="text"], .df-form textarea { font: 17px "Akko Std", sans-serif; padding: 11px 12px; border: 2px solid rgba(0, 46, 24, .3); background: #fff; width: 100%; box-sizing: border-box; }
+.df-form input[type="text"], .df-form textarea { font: 17px "Akko Std Regular", sans-serif; padding: 11px 12px; border: 2px solid rgba(0, 46, 24, .3); background: #fff; width: 100%; box-sizing: border-box; }
 .df-form input[type="text"]:focus, .df-form textarea:focus { border-color: var(--schwarz); outline: 0; }
-.df-form input[type="file"] { font: 15px "Akko Std", sans-serif; }
+.df-form input[type="file"] { font: 15px "Akko Std Regular", sans-serif; }
 .la .df-form p.df-frage { margin: 0; }
 .la .df-form p.df-klein { margin: -6px 0 0; }
 .la .df-form .la-knopf { justify-self: start; }
@@ -160,4 +160,28 @@
   .la .df-nav .la-knopf { font-size: 22px; padding: 12px 16px; }
 }
 .wp-site-blocks:has(.df) { overflow: clip !important; }
-.la .df-form input[type="text"], .la .df-form textarea, .la .df-eingabe { font-family: "Akko Std", sans-serif !important; }
+.la .df-form input[type="text"], .la .df-form textarea, .la .df-eingabe { font-family: "Akko Std Regular", sans-serif !important; }
+
+/* Fotos dazulegen: wie das Ablagefeld im Lohnabbund, nur kleiner und auf hellem Grund */
+.la .df-form label.df-drop { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; padding: 18px 16px 16px; border: 3px dashed #9fca4a; background: #f3f7ea; cursor: pointer; text-align: center; transition: background-color .25s, border-color .25s, transform .25s; }
+.la .df-form label.df-drop:hover, .la .df-form label.df-drop.df-drueber, .la .df-form label.df-drop:focus-within { background: #e4eecd; border-color: var(--schwarz); }
+.la .df-form label.df-drop.df-drueber { transform: scale(1.015); }
+.la .df-form label.df-drop input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.df-drop svg { width: 46px; height: 38px; fill: none; stroke: var(--schwarz); stroke-width: 2.4; stroke-linejoin: round; stroke-linecap: round; margin-bottom: 4px; }
+.df-drop svg .df-ico-akzent { stroke: var(--gruen); stroke-width: 3.4; }
+.la .df-form label.df-drop strong { font-family: "Black Ground", sans-serif !important; font-weight: normal; font-size: clamp(24px, 2.6vw, 30px); line-height: 1; color: var(--schwarz); }
+.la .df-form label.df-drop span { font: 15px "Akko Std Regular", sans-serif; color: #3d4a2a; }
+.la .df-form label.df-drop small { margin-top: 8px; font: 13px "Akko Std Regular", sans-serif; color: #5a6a3c; }
+.la .df-form label.df-drop.df-drop-voll { flex-direction: row; flex-wrap: wrap; gap: 4px 12px; padding: 10px 14px; }
+.df-drop.df-drop-voll svg { width: 34px; height: 28px; margin: 0; }
+.la .df-form label.df-drop.df-drop-voll strong { font-size: 22px; }
+.df-drop.df-drop-voll span, .df-drop.df-drop-voll small { display: none; }
+.df-foto-liste { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: 8px; }
+.df-foto-liste:not(:empty) { margin-top: 10px; }
+.df-foto-liste li { position: relative; background: #fff; padding: 5px 5px 4px; box-shadow: 0 4px 12px rgba(0, 46, 24, .14); }
+.df-foto-liste li:nth-child(odd) { transform: rotate(-1.2deg); }
+.df-foto-liste li:nth-child(even) { transform: rotate(1deg); }
+.df-foto-liste img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; }
+.df-foto-liste span { display: block; margin-top: 3px; font: 12px "Akko Std Regular", sans-serif; color: #3d4a2a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.la .df-foto-liste button { position: absolute; top: -8px; right: -8px; width: 26px; height: 26px; border: 0; border-radius: 50%; background: var(--schwarz); color: #fff; font-size: 18px; line-height: 1; cursor: pointer; }
+.la .df-foto-liste button:hover { background: #b0583a; }

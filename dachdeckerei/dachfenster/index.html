@@ -191,11 +191,11 @@ background: none;
         :root :where(.is-layout-constrained) > * {
             margin-block-start: 0 !important;
         }
-    </style><link rel="stylesheet" href="/demo/css/demo.css?v=11241406">
-<link rel="stylesheet" href="/demo/css/la.css?v=11241406">
-<link rel="stylesheet" href="/demo/css/ds.css?v=11241406">
-<link rel="stylesheet" href="/demo/css/wege.css?v=11241406">
-<link rel="stylesheet" href="/demo/css/handy.css?v=11241406">
+    </style><link rel="stylesheet" href="/demo/css/demo.css?v=11241410">
+<link rel="stylesheet" href="/demo/css/la.css?v=11241410">
+<link rel="stylesheet" href="/demo/css/ds.css?v=11241410">
+<link rel="stylesheet" href="/demo/css/wege.css?v=11241410">
+<link rel="stylesheet" href="/demo/css/handy.css?v=11241410">
 </head>
 
 <body data-rsssl=1 data-cmplz=1 class="wp-singular page-template page-template-blank page page-id-495 wp-custom-logo wp-embed-responsive wp-theme-twentytwentytwo wp-child-theme-schophuis">
@@ -248,7 +248,7 @@ background: none;
 
 <div class="entry-content wp-block-post-content is-layout-constrained wp-block-post-content-is-layout-constrained">
 <div class="la df">
-<link rel="stylesheet" href="/demo/css/df.css?v=3">
+<link rel="stylesheet" href="/demo/css/df.css?v=5">
 
 <!-- ================= Kopf ================= -->
 <section class="la-hero la-hero-klein" aria-label="Dachfenster">
@@ -441,8 +441,16 @@ background: none;
             <label>Name <input type="text" name="name" autocomplete="name"></label>
             <label>Straße und Ort <input type="text" name="ort" autocomplete="street-address" placeholder="Wo ist das Dach?"></label>
             <label class="la-pflicht">Telefon oder E-Mail <input type="text" name="kontakt" required autocomplete="email" placeholder="Damit wir uns melden können"></label>
-            <label>Fotos <input type="file" name="fotos" accept="image/*" multiple></label>
-            <p class="df-klein" id="df-foto-tipp"></p>
+            <div class="df-fotos">
+              <label class="df-drop" id="df-drop" for="df-fotos-feld">
+                <input type="file" id="df-fotos-feld" name="fotos" accept="image/*" multiple>
+                <svg viewBox="0 0 48 40" aria-hidden="true"><path d="M5 12 h9 l3 -5 h14 l3 5 h9 v23 h-38 z"/><circle cx="24" cy="23" r="7.5"/><path class="df-ico-akzent" d="M40 2 v9 M35.5 6.5 h9"/></svg>
+                <strong>Fotos dazulegen</strong>
+                <span>Hierher ziehen oder antippen</span>
+                <small id="df-foto-tipp"></small>
+              </label>
+              <ul class="df-foto-liste" id="df-foto-liste" aria-live="polite"></ul>
+            </div>
             <label>Noch etwas? <textarea name="nachricht" rows="2" placeholder="Zum Beispiel: Fenster im Bad, Wunschtermin im Frühjahr"></textarea></label>
             <p class="la-fehler" id="df-fehler" role="alert" hidden>Bitte Telefon oder E-Mail eintragen.</p>
             <button type="submit" class="la-knopf">Anfrage schicken &gt;</button>
@@ -533,7 +541,7 @@ var njt_wa = {"gdprStatus":"","accounts":[{"accountId":935,"accountName":"Steffe
 <script id="nta-js-popup-js" src="/wp-content/plugins/wp-whatsapp/assets/js/whatsapp-popup.js?ver=3.8.2"></script>
 
 
-<script src="/demo/js/dachfenster.js?v=11241406"></script>
-<script src="/demo/js/seite.js?v=11241406"></script>
+<script src="/demo/js/dachfenster.js?v=11241410"></script>
+<script src="/demo/js/seite.js?v=11241410"></script>
 </body>
 </html>

@@ -208,7 +208,7 @@
     });
     $('#df-bed-text').textContent = bedienText(l);
     $('#df-zettel').innerHTML = zettel().map(function (x) { return '<div><dt>' + x[0] + '</dt><dd>' + esc(x[1]) + ' <button type="button" class="df-aendern" data-zu="' + x[2] + '">ändern</button></dd></div>'; }).join('');
-    $('#df-foto-tipp').textContent = neu ? 'Hilfreich: ein Foto vom Raum mit der Schräge und eins vom Dach außen.' : 'Hilfreich: ein Foto vom Fenster innen, eins vom Dach außen und eins vom Typenschild.';
+    $('#df-foto-tipp').textContent = neu ? 'Hilfreich: der Raum mit der Schräge und das Dach von außen' : 'Hilfreich: das Fenster innen, das Dach außen, das Typenschild';
   }
   function gehe(i, ohneRollen) {
     s.i = Math.max(0, Math.min(folge().length - 1, i)); zeige();
@@ -293,6 +293,32 @@
   /* ---------- Anfrage ---------- */
   function form() {
     var f = $('#df-form'), box = $('#df-danke'), karton = $('#df-karton');
+    // Fotos: ziehen oder antippen, mehrere nacheinander, jedes wieder entfernbar
+    var fotos = [], drop = $('#df-drop'), liste = $('#df-foto-liste'), feld = $('#df-fotos-feld');
+    function zeigeFotos() {
+      liste.innerHTML = fotos.map(function (x, i) {
+        return '<li><img src="' + x.url + '" alt=""><span>' + esc(x.datei.name) + '</span><button type="button" data-weg="' + i + '" aria-label="' + esc(x.datei.name) + ' entfernen">×</button></li>';
+      }).join('');
+      drop.classList.toggle('df-drop-voll', fotos.length > 0);
+      $('strong', drop).textContent = fotos.length ? 'Noch ein Foto dazulegen' : 'Fotos dazulegen';
+    }
+    function nimm(dateien) {
+      Array.prototype.forEach.call(dateien, function (d) {
+        if (!/^image\//.test(d.type) || fotos.length >= 8) return;
+        if (fotos.some(function (x) { return x.datei.name === d.name && x.datei.size === d.size; })) return;
+        fotos.push({ datei: d, url: URL.createObjectURL(d) });
+      });
+      zeigeFotos();
+    }
+    feld.addEventListener('change', function () { nimm(feld.files); feld.value = ''; });
+    ['dragenter', 'dragover'].forEach(function (n) { drop.addEventListener(n, function (e) { e.preventDefault(); drop.classList.add('df-drueber'); }); });
+    ['dragleave', 'drop'].forEach(function (n) { drop.addEventListener(n, function (e) { e.preventDefault(); drop.classList.remove('df-drueber'); }); });
+    drop.addEventListener('drop', function (e) { if (e.dataTransfer && e.dataTransfer.files.length) nimm(e.dataTransfer.files); });
+    liste.addEventListener('click', function (e) {
+      var b = e.target.closest('[data-weg]'); if (!b) return;
+      var x = fotos.splice(+b.dataset.weg, 1)[0]; if (x) URL.revokeObjectURL(x.url);
+      zeigeFotos();
+    });
     f.addEventListener('submit', function (e) {
       e.preventDefault();
       var kontakt = f.kontakt.value.trim();
@@ -302,7 +328,7 @@
       if (f.name.value) zl.push(['Name', esc(f.name.value)]);
       if (f.ort.value) zl.push(['Ort', esc(f.ort.value)]);
       zl.push(['Rückmeldung an', esc(kontakt)]);
-      if (f.fotos.files && f.fotos.files.length) zl.push(['Fotos', esc(Array.prototype.map.call(f.fotos.files, function (x) { return x.name; }).join(', '))]);
+      if (fotos.length) zl.push(['Fotos', esc(fotos.map(function (x) { return x.datei.name; }).join(', '))]);
       if (f.nachricht.value) zl.push(['Nachricht', esc(f.nachricht.value)]);
       var bild = s.vorhaben === 'neu' ? '<img src="data:image/svg+xml;charset=utf-8,' + encodeURIComponent(schnitt()) + '" alt="Zeichnung: Dachfenster im Raum">' : '';
       var text = 'Guten Tag,\n\nhier ist meine Anfrage zum Dachfenster:\n\n' + zl.map(function (x) { var d = document.createElement('div'); d.innerHTML = x[1]; return x[0] + ': ' + d.textContent; }).join('\n') + '\n';
