@@ -224,9 +224,18 @@
     var w = t.split(/\s+/);
     for (var i = 0; i < w.length; i++) {
       var r = /^([CFMPSU])K?0?(\d{1,2})$/.exec(w[i]);
+      // aeltere Schilder bis etwa 2000: drei Ziffern, z. B. 306 = M06 = MK06 (erste Ziffer Breite, letzte zwei Hoehe)
+      var alt = /^([123468])(0[2468]|10)$/.exec(w[i]);
+      if (alt) r = [0, { 1: 'C', 2: 'F', 3: 'M', 4: 'P', 6: 'S', 8: 'U' }[alt[1]], alt[2]];
       if (r) { var c = r[1] + 'K' + ('0' + r[2]).slice(-2); for (var j = 0; j < GROESSEN.length; j++) if (GROESSEN[j][0] === c) return c; }
     }
     return '';
+  }
+
+  /* Bauart aus den ersten Buchstaben: GG = Schwingfenster (Griff oben), GP = Klapp-Schwing-Fenster (Griff unten); L = Holz, U = Kunststoff */
+  function leseTyp(t) {
+    var r = /\bG([GP])([LU])\b/.exec(String(t || '').toUpperCase().replace(/[^A-Z0-9 ]/g, ' '));
+    return r ? (r[1] === 'G' ? 'Schwingfenster' : 'Klapp-Schwing-Fenster') + (r[2] === 'L' ? ' aus Holz' : ' aus Kunststoff') : '';
   }
 
   /* ---------- Schalter ---------- */
@@ -256,9 +265,10 @@
     $('#df-zettel').addEventListener('click', function (e) { var b = e.target.closest('[data-zu]'); if (b) geheZu(b.dataset.zu); });
 
     $('#df-code').addEventListener('input', function () {
-      var c = leseCode(this.value), g, ok = $('#df-code-ok');
+      var c = leseCode(this.value), typ = leseTyp(this.value), g, ok = $('#df-code-ok');
       s.codeErkannt = this.value.trim();
-      if (c) { s.groesse = c; s.groesseBekannt = true; g = gr(); ok.innerHTML = '<b>Erkannt: ' + g[1] + ' × ' + g[2] + ' cm.</b> Mehr brauchen wir zur Größe nicht.'; }
+      if (c) { s.groesse = c; s.groesseBekannt = true; g = gr(); ok.innerHTML = '<b>Erkannt: ' + (typ ? typ + ', ' : '') + g[1] + ' × ' + g[2] + ' cm.</b> Mehr brauchen wir zur Größe nicht.'; }
+      else if (typ) ok.innerHTML = '<b>Erkannt: ' + typ + '.</b> Die Größe steht direkt dahinter, zum Beispiel MK06.';
       else ok.textContent = this.value.trim().length > 3 ? 'Diesen Code schlagen wir selbst nach. Sie können einfach weitergehen.' : '';
       zeige();
     });

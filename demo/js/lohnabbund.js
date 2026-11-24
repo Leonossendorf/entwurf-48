@@ -417,7 +417,7 @@
     var alt = bs.staerken || {};
     ul.innerHTML = zeilen.map(function (r) {
       var anders = alt[r.n] && alt[r.n] !== r.q;
-      return '<li' + (anders ? ' class="bs-neu"' : '') + '><span>' + r.n + '</span><b>' + r.q + (anders ? ' <em>' + (parseFloat(r.q.split('×')[1]) > parseFloat(alt[r.n].split('×')[1]) ? 'stärker' : 'schlanker') + '</em>' : '') + '</b></li>';
+      return '<li' + (anders ? ' class="bs-neu"' : '') + '><span>' + r.n + '</span><b>' + r.q + (anders ? ' <em>' + (parseFloat(r.q.split('×')[1]) > parseFloat(alt[r.n].split('×')[1]) ? 'dicker' : 'dünner') + '</em>' : '') + '</b></li>';
     }).join('');
     bs.staerken = {}; zeilen.forEach(function (r) { bs.staerken[r.n] = r.q; });
   }
