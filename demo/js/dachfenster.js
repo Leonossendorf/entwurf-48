@@ -1,5 +1,10 @@
-/* Dachfenster-Planer fuer Schophuis: Vorhaben, Groesse (auch aus dem Typenschild), Dach, Bedienung, Extras.
-   Zeichnet den Raum im Schnitt und die Dachansicht als SVG, gibt Hinweise und baut die Anfrage. */
+/* Dachfenster-Planer fuer Schophuis: fuehrt Schritt fuer Schritt, eine Frage nach der anderen.
+   Austausch: altes Fenster (Typenschild) -> Dach -> Oeffnen -> Dazu -> Bauzettel.
+   Neu: Raum -> Dach -> Vorschlag mit Bild -> Oeffnen -> Dazu -> Bauzettel.
+   Quellen der Zahlen:
+   - Einbauhoehen: VELUX Dokument 7063 "Empfohlene Einbaumasse fuer Dachfenster", Stand 17.02.2026
+     (Oberkante 200 cm; Unterkante ca. 90 cm bei Griff oben, ca. 120 cm bei Griff unten; Tabelle Dachneigung x Fensterlaenge).
+   - Fensterflaeche: Paragraf 46 Abs. 2 BauO NRW 2018 (Rohbaumass der Fensteroeffnungen mindestens ein Achtel der Raumflaeche). */
 (function () {
   'use strict';
   function $(s, r) { return (r || document).querySelector(s); }
@@ -8,163 +13,209 @@
   function z(x, n) { return x.toLocaleString('de-DE', { minimumFractionDigits: n || 0, maximumFractionDigits: n || 0 }); }
   function m(x) { return z(x, 2) + ' m'; }
 
-  /* Uebliche Dachfenstergroessen (Aussenmass Rahmen, cm). Kennung wie auf dem Typenschild gaengiger Hersteller. */
+  /* Uebliche Dachfenstergroessen (Aussenmass Rahmen, cm) mit der Kennung vom Typenschild. */
   var GROESSEN = [
     ['CK02', 55, 78], ['CK04', 55, 98], ['CK06', 55, 118], ['FK04', 66, 98], ['FK06', 66, 118], ['FK08', 66, 140],
     ['MK04', 78, 98], ['MK06', 78, 118], ['MK08', 78, 140], ['MK10', 78, 160], ['PK06', 94, 118], ['PK08', 94, 140], ['PK10', 94, 160],
     ['SK06', 114, 118], ['SK08', 114, 140], ['SK10', 114, 160], ['UK04', 134, 98], ['UK08', 134, 140], ['UK10', 134, 160]
   ];
-  var VORHABEN = { austausch: 'Altes Fenster austauschen', neu: 'Neues Fenster einbauen', platz: 'Mehr Platz und Licht' };
-  var s = { vorhaben: 'austausch', groesse: 'MK06', anzahl: 1, anordnung: 'nebeneinander', neigung: 40, knie: 0.8, deckung: 'Dachpfannen', bedienung: 'Griff oben', extras: ['Innenfutter'], raum: 16, ansicht: 'schnitt', codeErkannt: '' };
+  /* VELUX Dokument 7063: Fensterunterkante in cm bei Oberkante 200 cm, mit Eindeckrahmen.
+     Zeile = Dachneigung in Grad, Spalten = Fensterlaenge 78, 98, 118, 140, 160 cm. */
+  var LAENGEN = [78, 98, 118, 140, 160];
+  var UNTERKANTE = { 30: [151, 141, 131, 120, 110], 40: [141, 128, 115, 101, 88], 50: [133, 117, 102, 85, 70] };
+  var OBEN = 2.0, UNTEN_GRIFF_OBEN = 0.9, UNTEN_GRIFF_UNTEN = 1.2;   // VELUX-Empfehlung in Metern
 
-  function gr() { for (var i = 0; i < GROESSEN.length; i++) if (GROESSEN[i][0] === s.groesse) return GROESSEN[i]; return GROESSEN[7]; }
+  var VORHABEN = { austausch: 'Altes Fenster austauschen', neu: 'Neues Fenster einbauen' };
+  var NEIGUNGEN = [[30, 'Eher flach', 'um 30°'], [40, 'Mittel', 'um 40°'], [50, 'Steil', 'um 50°'], [0, 'Weiß ich nicht', 'Wir messen nach']];
+  var WAENDE = [[0.3, 'Keine oder niedrig', 'bis etwa 50 cm'], [1.0, 'Etwa hüfthoch', 'um 1 m'], [1.4, 'Schulterhoch', 'um 1,40 m']];
+  var FOLGE = { austausch: ['vorhaben', 'alt', 'dach', 'oeffnen', 'dazu', 'zettel'], neu: ['vorhaben', 'raum', 'dach', 'vorschlag', 'oeffnen', 'dazu', 'zettel'] };
 
-  /* ---------- Geometrie im Schnitt ---------- */
-  function lage() {
-    var g = gr(), al = s.neigung * Math.PI / 180, sin = Math.sin(al), k = s.knie;
-    var L = g[2] / 100, n = s.anordnung === 'übereinander' ? s.anzahl : 1, Lges = n * L + (n - 1) * 0.1;
-    var hu = Math.max(k + 0.08, 1.0);                       // Unterkante: etwa einen Meter ueber dem Boden, sonst knapp ueber der Wand
-    var d0 = (hu - k) / sin;
-    return { al: al, sin: sin, cos: Math.cos(al), k: k, L: L, n: n, Lges: Lges, d0: d0, hu: hu,
-      hoErst: k + (d0 + L) * sin, ho: k + (d0 + Lges) * sin, flaeche: s.anzahl * g[1] * g[2] / 1e4 };
+  var s = { vorhaben: 'austausch', i: 0, groesse: 'MK06', groesseBekannt: false, codeErkannt: '', anzahl: 1, eigen: false,
+    raum: 16, hat: false, neigung: 40, neigungUnklar: false, knie: 0.3, deckung: 'Dachpfannen',
+    bedienung: 'Wie bisher', bedienungEigen: false, extras: ['Innenverkleidung'] };
+
+  function gr(code) { code = code || s.groesse; for (var i = 0; i < GROESSEN.length; i++) if (GROESSEN[i][0] === code) return GROESSEN[i]; return GROESSEN[7]; }
+  function finde(b, h) { for (var i = 0; i < GROESSEN.length; i++) if (GROESSEN[i][1] === b && GROESSEN[i][2] === h) return GROESSEN[i]; return null; }
+
+  /* ---------- Wo sitzt das Fenster? (nach VELUX-Tabelle) ---------- */
+  function lage(code) {
+    var g = gr(code), al = s.neigung * Math.PI / 180;
+    var uk = UNTERKANTE[s.neigung][LAENGEN.indexOf(g[2])] / 100;      // Unterkante, wenn die Oberkante bei 2,00 m liegt
+    var hu = Math.max(uk, s.knie + 0.05);                              // tiefer als die Wand geht nicht
+    return { al: al, sin: Math.sin(al), cos: Math.cos(al), k: s.knie, hu: hu, ho: OBEN + (hu - uk), flaeche: s.anzahl * g[1] * g[2] / 1e4 };
   }
+  function bedienRat(l) { return l.hu <= 1.05 && l.ho <= 2.1 ? 'Griff oben' : (l.hu <= 1.35 ? 'Griff unten' : 'Elektrisch'); }
 
-  /* ---------- Zeichnung: Raum im Schnitt ---------- */
-  function schnitt() {
-    var l = lage(), W = 640, H = 420, sc = 105, x0 = 70, y0 = 370;
-    function P(x, h) { return [x0 + x * sc, y0 - h * sc]; }
-    function pt(p) { return p[0].toFixed(1) + ',' + p[1].toFixed(1); }
-    var hMax = 3.3, dMax = (hMax - l.k) / l.sin, xr = Math.min(dMax * l.cos, (W - x0 - 20) / sc), dEnd = xr / l.cos;
-    function dach(d) { return P(d * l.cos, l.k + d * l.sin); }
-    var t = 0.26, nx = -l.sin * t, nh = l.cos * t;          // Dachdicke senkrecht zur Flaeche
-    function aussen(d) { var p = dach(d); return [p[0] + nx * sc, p[1] - nh * sc]; }
-    var o = [];
-    o.push('<svg viewBox="0 0 ' + W + ' ' + H + '" xmlns="http://www.w3.org/2000/svg" class="df-svg" role="img" aria-label="Schnitt durch den Raum mit Dachfenster">');
-    o.push('<defs><pattern id="df-schraff" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="8" stroke="#002e18" stroke-width="1.2" opacity=".35"/></pattern>' +
-      '<linearGradient id="df-glas" x1="0" x2="1" y1="0" y2="1"><stop offset="0" stop-color="#e9f3f7"/><stop offset="1" stop-color="#bcd6e0"/></linearGradient></defs>');
-    // Licht durch das Fenster
-    var sonne = 52 * Math.PI / 180, dxs = -Math.cos(sonne), dys = Math.sin(sonne);
-    function strahl(d) { var p = dach(d), f = (y0 - p[1]) / (dys * sc); return [p[0] + dxs * f * sc, y0]; }
-    var a = dach(l.d0), b = dach(l.d0 + l.Lges);
-    o.push('<polygon class="df-licht" points="' + [a, b, strahl(l.d0 + l.Lges), strahl(l.d0)].map(pt).join(' ') + '"/>');
-    // Boden, Wand, Dach
-    o.push('<line class="df-boden" x1="' + (x0 - 40) + '" y1="' + y0 + '" x2="' + W + '" y2="' + y0 + '"/>');
-    o.push('<rect x="' + (x0 - 22) + '" y="' + (y0 - l.k * sc) + '" width="22" height="' + (l.k * sc) + '" fill="url(#df-schraff)" stroke="#002e18" stroke-width="2"/>');
-    o.push('<polygon class="df-dach" points="' + [dach(-0.35), dach(l.d0), aussen(l.d0), aussen(-0.35)].map(pt).join(' ') + '"/>');
-    o.push('<polygon class="df-dach" points="' + [dach(l.d0 + l.Lges), dach(dEnd), aussen(dEnd), aussen(l.d0 + l.Lges)].map(pt).join(' ') + '"/>');
-    // Fenster(e) in der Dachflaeche
-    for (var i = 0; i < l.n; i++) {
-      var d1 = l.d0 + i * (l.L + 0.1), d2 = d1 + l.L, p1 = dach(d1), p2 = dach(d2), q2 = aussen(d2), q1 = aussen(d1);
-      o.push('<polygon class="df-rahmen" points="' + [p1, p2, q2, q1].map(pt).join(' ') + '"/>');
-      var m1 = [(p1[0] * 0.25 + q1[0] * 0.75), (p1[1] * 0.25 + q1[1] * 0.75)], m2 = [(p2[0] * 0.25 + q2[0] * 0.75), (p2[1] * 0.25 + q2[1] * 0.75)];
-      o.push('<line class="df-glas" x1="' + m1[0] + '" y1="' + m1[1] + '" x2="' + m2[0] + '" y2="' + m2[1] + '"/>');
-      if (i > 0) { var pz = dach(d1 - 0.1); o.push('<polygon class="df-dach" points="' + [pz, p1, q1, aussen(d1 - 0.1)].map(pt).join(' ') + '"/>'); }
-    }
-    // Person (1,78 m) dort, wo man stehen kann
-    var xp = Math.max(0.55, (Math.max(0, 1.95 - l.k)) / Math.tan(l.al) + 0.5);
-    if (xp * sc + x0 > W - 40) xp = (W - 40 - x0) / sc;
-    var fp = P(xp, 0), kh = 1.78 * sc;
-    o.push('<g class="df-person" transform="translate(' + fp[0] + ',' + fp[1] + ')">' +
-      '<circle cx="0" cy="' + (-kh + 12) + '" r="11"/>' +
-      '<path d="M-15 ' + (-kh + 28) + ' Q0 ' + (-kh + 22) + ' 15 ' + (-kh + 28) + ' L18 ' + (-kh * 0.52) + ' L11 ' + (-kh * 0.52) + ' L9 0 L2 0 L0 ' + (-kh * 0.47) + ' L-2 0 L-9 0 L-11 ' + (-kh * 0.52) + ' L-18 ' + (-kh * 0.52) + ' Z"/></g>');
-    // Blicklinie von den Augen (1,65 m)
-    var auge = P(xp + 0.08, 1.65), mitte = dach(l.d0 + l.Lges / 2), sieht = 1.65 > l.hu && 1.65 < l.ho + 0.25;
-    o.push('<line class="df-blick' + (sieht ? '' : ' df-blick-nein') + '" x1="' + auge[0] + '" y1="' + auge[1] + '" x2="' + mitte[0] + '" y2="' + mitte[1] + '"/>');
-    // Masse: Unterkante, Oberkante, Wandhoehe
-    function mass(h, text, cls) {
-      var y = y0 - h * sc;
-      o.push('<line class="df-mass-linie" x1="' + (x0 - 22) + '" y1="' + y + '" x2="' + (W - 8) + '" y2="' + y + '"/>');
-      o.push('<text class="df-mass ' + (cls || '') + '" x="' + (W - 10) + '" y="' + (y - 6) + '" text-anchor="end">' + text + '</text>');
-    }
-    mass(l.hu, 'Unterkante ' + m(l.hu));
-    mass(l.ho, 'Oberkante ' + m(l.ho), 'df-mass-stark');
-    if (l.k > 0.05) o.push('<text class="df-mass" x="' + (x0 - 34) + '" y="' + (y0 - l.k * sc / 2) + '" text-anchor="middle" transform="rotate(-90 ' + (x0 - 34) + ' ' + (y0 - l.k * sc / 2) + ')">' + m(l.k) + '</text>');
-    var wn = dach(Math.min(dEnd - 0.4, l.d0 + l.Lges + 0.7));
-    o.push('<text class="df-mass" x="' + (wn[0] + 8) + '" y="' + (wn[1] + 22) + '">' + s.neigung + '°</text>');
-    o.push('<text class="df-mass df-mass-klein" x="' + (fp[0]) + '" y="' + (y0 + 20) + '" text-anchor="middle">1,78 m</text>');
-    o.push('</svg>');
-    return o.join('');
-  }
-
-  /* ---------- Zeichnung: Dachansicht mit Eindeckung ---------- */
-  function dachansicht() {
-    var g = gr(), W = 640, H = 420, n = s.anzahl, neben = s.anordnung === 'nebeneinander' || n === 1;
-    var bw = g[1] / 100, bh = g[2] / 100, spalt = 0.1;
-    var gesB = neben ? n * bw + (n - 1) * spalt : bw, gesH = neben ? bh : n * bh + (n - 1) * spalt;
-    var sc = Math.min(260 / gesB, 230 / gesH, 150), ox = (W - gesB * sc) / 2, oy = 60 + (300 - gesH * sc) / 2 + 20;
-    var muster = {
-      'Dachpfannen': '<pattern id="df-deck" width="' + (0.3 * sc) + '" height="' + (0.34 * sc) + '" patternUnits="userSpaceOnUse"><rect width="100%" height="100%" fill="#d9d6cc"/><path d="M0 ' + (0.34 * sc - 2) + ' q' + (0.075 * sc) + ' -' + (0.07 * sc) + ' ' + (0.15 * sc) + ' 0 t' + (0.15 * sc) + ' 0" fill="none" stroke="#8d8a80" stroke-width="2"/></pattern>',
-      'Biberschwanz': '<pattern id="df-deck" width="' + (0.18 * sc) + '" height="' + (0.3 * sc) + '" patternUnits="userSpaceOnUse"><rect width="100%" height="100%" fill="#d9d6cc"/><path d="M0 0 v' + (0.15 * sc) + ' a' + (0.09 * sc) + ' ' + (0.09 * sc) + ' 0 0 0 ' + (0.18 * sc) + ' 0 v-' + (0.15 * sc) + '" fill="none" stroke="#8d8a80" stroke-width="1.6"/><path d="M' + (0.09 * sc) + ' ' + (0.15 * sc) + ' v' + (0.15 * sc) + '" stroke="#8d8a80" stroke-width="1.6"/></pattern>',
-      'Schiefer': '<pattern id="df-deck" width="' + (0.4 * sc) + '" height="' + (0.4 * sc) + '" patternUnits="userSpaceOnUse"><rect width="100%" height="100%" fill="#bfc2c0"/><path d="M0 ' + (0.2 * sc) + ' h' + (0.4 * sc) + ' M0 ' + (0.4 * sc) + ' h' + (0.4 * sc) + ' M' + (0.1 * sc) + ' 0 v' + (0.2 * sc) + ' M' + (0.3 * sc) + ' ' + (0.2 * sc) + ' v' + (0.2 * sc) + '" stroke="#6f7472" stroke-width="1.4"/></pattern>',
-      'Blech': '<pattern id="df-deck" width="' + (0.5 * sc) + '" height="40" patternUnits="userSpaceOnUse"><rect width="100%" height="100%" fill="#cfd3d1"/><path d="M1 0 v40" stroke="#7d8482" stroke-width="2.4"/></pattern>'
-    };
-    var p = muster[s.deckung] || muster['Dachpfannen'];
-    var o = ['<svg viewBox="0 0 ' + W + ' ' + H + '" xmlns="http://www.w3.org/2000/svg" class="df-svg" role="img" aria-label="Ansicht von außen auf die Dachfläche">'];
-    o.push('<defs>' + p + '<linearGradient id="df-glas2" x1="0" x2="1" y1="0" y2="1"><stop offset="0" stop-color="#eef5f8"/><stop offset=".55" stop-color="#b7cfd9"/><stop offset="1" stop-color="#8fb0be"/></linearGradient></defs>');
-    o.push('<rect x="10" y="40" width="' + (W - 20) + '" height="' + (H - 60) + '" fill="url(#df-deck)" stroke="#002e18" stroke-width="2"/>');
-    o.push('<text class="df-mass" x="20" y="30">' + esc(s.deckung === 'Weiß ich nicht' ? 'Eindeckung: klären wir vor Ort' : s.deckung) + '</text>');
-    for (var i = 0; i < n; i++) {
-      var x = ox + (neben ? i * (bw + spalt) * sc : 0), y = oy + (neben ? 0 : i * (bh + spalt) * sc), w = bw * sc, h = bh * sc, r = Math.max(6, 0.07 * sc);
-      o.push('<rect class="df-eindeck" x="' + (x - 7) + '" y="' + (y - 7) + '" width="' + (w + 14) + '" height="' + (h + 14) + '"/>');
-      o.push('<rect class="df-rahmen2" x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '"/>');
-      o.push('<rect x="' + (x + r) + '" y="' + (y + r) + '" width="' + (w - 2 * r) + '" height="' + (h - 2 * r) + '" fill="url(#df-glas2)"/>');
-      o.push('<path d="M' + (x + r + 6) + ' ' + (y + h - r - 6) + ' L' + (x + w * 0.55) + ' ' + (y + r + 6) + '" stroke="#fff" stroke-width="3" opacity=".55"/>');
-    }
-    // Masslinien
-    var yb = oy - 26;
-    o.push('<line class="df-masspfeil" x1="' + ox + '" y1="' + yb + '" x2="' + (ox + gesB * sc) + '" y2="' + yb + '"/><text class="df-mass df-mass-stark" x="' + (ox + gesB * sc / 2) + '" y="' + (yb - 7) + '" text-anchor="middle">' + z(gesB * 100) + ' cm</text>');
-    var xb = ox + gesB * sc + 26;
-    o.push('<line class="df-masspfeil" x1="' + xb + '" y1="' + oy + '" x2="' + xb + '" y2="' + (oy + gesH * sc) + '"/><text class="df-mass df-mass-stark" x="' + (xb + 8) + '" y="' + (oy + gesH * sc / 2 + 5) + '">' + z(gesH * 100) + ' cm</text>');
-    o.push('<text class="df-mass df-mass-klein" x="' + (W / 2) + '" y="' + (H - 6) + '" text-anchor="middle">Grün: Eindeckrahmen, der Anschluss an Ihr Dach</text>');
-    o.push('</svg>');
-    return o.join('');
-  }
-
-  /* ---------- Empfehlungen und Hinweise ---------- */
-  function bedienEmpfehlung(l) {
-    var ok = {};
-    if (l.hoErst <= 2.05) ok['Griff oben'] = 1;
-    if (l.hu <= 1.35) ok['Griff unten'] = 1;
-    if (l.hoErst > 2.05 || l.hu > 1.35) { ok['Elektrisch'] = 1; ok['Solar'] = 1; }
-    return ok;
-  }
-  function hinweise(l) {
-    var h = [];
-    if (s.neigung < 15) h.push(['warn', 'Unter 15° Neigung passt ein normales Dachfenster nicht. Für flache Dächer gibt es eigene Fenster, wir beraten Sie gern.']);
-    if (l.ho < 1.85) h.push(['warn', 'Oben endet das Fenster bei ' + m(l.ho) + '. Im Stehen sehen Sie nicht hinaus. Ein höheres Fenster oder zwei übereinander helfen.']);
-    else h.push(['ok', 'Oben endet das Fenster bei ' + m(l.ho) + ': Sie können im Stehen hinaussehen.']);
-    if (l.hu > 1.3) h.push(['info', 'Die Unterkante liegt bei ' + m(l.hu) + ', weil die Wand hoch ist. Im Sitzen sehen Sie vor allem Himmel.']);
-    if (s.vorhaben === 'neu') {
-      var ziel = s.raum * 0.1;
-      h.push([l.flaeche >= ziel * 0.85 ? 'ok' : 'info', 'Fensterfläche ' + z(l.flaeche, 2) + ' m² für ' + s.raum + ' m² Raum. Faustregel: etwa ein Zehntel der Raumfläche' + (l.flaeche >= ziel * 0.85 ? ', das passt.' : ', also rund ' + z(ziel, 1) + ' m².')]);
-      if (gr()[1] > 70) h.push(['info', 'Breiter als der Abstand Ihrer Sparren? Kein Problem: Als Zimmerei setzen wir den Wechsel gleich mit ein.']);
-    }
-    if (s.vorhaben === 'austausch') h.push(['info', 'Beim Austausch entsorgen wir das alte Fenster und schließen das neue wieder dicht an Ihr Dach an.']);
-    return h;
-  }
-
-  /* ---------- Groessen-Kacheln ---------- */
+  /* ---------- Vorschlag: erst die Hoehe (aus dem Dach), dann Breite und Anzahl (aus dem Raum) ---------- */
   function vorschlag() {
-    var ziel = s.raum * 0.1, best = null;
-    [1, 2, 3].forEach(function (n) {
-      GROESSEN.forEach(function (g) {
-        if (g[2] < 98) return;
-        var f = n * g[1] * g[2] / 1e4, d = Math.abs(f - ziel) + (n - 1) * 0.12;
-        if (!best || d < best.d) best = { n: n, g: g, d: d };
+    var best = null;
+    [98, 118, 140, 160].forEach(function (L) {
+      var g = finde(78, L), l = lage(g[0]), note = Math.abs(l.hu - UNTEN_GRIFF_OBEN) + 2 * (l.ho - OBEN);
+      if (!best || note < best.note - 1e-9) best = { L: L, note: note };
+    });
+    var L = best.L, wahl = null;
+    if (s.hat) return { g: finde(78, L), n: 1 };
+    var ziel = s.raum / 8;
+    [1, 2, 3, 4].forEach(function (n) {
+      [78, 94, 114, 134].forEach(function (b) {
+        var g = finde(b, L); if (!g) return;
+        var f = n * b * L / 1e4, reicht = f >= ziel - 0.001;
+        var note = reicht ? (n - 1) * 0.5 + (f - ziel) + (b >= 134 ? 0.9 : (b >= 114 ? 0.35 : (b >= 94 ? 0.2 : 0))) : 10 + (ziel - f);
+        if (!wahl || note < wahl.note) wahl = { g: g, n: n, note: note };
       });
     });
-    return best;
+    return wahl;
   }
+  function uebernehmeVorschlag() {
+    if (s.vorhaben !== 'neu' || s.eigen) return;
+    var v = vorschlag(); s.groesse = v.g[0]; s.anzahl = v.n;
+  }
+
+  /* ---------- Bild: der Raum von der Seite ---------- */
+  function person(x, y, h) {
+    var k = h / 178;
+    return '<g class="df-person" transform="translate(' + x + ',' + y + ') scale(' + k + ')">' +
+      '<circle cx="0" cy="-164" r="13"/><path d="M-19 -146 Q0 -153 19 -146 L22 -84 L13 -84 L11 0 L2 0 L0 -78 L-2 0 L-11 0 L-13 -84 L-22 -84 Z"/></g>';
+  }
+  function schnitt() {
+    var l = lage(), W = 560, H = 392, sc = 100, x0 = 58, y0 = 352;
+    function P(x, h) { return [x0 + x * sc, y0 - h * sc]; }
+    function pt(p) { return p[0].toFixed(1) + ',' + p[1].toFixed(1); }
+    function dach(d) { return P(d * l.cos, l.k + d * l.sin); }
+    var t = 0.2, nx = -l.sin * t, nh = l.cos * t;
+    function aussen(d) { var p = dach(d); return [p[0] + nx * sc, p[1] - nh * sc]; }
+    var dEnd = Math.min((3.25 - l.k) / l.sin, (W - x0 - 14) / sc / l.cos);
+    var d0 = (l.hu - l.k) / l.sin, d1 = (l.ho - l.k) / l.sin, a = dach(d0), b = dach(d1);
+    var o = ['<svg viewBox="0 0 ' + W + ' ' + H + '" xmlns="http://www.w3.org/2000/svg" class="df-svg" role="img" aria-label="Der Raum von der Seite: Dachschräge mit Fenster, daneben ein Mensch zum Größenvergleich">'];
+    // Licht, das durchs Fenster auf den Boden faellt
+    var so = 55 * Math.PI / 180;
+    function strahl(p) { var f = (y0 - p[1]) / Math.sin(so); return [p[0] + Math.cos(so) * f * 0.55, y0]; }
+    o.push('<polygon class="df-licht" points="' + [a, b, strahl(b), strahl(a)].map(pt).join(' ') + '"/>');
+    // Hoehenlinien zu den beiden Kanten des Fensters
+    [[l.ho, 'oben ' + m(l.ho), b], [l.hu, 'unten ' + m(l.hu), a]].forEach(function (e) {
+      var y = y0 - e[0] * sc;
+      o.push('<line class="df-linie" x1="' + e[2][0] + '" y1="' + y + '" x2="' + (W - 6) + '" y2="' + y + '"/>');
+      o.push('<text class="df-mass" x="' + (W - 8) + '" y="' + (y - 7) + '" text-anchor="end">' + e[1] + '</text>');
+    });
+    // Boden, Wand, Dach
+    o.push('<line class="df-boden" x1="14" y1="' + y0 + '" x2="' + W + '" y2="' + y0 + '"/>');
+    if (l.k > 0.05) o.push('<rect class="df-wand" x="' + (x0 - 20) + '" y="' + (y0 - l.k * sc) + '" width="20" height="' + (l.k * sc) + '"/>');
+    o.push('<polygon class="df-dach" points="' + [dach(-0.3), dach(d0), aussen(d0), aussen(-0.3)].map(pt).join(' ') + '"/>');
+    o.push('<polygon class="df-dach" points="' + [dach(d1), dach(dEnd), aussen(dEnd), aussen(d1)].map(pt).join(' ') + '"/>');
+    // Fenster
+    o.push('<polygon class="df-fenster" points="' + [a, b, aussen(d1), aussen(d0)].map(pt).join(' ') + '"/>');
+    o.push('<circle class="df-punkt" cx="' + a[0] + '" cy="' + a[1] + '" r="5"/><circle class="df-punkt" cx="' + b[0] + '" cy="' + b[1] + '" r="5"/>');
+    // Mensch, dort wo man aufrecht stehen kann
+    var xp = Math.min((1.95 - l.k) / Math.tan(l.al) + 0.45, (W - 150 - x0) / sc);
+    var fp = P(Math.max(xp, 0.6), 0);
+    o.push(person(fp[0], fp[1], 1.78 * sc));
+    o.push('</svg>');
+    return o.join('');
+  }
+  function bildNeigung(grad) {
+    if (!grad) return '<svg viewBox="0 0 64 44" aria-hidden="true"><text x="32" y="34" text-anchor="middle" class="df-frz">?</text></svg>';
+    var a = grad * Math.PI / 180, x2 = 8 + 46 * Math.cos(a) * 1.05, y2 = 40 - 46 * Math.sin(a) * 1.05;
+    return '<svg viewBox="0 0 64 44" aria-hidden="true"><path d="M4 40 H60"/><path class="df-ico-akzent" d="M8 40 L' + x2.toFixed(1) + ' ' + y2.toFixed(1) + '"/></svg>';
+  }
+  function bildWand(k) {
+    var y = 40 - k * 20;
+    return '<svg viewBox="0 0 64 44" aria-hidden="true"><path d="M4 40 H60"/><path class="df-ico-akzent" d="M12 40 V' + y + ' L' + (12 + (y - 2) * 0.95) + ' 2"/>' + person(46, 40, 35.6).replace('class="df-person"', 'class="df-person df-person-klein"') + '</svg>';
+  }
+
+  /* ---------- Texte zum Vorschlag ---------- */
+  function fensterText() { var g = gr(); return (s.anzahl > 1 ? s.anzahl + ' Fenster, je ' : '1 Fenster, ') + g[1] + ' × ' + g[2] + ' cm'; }
+  function warum(l) {
+    var w = [], g = gr();
+    if (l.ho <= 2.1) w.push(['ok', 'Oben endet das Fenster bei ' + m(l.ho) + '. So sehen Sie im Stehen hinaus.']);
+    else w.push(['info', 'Oben endet das Fenster bei ' + m(l.ho) + ', weil die Wand darunter hoch ist.']);
+    if (l.hu <= 1.05) w.push(['ok', 'Unten beginnt es bei ' + m(l.hu) + '. So sehen Sie auch im Sitzen hinaus.']);
+    else w.push(['info', 'Unten beginnt es bei ' + m(l.hu) + (s.neigung <= 30 && l.hu > s.knie + 0.06 ? ', tiefer geht es bei einem flachen Dach nicht' : '') + '. Im Sitzen sehen Sie vor allem Himmel.']);
+    if (s.hat) w.push(['info', 'Der Raum hat schon ein Fenster. Ob beide zusammen genug Licht bringen, rechnen wir vor Ort nach.']);
+    else {
+      var ziel = s.raum / 8, ok = l.flaeche >= ziel - 0.001;
+      w.push([ok ? 'ok' : 'warn', (s.anzahl > 1 ? s.anzahl + ' Fenster ergeben ' : 'Das Fenster hat ') + z(l.flaeche, 1) + ' m². Für ' + s.raum + ' m² Raum sollten es mindestens ' + z(ziel, 1) + ' m² sein' + (ok ? '.' : ': Das ist zu wenig.')]);
+    }
+    if (l.hu > 1.35) w.push(['info', 'Die Wand unter der Schräge ist hoch. Wünschen Sie Ausblick im Sitzen, ist eine Gaube die bessere Wahl. Sprechen Sie uns gern an.']);
+    if (g[1] >= 94) w.push(['info', 'Breiter als der Abstand Ihrer Sparren? Dann setzen wir als Zimmerei einen Wechsel ein.']);
+    if (s.neigungUnklar) w.push(['info', 'Die Dachneigung haben wir geschätzt. Wir messen sie bei Ihnen nach.']);
+    return w;
+  }
+  function bedienText(l) {
+    if (s.vorhaben === 'austausch') return 'Am einfachsten bleibt es wie bisher. Kommen Sie schlecht an das Fenster, lohnt sich elektrisch.';
+    var r = bedienRat(l);
+    if (r === 'Griff oben') return 'Ihr Fenster endet oben bei ' + m(l.ho) + '. Den Griff dort erreichen Sie bequem im Stehen. Wir empfehlen: Griff oben.';
+    if (r === 'Griff unten') return 'Ihr Fenster beginnt unten erst bei ' + m(l.hu) + '. Dort liegt ein Griff gut in der Hand. Wir empfehlen: Griff unten.';
+    return 'Ihr Fenster sitzt hoch: unten ' + m(l.hu) + ', oben ' + m(l.ho) + '. Von Hand kommt man schlecht dran. Wir empfehlen: elektrisch oder Solar.';
+  }
+
+  /* ---------- Bauzettel ---------- */
+  function zettel() {
+    var g = gr(), r = [['Vorhaben', VORHABEN[s.vorhaben], 'vorhaben']];
+    if (s.vorhaben === 'neu') {
+      var l = lage();
+      r.push(['Raum', s.raum + ' m², ' + (s.hat ? 'hat schon ein Fenster' : 'noch kein Fenster'), 'raum']);
+      r.push(['Dach', (s.neigungUnklar ? 'Neigung unbekannt' : 'um ' + s.neigung + '° Neigung') + ', Wand ' + WAENDE.filter(function (x) { return x[0] === s.knie; })[0][2] + ', ' + (s.deckung === 'Weiß ich nicht' ? 'Eindeckung unbekannt' : s.deckung), 'dach']);
+      r.push(['Fenster', fensterText() + ' (' + g[0] + ')' + (s.eigen ? '' : ', unser Vorschlag'), 'vorschlag']);
+      r.push(['Im Raum', 'unten ' + m(l.hu) + ', oben ' + m(l.ho), 'vorschlag']);
+    } else {
+      r.push(['Fenster', s.groesseBekannt ? fensterText() + ' (' + g[0] + ')' : s.anzahl + ' Fenster, Größe messen wir vor Ort', 'alt']);
+      if (s.codeErkannt) r.push(['Typenschild', s.codeErkannt, 'alt']);
+      r.push(['Dach', s.deckung === 'Weiß ich nicht' ? 'Eindeckung unbekannt' : s.deckung, 'dach']);
+    }
+    r.push(['Öffnen', s.bedienung, 'oeffnen']);
+    r.push(['Dazu', s.extras.length ? s.extras.join(', ') : 'nichts', 'dazu']);
+    return r;
+  }
+
+  /* ---------- Anzeige ---------- */
+  function folge() { return FOLGE[s.vorhaben]; }
   function kacheln() {
-    var v = s.vorhaben === 'neu' ? vorschlag() : null;
-    $('#df-groessen').innerHTML = GROESSEN.map(function (g) {
-      var w = g[1] / 134 * 34, h = g[2] / 160 * 42;
-      return '<button type="button" aria-pressed="' + (g[0] === s.groesse) + '" data-code="' + g[0] + '">' +
-        '<svg viewBox="0 0 40 46" aria-hidden="true"><rect x="' + (20 - w / 2) + '" y="' + (44 - h) + '" width="' + w + '" height="' + h + '"/></svg>' +
-        '<strong>' + g[1] + ' × ' + g[2] + '</strong><small>' + g[0] + '</small>' + (v && v.g[0] === g[0] ? '<em>Vorschlag</em>' : '') + '</button>';
+    var h = GROESSEN.map(function (g) {
+      var w = g[1] / 134 * 34, hh = g[2] / 160 * 42;
+      return '<button type="button" aria-pressed="false" data-code="' + g[0] + '"><svg viewBox="0 0 40 46" aria-hidden="true"><rect x="' + (20 - w / 2) + '" y="' + (44 - hh) + '" width="' + w + '" height="' + hh + '"/></svg><strong>' + g[1] + ' × ' + g[2] + '</strong></button>';
     }).join('');
-    if (v) $('#df-raum-text').textContent = 'Faustregel: Fensterfläche etwa ein Zehntel der Raumfläche. Für ' + s.raum + ' m² passt zum Beispiel ' + (v.n > 1 ? v.n + ' × ' : '') + v.g[1] + ' × ' + v.g[2] + ' cm.';
+    $$('[data-groessen]').forEach(function (b) { b.innerHTML = h; });
   }
+  function zeige() {
+    uebernehmeVorschlag();
+    var neu = s.vorhaben === 'neu', l = neu ? lage() : null, name = folge()[s.i], n = folge().length;
+    $$('.df-schritt').forEach(function (x) { x.hidden = x.dataset.schritt !== name; });
+    $$('#df-karton [data-nur]').forEach(function (x) { x.hidden = x.dataset.nur !== s.vorhaben; });
+    $('#df-balken').style.width = (s.i / (n - 1) * 100) + '%';
+    $('#df-wo').textContent = s.i === 0 ? '' : 'Schritt ' + (s.i + 1) + ' von ' + n;
+    $('#df-zurueck').hidden = s.i === 0;
+    var w = $('#df-weiter'); w.hidden = name === 'vorhaben' || name === 'zettel';
+    w.innerHTML = name === 'vorschlag' ? (s.eigen ? 'Weiter mit meiner Wahl &gt;' : 'Weiter mit Vorschlag &gt;') : (name === 'dazu' ? 'Zum Bauzettel &gt;' : 'Weiter &gt;');
+    $('#df-nav').hidden = name === 'vorhaben';
+    // Werte
+    $$('[data-anzahl]').forEach(function (x) { x.textContent = s.anzahl; });
+    $$('[data-groessen] button').forEach(function (b) { b.setAttribute('aria-pressed', ((neu || s.groesseBekannt) && b.dataset.code === s.groesse) ? 'true' : 'false'); });
+    $('#df-raum-wert').textContent = s.raum + ' m²';
+    $$('#df-neigung button').forEach(function (b) { b.setAttribute('aria-pressed', (s.neigungUnklar ? b.dataset.wert === '0' : +b.dataset.wert === s.neigung) ? 'true' : 'false'); });
+    $$('#df-knie button').forEach(function (b) { b.setAttribute('aria-pressed', +b.dataset.wert === s.knie ? 'true' : 'false'); });
+    if (neu) {
+      $('#df-zeichnung').innerHTML = schnitt();
+      $('#df-empfehlung').innerHTML = '<small>' + (s.eigen ? 'Ihre Wahl' : 'Das passt zu Ihrem Dach') + '</small>' + esc(fensterText());
+      $('#df-warum').innerHTML = warum(l).map(function (x) { return '<li class="df-h-' + x[0] + '">' + esc(x[1]) + '</li>'; }).join('');
+    }
+    var rat = neu ? bedienRat(l) : '';
+    if (!s.bedienungEigen) s.bedienung = neu ? rat : 'Wie bisher';
+    if (neu && s.bedienung === 'Wie bisher') s.bedienung = rat;
+    $$('#df-bedienung .df-karte').forEach(function (b) {
+      b.setAttribute('aria-pressed', b.dataset.wert === s.bedienung ? 'true' : 'false');
+      var e = $('.df-empf', b); if (e) e.hidden = !(neu && (b.dataset.wert === rat || (rat === 'Elektrisch' && b.dataset.wert === 'Solar')));
+    });
+    $('#df-bed-text').textContent = bedienText(l);
+    $('#df-zettel').innerHTML = zettel().map(function (x) { return '<div><dt>' + x[0] + '</dt><dd>' + esc(x[1]) + ' <button type="button" class="df-aendern" data-zu="' + x[2] + '">ändern</button></dd></div>'; }).join('');
+    $('#df-foto-tipp').textContent = neu ? 'Hilfreich: ein Foto vom Raum mit der Schräge und eins vom Dach außen.' : 'Hilfreich: ein Foto vom Fenster innen, eins vom Dach außen und eins vom Typenschild.';
+  }
+  function gehe(i, ohneRollen) {
+    s.i = Math.max(0, Math.min(folge().length - 1, i)); zeige();
+    if (ohneRollen) return;
+    var k = $('#df-karton'); k.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    var t = $('.df-schritt:not([hidden]) .df-titel'); if (t) t.focus({ preventScroll: true });
+  }
+  function geheZu(name) { var i = folge().indexOf(name); if (i >= 0) gehe(i); }
 
   /* ---------- Typenschild lesen ---------- */
   function leseCode(t) {
@@ -177,109 +228,89 @@
     return '';
   }
 
-  /* ---------- Alles neu zeichnen ---------- */
-  function zeige() {
-    var l = lage(), g = gr();
-    $('#df-zeichnung').innerHTML = s.ansicht === 'dach' ? dachansicht() : schnitt();
-    $('#df-hinweise').innerHTML = hinweise(l).map(function (x) { return '<li class="df-h-' + x[0] + '">' + esc(x[1]) + '</li>'; }).join('');
-    $('#df-neigung-wert').textContent = s.neigung + '°';
-    $('#df-knie-wert').textContent = m(s.knie);
-    $('#df-raum-wert').textContent = s.raum + ' m²';
-    $('#df-anzahl').textContent = s.anzahl;
-    $('#df-anordnung-box').hidden = s.anzahl < 2;
-    $$('#df-groessen button').forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.code === s.groesse ? 'true' : 'false'); });
-    var ok = bedienEmpfehlung(l);
-    $$('#df-bedienung .df-karte').forEach(function (b) { $('.df-empf', b).hidden = !ok[b.dataset.wert]; });
-    $('#df-bed-text').textContent = l.hoErst > 2.05 ? 'Ein Griff oben säße bei ' + m(l.hoErst) + '. Bequemer: Griff unten bei ' + m(l.hu) + (l.hu > 1.35 ? ' (auch das ist hoch)' : '') + ' oder elektrisch.' : 'Der Griff oben sitzt bei ' + m(l.hoErst) + ' und ist gut erreichbar.';
-    var zl = zettel();
-    $('#df-zettel').innerHTML = zl.map(function (x) { return '<div><dt>' + x[0] + '</dt><dd>' + esc(x[1]) + (x[2] ? ' <a href="#' + x[2] + '" class="df-aendern">ändern</a>' : '') + '</dd></div>'; }).join('');
-    $('#df-uebersicht').textContent = zl.slice(0, 4).map(function (x) { return x[1]; }).join(' · ');
-  }
-  function zettel() {
-    var g = gr(), l = lage();
-    var z1 = [['Vorhaben', VORHABEN[s.vorhaben], 'df-s1'],
-      ['Fenster', (s.anzahl > 1 ? s.anzahl + ' × ' : '') + g[1] + ' × ' + g[2] + ' cm (' + g[0] + ')' + (s.anzahl > 1 ? ', ' + s.anordnung : ''), 'df-s2'],
-      ['Dach', s.neigung + '° Neigung, ' + s.deckung + ', Wand innen ' + m(s.knie), 'df-s3'],
-      ['Öffnen', s.bedienung, 'df-s4'],
-      ['Dazu', s.extras.length ? s.extras.join(', ') : 'nichts', 'df-s5']];
-    if (zettel.mitRaum) z1.push(['Im Raum', 'Unterkante ' + m(l.hu) + ', Oberkante ' + m(l.ho), '']);
-    if (s.codeErkannt) z1.splice(2, 0, ['Typenschild', s.codeErkannt, 'df-s2']);
-    if (s.vorhaben === 'neu') z1.splice(2, 0, ['Raum', s.raum + ' m²', 'df-s2']);
-    return z1;
-  }
-
   /* ---------- Schalter ---------- */
-  function wahl(gruppe, attr, fn) {
-    gruppe.addEventListener('click', function (e) {
-      var b = e.target.closest('button'); if (!b || !gruppe.contains(b)) return;
-      $$('button', gruppe).forEach(function (x) { x.setAttribute(attr, x === b ? 'true' : 'false'); });
-      fn(b);
-    });
+  function wahl(gruppe, fn) {
+    gruppe.addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b || !gruppe.contains(b)) return; fn(b); zeige(); });
   }
-  function vorhaben(v) {
-    s.vorhaben = v;
-    $('#df-gaube').hidden = v !== 'platz';
-    $('#df-code-box').hidden = v !== 'austausch';
-    $('#df-raum-box').hidden = v !== 'neu';
-    $('#df-s2-titel').textContent = v === 'austausch' ? 'Das alte Fenster' : 'Das neue Fenster';
-    kacheln(); zeige();
+  function setzeVorhaben(v) {
+    s.vorhaben = v; s.eigen = false; s.bedienungEigen = false; s.anzahl = 1;
+    $$('#df-vorhaben button').forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.wert === v ? 'true' : 'false'); });
+    $('#df-gaube').hidden = true;
   }
 
   function start() {
-    if (!$('#df-zeichnung')) return;
-    var q = new URLSearchParams(location.search);
-    if (VORHABEN[q.get('vorhaben')]) { s.vorhaben = q.get('vorhaben'); $$('#df-vorhaben button').forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.wert === s.vorhaben ? 'true' : 'false'); }); }
-    wahl($('#df-vorhaben'), 'aria-pressed', function (b) { vorhaben(b.dataset.wert); });
-    $('#df-gaube-weiter').addEventListener('click', function () { $('#df-vorhaben [data-wert="neu"]').click(); $('#df-s2').scrollIntoView({ behavior: 'smooth', block: 'start' }); });
-    $('#df-groessen').addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; s.groesse = b.dataset.code; s.codeErkannt = ''; $('#df-code-ok').textContent = ''; zeige(); });
+    if (!$('#df-karton')) return;
+    $('#df-neigung').innerHTML = NEIGUNGEN.map(function (n) { return '<button type="button" class="df-karte" data-wert="' + n[0] + '">' + bildNeigung(n[0]) + '<strong>' + n[1] + '</strong><span>' + n[2] + '</span></button>'; }).join('');
+    $('#df-knie').innerHTML = WAENDE.map(function (n) { return '<button type="button" class="df-karte" data-wert="' + n[0] + '">' + bildWand(n[0]) + '<strong>' + n[1] + '</strong><span>' + n[2] + '</span></button>'; }).join('');
+    kacheln();
+
+    $('#df-vorhaben').addEventListener('click', function (e) {
+      var b = e.target.closest('button'); if (!b) return;
+      if (b.dataset.wert === 'platz') { $$('#df-vorhaben button').forEach(function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); }); $('#df-gaube').hidden = false; return; }
+      setzeVorhaben(b.dataset.wert); gehe(1);
+    });
+    $('#df-gaube-weiter').addEventListener('click', function () { setzeVorhaben('neu'); gehe(1); });
+    $('#df-weiter').addEventListener('click', function () { gehe(s.i + 1); });
+    $('#df-zurueck').addEventListener('click', function () { gehe(s.i - 1); });
+    $('#df-zettel').addEventListener('click', function (e) { var b = e.target.closest('[data-zu]'); if (b) geheZu(b.dataset.zu); });
+
     $('#df-code').addEventListener('input', function () {
-      var c = leseCode(this.value), g;
-      if (c) { s.groesse = c; g = gr(); s.codeErkannt = this.value.trim(); $('#df-code-ok').innerHTML = '<b>Erkannt: ' + g[1] + ' × ' + g[2] + ' cm.</b>'; }
-      else { s.codeErkannt = this.value.trim(); $('#df-code-ok').textContent = this.value.trim().length > 3 ? 'Diesen Code prüfen wir selbst. Wählen Sie unten die ungefähre Größe.' : ''; }
+      var c = leseCode(this.value), g, ok = $('#df-code-ok');
+      s.codeErkannt = this.value.trim();
+      if (c) { s.groesse = c; s.groesseBekannt = true; g = gr(); ok.innerHTML = '<b>Erkannt: ' + g[1] + ' × ' + g[2] + ' cm.</b> Mehr brauchen wir zur Größe nicht.'; }
+      else ok.textContent = this.value.trim().length > 3 ? 'Diesen Code schlagen wir selbst nach. Sie können einfach weitergehen.' : '';
       zeige();
     });
-    $('#df-raum').addEventListener('input', function () { s.raum = +this.value; kacheln(); zeige(); });
-    $('#df-minus').addEventListener('click', function () { s.anzahl = Math.max(1, s.anzahl - 1); zeige(); });
-    $('#df-plus').addEventListener('click', function () { s.anzahl = Math.min(4, s.anzahl + 1); zeige(); });
-    wahl($('#df-anordnung'), 'aria-pressed', function (b) { s.anordnung = b.dataset.wert; zeige(); });
-    $('#df-neigung').addEventListener('input', function () { s.neigung = +this.value; zeige(); });
-    $('#df-knie').addEventListener('input', function () { s.knie = this.value / 100; zeige(); });
-    wahl($('#df-deckung'), 'aria-pressed', function (b) { s.deckung = b.dataset.wert; if (s.ansicht !== 'dach') ansicht('dach'); else zeige(); });
-    wahl($('#df-bedienung'), 'aria-pressed', function (b) { s.bedienung = b.dataset.wert; zeige(); });
-    $('#df-extras').addEventListener('click', function (e) {
-      var b = e.target.closest('button'); if (!b) return;
-      b.setAttribute('aria-pressed', b.getAttribute('aria-pressed') === 'true' ? 'false' : 'true');
-      s.extras = $$('#df-extras button[aria-pressed="true"]').map(function (x) { return x.dataset.wert; }); zeige();
+    $$('[data-groessen]').forEach(function (box) {
+      wahl(box, function (b) {
+        s.groesse = b.dataset.code;
+        if (s.vorhaben === 'neu') s.eigen = true; else { s.groesseBekannt = true; if (!leseCode($('#df-code').value)) $('#df-code-ok').textContent = ''; }
+      });
     });
-    function ansicht(a) { s.ansicht = a; $$('.df-ansicht button').forEach(function (x) { x.setAttribute('aria-selected', x.dataset.ansicht === a ? 'true' : 'false'); }); zeige(); }
-    $$('.df-ansicht button').forEach(function (b) { b.addEventListener('click', function () { ansicht(b.dataset.ansicht); }); });
+    $$('[data-zahl]').forEach(function (b) {
+      b.addEventListener('click', function () { s.anzahl = Math.max(1, Math.min(4, s.anzahl + (+b.dataset.zahl))); if (s.vorhaben === 'neu') s.eigen = true; zeige(); });
+    });
+    $('#df-zurueck-vorschlag').addEventListener('click', function () { s.eigen = false; $('#df-eigen').open = false; zeige(); });
+    $('#df-raum').addEventListener('input', function () { s.raum = +this.value; zeige(); });
+    wahl($('#df-hat'), function (b) { s.hat = b.dataset.wert === 'ja'; $$('#df-hat button').forEach(function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); }); });
+    wahl($('#df-neigung'), function (b) { s.neigungUnklar = b.dataset.wert === '0'; s.neigung = +b.dataset.wert || 40; });
+    wahl($('#df-knie'), function (b) { s.knie = +b.dataset.wert; });
+    wahl($('#df-deckung'), function (b) { s.deckung = b.dataset.wert; $$('#df-deckung button').forEach(function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); }); });
+    wahl($('#df-bedienung'), function (b) { s.bedienung = b.dataset.wert; s.bedienungEigen = true; });
+    [$('#df-extras'), $('#df-extras2')].forEach(function (box) {
+      box.addEventListener('click', function (e) {
+        var b = e.target.closest('button'); if (!b) return;
+        b.setAttribute('aria-pressed', b.getAttribute('aria-pressed') === 'true' ? 'false' : 'true');
+        s.extras = $$('.df-extras button[aria-pressed="true"]').map(function (x) { return x.dataset.wert; }); zeige();
+      });
+    });
     form();
-    vorhaben(s.vorhaben);
+    var q = new URLSearchParams(location.search).get('vorhaben');
+    if (VORHABEN[q]) { setzeVorhaben(q); gehe(1, true); } else zeige();
   }
 
   /* ---------- Anfrage ---------- */
   function form() {
-    var f = $('#df-form'), box = $('#df-danke');
+    var f = $('#df-form'), box = $('#df-danke'), karton = $('#df-karton');
     f.addEventListener('submit', function (e) {
       e.preventDefault();
       var kontakt = f.kontakt.value.trim();
       $('#df-fehler').hidden = !!kontakt;
       if (!kontakt) { f.kontakt.focus(); return; }
-      zettel.mitRaum = true; var zl = zettel().map(function (x) { return [x[0], esc(x[1])]; });
-      zettel.mitRaum = false;
+      var zl = zettel().map(function (x) { return [x[0], esc(x[1])]; });
       if (f.name.value) zl.push(['Name', esc(f.name.value)]);
       if (f.ort.value) zl.push(['Ort', esc(f.ort.value)]);
       zl.push(['Rückmeldung an', esc(kontakt)]);
       if (f.fotos.files && f.fotos.files.length) zl.push(['Fotos', esc(Array.prototype.map.call(f.fotos.files, function (x) { return x.name; }).join(', '))]);
       if (f.nachricht.value) zl.push(['Nachricht', esc(f.nachricht.value)]);
-      var alt = s.ansicht; s.ansicht = 'schnitt'; var bild = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(schnitt()); s.ansicht = alt;
+      var bild = s.vorhaben === 'neu' ? '<img src="data:image/svg+xml;charset=utf-8,' + encodeURIComponent(schnitt()) + '" alt="Zeichnung: Dachfenster im Raum">' : '';
       var text = 'Guten Tag,\n\nhier ist meine Anfrage zum Dachfenster:\n\n' + zl.map(function (x) { var d = document.createElement('div'); d.innerHTML = x[1]; return x[0] + ': ' + d.textContent; }).join('\n') + '\n';
-      box.innerHTML = '<h3>So kommt die Anfrage an</h3><p class="la-entwurf la-entwurf-gross">Entwurf: Es wurde nichts versendet. Schophuis bekommt alle Angaben mit Zeichnung und Fotos per E-Mail und meldet sich für einen Termin.</p>' +
-        '<div class="la-danke-innen"><img src="' + bild + '" alt="Zeichnung: Dachfenster im Raum"><dl class="la-dl">' + zl.map(function (x) { return '<dt>' + x[0] + '</dt><dd>' + x[1] + '</dd>'; }).join('') + '</dl></div>' +
+      box.innerHTML = '<h3>So kommt die Anfrage an</h3><p class="la-entwurf la-entwurf-gross">Entwurf: Es wurde nichts versendet. Schophuis bekommt alle Angaben' + (bild ? ' mit Zeichnung' : '') + ' und Fotos per E-Mail und meldet sich für einen Termin.</p>' +
+        '<div class="la-danke-innen">' + bild + '<dl class="la-dl">' + zl.map(function (x) { return '<dt>' + x[0] + '</dt><dd>' + x[1] + '</dd>'; }).join('') + '</dl></div>' +
         '<div class="la-mail"><a class="la-knopf la-mail-auf" href="mailto:?subject=' + encodeURIComponent('Dachfenster: ' + VORHABEN[s.vorhaben]) + '&body=' + encodeURIComponent(text.slice(0, 1700)) + '">Als E-Mail senden &gt;</a>' +
-        '<button type="button" class="la-link-hell df-zurueck">Anfrage bearbeiten</button></div>';
-      f.hidden = true; box.hidden = false; box.focus();
-      $('.df-zurueck', box).addEventListener('click', function () { box.hidden = true; f.hidden = false; });
+        '<button type="button" class="la-link-hell df-bearbeiten">Anfrage bearbeiten</button></div>';
+      karton.hidden = true; box.hidden = false; box.focus();
+      $('.df-bearbeiten', box).addEventListener('click', function () { box.hidden = true; karton.hidden = false; });
     });
   }
 

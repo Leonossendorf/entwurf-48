@@ -191,11 +191,11 @@ background: none;
         :root :where(.is-layout-constrained) > * {
             margin-block-start: 0 !important;
         }
-    </style><link rel="stylesheet" href="/demo/css/demo.css?v=11231202">
-<link rel="stylesheet" href="/demo/css/la.css?v=11231202">
-<link rel="stylesheet" href="/demo/css/ds.css?v=11231202">
-<link rel="stylesheet" href="/demo/css/wege.css?v=11231202">
-<link rel="stylesheet" href="/demo/css/handy.css?v=11231202">
+    </style><link rel="stylesheet" href="/demo/css/demo.css?v=11241018">
+<link rel="stylesheet" href="/demo/css/la.css?v=11241018">
+<link rel="stylesheet" href="/demo/css/ds.css?v=11241018">
+<link rel="stylesheet" href="/demo/css/wege.css?v=11241018">
+<link rel="stylesheet" href="/demo/css/handy.css?v=11241018">
 </head>
 
 <body data-rsssl=1 data-cmplz=1 class="wp-singular page-template page-template-blank page page-id-495 wp-custom-logo wp-embed-responsive wp-theme-twentytwentytwo wp-child-theme-schophuis">
@@ -248,7 +248,7 @@ background: none;
 
 <div class="entry-content wp-block-post-content is-layout-constrained wp-block-post-content-is-layout-constrained">
 <div class="la df">
-<link rel="stylesheet" href="/demo/css/df.css?v=2">
+<link rel="stylesheet" href="/demo/css/df.css?v=3">
 
 <!-- ================= Kopf ================= -->
 <section class="la-hero la-hero-klein" aria-label="Dachfenster">
@@ -276,24 +276,27 @@ background: none;
   </ol>
 </section>
 
-<!-- ================= Planer ================= -->
+<!-- ================= Planer: eine Frage nach der anderen ================= -->
 <section class="la-abschnitt la-hellgrund" id="planer">
   <div class="df-planer">
-    <div class="df-schritte">
-      <h2 class="la-h2 df-h2">Ihr Dachfenster. <span>Fertig in 5 Schritten!</span></h2>
-      <p class="df-intro">Alles ist freiwillig, jede Angabe hilft uns beim Angebot. Rechts sehen Sie sofort, wie das Fenster in Ihrem Raum sitzt.</p>
+    <h2 class="la-h2 df-h2">Ihr Dachfenster. <span>In 2 Minuten geplant!</span></h2>
+    <p class="df-intro">Wir fragen eins nach dem anderen. Am Ende steht ein Vorschlag, der zu Ihrem Dach passt.</p>
 
-      <!-- Schritt 1 -->
-      <fieldset class="df-schritt" id="df-s1">
-        <legend><b>1</b> Was haben Sie vor?</legend>
+    <div class="df-karton" id="df-karton">
+      <div class="df-fortschritt" aria-hidden="true"><i id="df-balken"></i></div>
+      <p class="df-wo" id="df-wo" aria-live="polite"></p>
+
+      <!-- Vorhaben -->
+      <section class="df-schritt" data-schritt="vorhaben">
+        <h3 class="df-titel" tabindex="-1">Was haben Sie vor?</h3>
         <div class="df-karten" id="df-vorhaben">
-          <button type="button" class="df-karte" aria-pressed="true" data-wert="austausch">
+          <button type="button" class="df-karte" data-wert="austausch">
             <svg viewBox="0 0 64 48" aria-hidden="true"><path d="M8 40 L32 10 L56 40" /><rect x="24" y="22" width="14" height="12" transform="rotate(-38 31 28)" /><path class="df-ico-akzent" d="M44 6 a8 8 0 1 1 -6 3 M38 3 l0 6 l6 0" /></svg>
             <strong>Altes Fenster austauschen</strong><span>Undicht, beschlagen oder schwer zu bedienen</span></button>
-          <button type="button" class="df-karte" aria-pressed="false" data-wert="neu">
+          <button type="button" class="df-karte" data-wert="neu">
             <svg viewBox="0 0 64 48" aria-hidden="true"><path d="M8 40 L32 10 L56 40" /><rect x="24" y="22" width="14" height="12" transform="rotate(-38 31 28)" /><path class="df-ico-akzent" d="M48 4 v12 M42 10 h12" /></svg>
             <strong>Neues Fenster einbauen</strong><span>Mehr Licht für einen Raum unterm Dach</span></button>
-          <button type="button" class="df-karte" aria-pressed="false" data-wert="platz">
+          <button type="button" class="df-karte" data-wert="platz">
             <svg viewBox="0 0 64 48" aria-hidden="true"><path d="M8 40 L32 10 L56 40" /><path class="df-ico-akzent" d="M26 28 V18 H44 L48 26" /></svg>
             <strong>Mehr Platz und Licht</strong><span>Stehen können, wo jetzt die Schräge ist</span></button>
         </div>
@@ -301,48 +304,57 @@ background: none;
           <p><b>Dann ist eine Gaube oft die bessere Wahl.</b> Sie schafft Stehhöhe und ein senkrechtes Fenster. Wir bauen sie in der Halle vor und setzen sie an einem Tag aufs Dach.</p>
           <p><a class="la-knopf" href="/lohnabbund/privat/?typ=dachgaube#planer">Gaube planen &gt;</a> <button type="button" class="la-link-dunkel" id="df-gaube-weiter">Doch lieber Dachfenster planen</button></p>
         </div>
-      </fieldset>
+      </section>
 
-      <!-- Schritt 2 -->
-      <fieldset class="df-schritt" id="df-s2">
-        <legend><b>2</b> <span id="df-s2-titel">Das alte Fenster</span></legend>
-        <div id="df-code-box">
-          <label class="df-feld">Code vom Typenschild
-            <input type="text" id="df-code" placeholder="zum Beispiel GGL MK06" autocomplete="off" spellcheck="false">
-          </label>
-          <p class="df-klein">Das Schild sitzt oben im Rahmen, wenn das Fenster offen ist. Den Code lesen wir aus, die Größe stellt sich dann von selbst ein. <span id="df-code-ok" role="status"></span></p>
-        </div>
-        <div id="df-raum-box" hidden>
-          <div class="bs-regler">
-            <label><span>Größe des Raums <output id="df-raum-wert"></output></span><input type="range" id="df-raum" min="6" max="50" step="1" value="16"></label>
-          </div>
-          <p class="df-klein" id="df-raum-text"></p>
-        </div>
-        <p class="df-zeile-titel">Fenstergröße <span class="df-klein">(Breite × Höhe, Außenmaß des Rahmens)</span></p>
-        <div class="df-groessen" id="df-groessen"></div>
-        <div class="df-zwei">
+      <!-- Austausch: das alte Fenster -->
+      <section class="df-schritt" data-schritt="alt" hidden>
+        <h3 class="df-titel" tabindex="-1">Ihr altes Fenster</h3>
+        <div class="df-schild">
+          <svg viewBox="0 0 150 110" aria-hidden="true">
+            <rect x="12" y="10" width="126" height="92" class="df-sch-rahmen"/>
+            <polygon points="24,30 126,18 126,60 24,84" class="df-sch-fluegel"/>
+            <rect x="92" y="23" width="26" height="9" transform="rotate(-6.5 105 27)" class="df-sch-schild"/>
+            <path d="M105 44 V34" class="df-sch-pfeil"/><path d="M100 39 l5 -6 l5 6" class="df-sch-pfeil"/>
+          </svg>
           <div>
-            <p class="df-zeile-titel">Wie viele Fenster?</p>
-            <div class="df-zaehler"><button type="button" id="df-minus" aria-label="Ein Fenster weniger">−</button><output id="df-anzahl">1</output><button type="button" id="df-plus" aria-label="Ein Fenster mehr">+</button></div>
-          </div>
-          <div id="df-anordnung-box" hidden>
-            <p class="df-zeile-titel">Angeordnet</p>
-            <div class="la-chips la-chips-dunkel" id="df-anordnung">
-              <button type="button" aria-pressed="true" data-wert="nebeneinander">Nebeneinander</button>
-              <button type="button" aria-pressed="false" data-wert="übereinander">Übereinander</button>
-            </div>
+            <p class="df-frage">Was steht auf dem Typenschild?</p>
+            <p class="df-klein">Fenster öffnen und ganz herumschwingen. Oben am Flügel sitzt ein kleines Metallschild. Dort steht ein Code, zum Beispiel <b>GGL MK06</b>.</p>
+            <input type="text" id="df-code" class="df-eingabe" placeholder="GGL MK06" autocomplete="off" spellcheck="false" aria-label="Code vom Typenschild">
+            <p class="df-code-ok" id="df-code-ok" role="status"></p>
           </div>
         </div>
-      </fieldset>
+        <details class="df-mehr" id="df-ohne-schild">
+          <summary>Kein Schild gefunden? Größe ungefähr wählen</summary>
+          <p class="df-klein">Breite × Höhe des Rahmens in cm. Ungefähr reicht, wir messen vor Ort nach.</p>
+          <div class="df-groessen" data-groessen></div>
+        </details>
+        <p class="df-frage">Wie viele Fenster sollen getauscht werden?</p>
+        <div class="df-zaehler"><button type="button" data-zahl="-1" aria-label="Ein Fenster weniger">−</button><output data-anzahl>1</output><button type="button" data-zahl="1" aria-label="Ein Fenster mehr">+</button></div>
+      </section>
 
-      <!-- Schritt 3 -->
-      <fieldset class="df-schritt" id="df-s3">
-        <legend><b>3</b> Ihr Dach</legend>
-        <div class="bs-regler">
-          <label><span>Dachneigung <output id="df-neigung-wert"></output></span><input type="range" id="df-neigung" min="10" max="75" step="1" value="40"></label>
-          <label><span>Senkrechte Wand innen <output id="df-knie-wert"></output></span><input type="range" id="df-knie" min="0" max="200" step="5" value="80"></label>
+      <!-- Neu: der Raum -->
+      <section class="df-schritt" data-schritt="raum" hidden>
+        <h3 class="df-titel" tabindex="-1">Ihr Raum</h3>
+        <p class="df-frage">Wie groß ist der Raum? <output id="df-raum-wert" class="df-wert"></output></p>
+        <input type="range" id="df-raum" class="df-regler" min="6" max="50" step="1" value="16" aria-label="Größe des Raums in Quadratmetern">
+        <p class="df-klein">Ungefähr reicht. Ein Kinderzimmer hat oft 12 bis 16 m², ein Wohnraum 20 bis 30 m².</p>
+        <p class="df-frage">Hat der Raum schon ein Fenster?</p>
+        <div class="la-chips la-chips-dunkel" id="df-hat">
+          <button type="button" aria-pressed="true" data-wert="nein">Nein, noch keins</button>
+          <button type="button" aria-pressed="false" data-wert="ja">Ja</button>
         </div>
-        <p class="df-zeile-titel">Womit ist das Dach gedeckt?</p>
+      </section>
+
+      <!-- Das Dach -->
+      <section class="df-schritt" data-schritt="dach" hidden>
+        <h3 class="df-titel" tabindex="-1">Ihr Dach</h3>
+        <div data-nur="neu">
+          <p class="df-frage">Wie steil ist das Dach?</p>
+          <div class="df-karten df-karten-bild" id="df-neigung"></div>
+          <p class="df-frage">Wie hoch ist die gerade Wand unter der Schräge?</p>
+          <div class="df-karten df-karten-bild" id="df-knie"></div>
+        </div>
+        <p class="df-frage">Womit ist das Dach gedeckt?</p>
         <div class="la-chips la-chips-dunkel" id="df-deckung">
           <button type="button" aria-pressed="true" data-wert="Dachpfannen">Dachpfannen</button>
           <button type="button" aria-pressed="false" data-wert="Biberschwanz">Biberschwanz</button>
@@ -350,72 +362,101 @@ background: none;
           <button type="button" aria-pressed="false" data-wert="Blech">Blech</button>
           <button type="button" aria-pressed="false" data-wert="Weiß ich nicht">Weiß ich nicht</button>
         </div>
-      </fieldset>
+        <p class="df-klein">Davon hängt ab, mit welchem Rahmen wir das Fenster dicht an Ihr Dach anschließen.</p>
+      </section>
 
-      <!-- Schritt 4 -->
-      <fieldset class="df-schritt" id="df-s4">
-        <legend><b>4</b> Wie soll es aufgehen?</legend>
-        <div class="df-karten df-karten-klein" id="df-bedienung">
-          <button type="button" class="df-karte" aria-pressed="true" data-wert="Griff oben"><strong>Griff oben</strong><span>Klassisch, dreht in der Mitte</span><em class="df-empf" hidden>passt</em></button>
-          <button type="button" class="df-karte" aria-pressed="false" data-wert="Griff unten"><strong>Griff unten</strong><span>Klappt nach außen, mehr Ausblick</span><em class="df-empf" hidden>passt</em></button>
-          <button type="button" class="df-karte" aria-pressed="false" data-wert="Elektrisch"><strong>Elektrisch</strong><span>Per Schalter, schließt bei Regen</span><em class="df-empf" hidden>passt</em></button>
-          <button type="button" class="df-karte" aria-pressed="false" data-wert="Solar"><strong>Solar</strong><span>Elektrisch, ohne neues Kabel</span><em class="df-empf" hidden>passt</em></button>
+      <!-- Neu: unser Vorschlag -->
+      <section class="df-schritt" data-schritt="vorschlag" hidden>
+        <h3 class="df-titel" tabindex="-1">Unser Vorschlag</h3>
+        <div class="df-vorschlag">
+          <figure class="df-bild">
+            <div id="df-zeichnung"></div>
+            <figcaption>Ihr Raum von der Seite: So sitzt das Fenster in der Schräge.</figcaption>
+          </figure>
+          <div>
+            <p class="df-empfehlung" id="df-empfehlung"></p>
+            <ul class="df-warum" id="df-warum"></ul>
+            <details class="df-mehr" id="df-eigen">
+              <summary>Lieber selbst wählen</summary>
+              <p class="df-klein">Breite × Höhe des Rahmens in cm. Das Bild und die Hinweise oben ändern sich mit.</p>
+              <div class="df-groessen" data-groessen></div>
+              <p class="df-frage">Wie viele Fenster?</p>
+              <div class="df-zaehler"><button type="button" data-zahl="-1" aria-label="Ein Fenster weniger">−</button><output data-anzahl>1</output><button type="button" data-zahl="1" aria-label="Ein Fenster mehr">+</button></div>
+              <p><button type="button" class="la-link-dunkel" id="df-zurueck-vorschlag">Zurück zum Vorschlag</button></p>
+            </details>
+            <details class="df-mehr df-woher">
+              <summary>Woher kommen die Zahlen?</summary>
+              <p class="df-klein"><b>Höhe im Raum:</b> Der Hersteller Velux empfiehlt die Oberkante bei etwa 2,00 m und die Unterkante bei etwa 90 cm. So sieht man im Stehen und im Sitzen hinaus und kommt gut an den Griff.</p>
+              <p class="df-klein"><b>Fläche:</b> Für Wohn- und Schlafräume nennt die Landesbauordnung NRW Fensteröffnungen von mindestens einem Achtel der Raumfläche. Fenster, die es schon gibt, zählen mit.</p>
+              <p class="df-klein">Das ist ein Vorschlag. Vor dem Angebot messen wir bei Ihnen nach.</p>
+            </details>
+          </div>
         </div>
-        <p class="df-klein" id="df-bed-text"></p>
-      </fieldset>
+      </section>
 
-      <!-- Schritt 5 -->
-      <fieldset class="df-schritt" id="df-s5">
-        <legend><b>5</b> Dazu <span class="df-klein">(alles freiwillig)</span></legend>
+      <!-- Bedienung -->
+      <section class="df-schritt" data-schritt="oeffnen" hidden>
+        <h3 class="df-titel" tabindex="-1">Wie soll es aufgehen?</h3>
+        <p class="df-rat" id="df-bed-text"></p>
+        <div class="df-karten df-karten-klein" id="df-bedienung">
+          <button type="button" class="df-karte" data-wert="Wie bisher" data-nur="austausch"><strong>Wie bisher</strong><span>So wie das alte Fenster</span></button>
+          <button type="button" class="df-karte" data-wert="Griff oben"><strong>Griff oben</strong><span>Dreht in der Mitte. Unter dem Fenster können Möbel stehen</span><em class="df-empf" hidden>Empfohlen</em></button>
+          <button type="button" class="df-karte" data-wert="Griff unten"><strong>Griff unten</strong><span>Klappt weit nach außen, freier Ausblick</span><em class="df-empf" hidden>Empfohlen</em></button>
+          <button type="button" class="df-karte" data-wert="Elektrisch"><strong>Elektrisch</strong><span>Per Schalter. Schließt von selbst bei Regen</span><em class="df-empf" hidden>Empfohlen</em></button>
+          <button type="button" class="df-karte" data-wert="Solar"><strong>Solar</strong><span>Wie elektrisch, aber ohne neues Kabel</span><em class="df-empf" hidden>Empfohlen</em></button>
+        </div>
+      </section>
+
+      <!-- Extras -->
+      <section class="df-schritt" data-schritt="dazu" hidden>
+        <h3 class="df-titel" tabindex="-1">Was darf dazu?</h3>
+        <p class="df-klein">Alles freiwillig. Einfach antippen, was Sie interessiert.</p>
         <div class="df-extras" id="df-extras">
-          <button type="button" aria-pressed="false" data-wert="Rollladen außen"><strong>Rollladen außen</strong><span>Hält die Hitze draußen</span></button>
+          <button type="button" aria-pressed="false" data-wert="Rollladen außen"><strong>Rollladen außen</strong><span>Hält im Sommer die Hitze draußen</span></button>
           <button type="button" aria-pressed="false" data-wert="Verdunkelung innen"><strong>Verdunkelung innen</strong><span>Für Schlaf- und Kinderzimmer</span></button>
           <button type="button" aria-pressed="false" data-wert="Insektenschutz"><strong>Insektenschutz</strong><span>Lüften ohne Mücken</span></button>
-          <button type="button" aria-pressed="false" data-wert="3-fach-Verglasung"><strong>3-fach-Verglasung</strong><span>Wärmer im Winter</span></button>
-          <button type="button" aria-pressed="false" data-wert="Schallschutz"><strong>Schallschutz</strong><span>Leiser bei Regen und Verkehr</span></button>
-          <button type="button" aria-pressed="true" data-wert="Innenfutter"><strong>Innenfutter</strong><span>Saubere Verkleidung innen</span></button>
+          <button type="button" aria-pressed="true" data-wert="Innenverkleidung"><strong>Innenverkleidung</strong><span>Sauberer Abschluss rund ums Fenster</span></button>
         </div>
-      </fieldset>
+        <details class="df-mehr">
+          <summary>Mehr zum Glas</summary>
+          <div class="df-extras" id="df-extras2">
+            <button type="button" aria-pressed="false" data-wert="3-fach-Verglasung"><strong>3-fach-Verglasung</strong><span>Wärmer im Winter</span></button>
+            <button type="button" aria-pressed="false" data-wert="Schallschutz"><strong>Schallschutz</strong><span>Leiser bei Regen und Verkehr</span></button>
+          </div>
+        </details>
+      </section>
+
+      <!-- Abschluss: Bauzettel und Anfrage -->
+      <section class="df-schritt" data-schritt="zettel" hidden>
+        <h3 class="df-titel" tabindex="-1">Ihr Bauzettel</h3>
+        <div class="df-abschluss">
+          <div class="df-zettel">
+            <dl id="df-zettel"></dl>
+            <p class="df-preis">Preisrahmen mit Einbau <em class="demo-offen" title="Preise für Fenster und Einbau liefert Schophuis">Angabe folgt</em></p>
+          </div>
+          <form class="df-form" id="df-form" novalidate>
+            <p class="df-frage">Wohin dürfen wir das Angebot schicken?</p>
+            <label>Name <input type="text" name="name" autocomplete="name"></label>
+            <label>Straße und Ort <input type="text" name="ort" autocomplete="street-address" placeholder="Wo ist das Dach?"></label>
+            <label class="la-pflicht">Telefon oder E-Mail <input type="text" name="kontakt" required autocomplete="email" placeholder="Damit wir uns melden können"></label>
+            <label>Fotos <input type="file" name="fotos" accept="image/*" multiple></label>
+            <p class="df-klein" id="df-foto-tipp"></p>
+            <label>Noch etwas? <textarea name="nachricht" rows="2" placeholder="Zum Beispiel: Fenster im Bad, Wunschtermin im Frühjahr"></textarea></label>
+            <p class="la-fehler" id="df-fehler" role="alert" hidden>Bitte Telefon oder E-Mail eintragen.</p>
+            <button type="submit" class="la-knopf">Anfrage schicken &gt;</button>
+            <p class="la-entwurf">Entwurf, wird nicht versendet.</p>
+          </form>
+        </div>
+      </section>
+
+      <div class="df-nav" id="df-nav">
+        <button type="button" class="df-zurueck" id="df-zurueck">&lt; Zurück</button>
+        <button type="button" class="la-knopf" id="df-weiter">Weiter &gt;</button>
+      </div>
     </div>
 
-    <!-- Rechte Seite: Zeichnung, Hinweise, Bauzettel -->
-    <aside class="df-seite" aria-label="Vorschau und Übersicht">
-      <div class="df-blatt">
-        <div class="df-ansicht" role="tablist" aria-label="Ansicht">
-          <button type="button" role="tab" aria-selected="true" data-ansicht="schnitt">Im Raum</button>
-          <button type="button" role="tab" aria-selected="false" data-ansicht="dach">Auf dem Dach</button>
-        </div>
-        <div class="df-zeichnung" id="df-zeichnung" aria-live="polite"></div>
-        <ul class="df-hinweise" id="df-hinweise"></ul>
-      </div>
-      <div class="df-zettel">
-        <p class="df-zettel-kopf">Ihr Bauzettel</p>
-        <dl id="df-zettel"></dl>
-        <p class="df-preis">Preisrahmen mit Einbau <em class="demo-offen" title="Preise für Fenster und Einbau liefert Schophuis">Angabe folgt</em></p>
-        <a class="la-knopf df-zur-anfrage" href="#anfrage">Zur Anfrage &gt;</a>
-      </div>
-    </aside>
+    <div class="la-danke la-danke-hell" id="df-danke" hidden tabindex="-1"></div>
   </div>
-</section>
-
-<!-- ================= Anfrage ================= -->
-<section class="la-abschnitt la-zentriert" id="anfrage">
-  <form class="la-form la-form-hell" id="df-form" novalidate>
-    <h3>Dachfenster anfragen</h3>
-    <p class="la-form-uebersicht" id="df-uebersicht"></p>
-    <div class="la-felder">
-      <label>Name <input type="text" name="name" autocomplete="name"></label>
-      <label>Straße und Ort <input type="text" name="ort" autocomplete="street-address" placeholder="Wo ist das Dach?"></label>
-      <label class="la-pflicht">Telefon oder E-Mail <input type="text" name="kontakt" required autocomplete="email" placeholder="Damit wir uns melden können"></label>
-      <label>Fotos <input type="file" name="fotos" accept="image/*" multiple></label>
-      <label class="la-breit">Noch etwas? <textarea name="nachricht" rows="3" placeholder="Zum Beispiel: Fenster im Bad, Wunschtermin im Frühjahr"></textarea></label>
-    </div>
-    <p class="df-klein df-foto-tipp">Hilfreich sind ein Foto vom Fenster innen, eins vom Dach außen und eins vom Typenschild.</p>
-    <p class="la-fehler" id="df-fehler" role="alert" hidden>Bitte Telefon oder E-Mail eintragen.</p>
-    <button type="submit" class="la-knopf">Anfrage schicken &gt;</button>
-    <p class="la-entwurf">Entwurf, wird nicht versendet.</p>
-  </form>
-  <div class="la-danke la-danke-hell" id="df-danke" hidden tabindex="-1"></div>
 </section>
 
 </div>
@@ -490,7 +531,7 @@ var njt_wa = {"gdprStatus":"","accounts":[{"accountId":935,"accountName":"Steffe
 <script id="nta-js-popup-js" src="/wp-content/plugins/wp-whatsapp/assets/js/whatsapp-popup.js?ver=3.8.2"></script>
 
 
-<script src="/demo/js/dachfenster.js?v=11231202"></script>
-<script src="/demo/js/seite.js?v=11231202"></script>
+<script src="/demo/js/dachfenster.js?v=11241018"></script>
+<script src="/demo/js/seite.js?v=11241018"></script>
 </body>
 </html>

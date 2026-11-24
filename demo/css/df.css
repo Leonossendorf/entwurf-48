@@ -1,141 +1,163 @@
-/* Dachfenster-Planer (Schophuis), baut auf la.css auf */
+/* Dachfenster-Planer (Schophuis), baut auf la.css auf. Gefuehrt: ein Schritt nach dem anderen. */
 .df-hero-foto { margin: 0; justify-self: center; max-width: 560px; transform: rotate(2deg); background: #fff; padding: 12px 12px 14px; box-shadow: 0 18px 50px rgba(0, 46, 24, .28); animation: la-rein .8s .35s both cubic-bezier(.2, .7, .2, 1); }
 .df-hero-foto img { display: block; width: 100%; height: auto; }
 
-.df-planer { max-width: 1320px; margin: 0 auto; display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: clamp(24px, 3.5vw, 56px); align-items: start; }
-.la .df-h2 { text-align: left; }
-.la p.df-intro { margin: 14px 0 6px; font-size: 18px; max-width: 620px; }
+.df-planer { max-width: 940px; margin: 0 auto; }
+.la .df-h2 { text-align: center; }
+.la p.df-intro { margin: 14px auto 26px; font-size: 18px; max-width: 620px; text-align: center; }
 
-.df-schritt { border: 0; margin: 26px 0 0; padding: 22px 0 0; border-top: 2px solid rgba(0, 46, 24, .18); min-width: 0; scroll-margin-top: 120px; }
-.df-schritt legend { display: flex; align-items: center; gap: 12px; font-family: "Black Ground", sans-serif !important; font-size: clamp(24px, 2.2vw, 32px); line-height: 1; color: var(--schwarz); padding: 0 0 14px; }
-.df-schritt legend > * { font-family: inherit !important; }
-.df-schritt legend b { display: inline-grid; place-items: center; width: 1.45em; height: 1.45em; background: var(--schwarz); color: #fff; transform: rotate(-4deg); font-size: .8em; }
-.df-schritt legend .df-klein { font-family: "Akko Std", sans-serif !important; font-size: 15px; }
-.la .df-klein, .df-klein { font-size: 14px; color: #3d4a2a; }
-.la p.df-klein { margin: 8px 0 0; }
-.la p.df-zeile-titel { margin: 18px 0 8px; font-family: "Akko Std Bold", sans-serif !important; font-size: 17px; }
+/* Der Karton: eine Frage, grosse Knoepfe */
+.df-karton { position: relative; background: #fffdf6; padding: clamp(20px, 3.4vw, 40px); box-shadow: 0 18px 50px rgba(0, 46, 24, .14); border-top: 8px solid var(--schwarz); scroll-margin-top: 110px; }
+.df-karton[hidden] { display: none; }
+.df-fortschritt { position: absolute; left: 0; right: 0; top: -8px; height: 8px; background: var(--schwarz); }
+.df-fortschritt i { display: block; height: 100%; width: 0; background: var(--hell); transition: width .45s cubic-bezier(.2, .7, .2, 1); }
+.la p.df-wo { margin: 0 0 6px; min-height: 20px; font-family: "Akko Std Bold", sans-serif !important; font-size: 14px; letter-spacing: .08em; text-transform: uppercase; color: #5a6a3c; }
+.df-schritt { animation: df-rein .35s both cubic-bezier(.2, .7, .2, 1); }
+.df-schritt[hidden] { display: none; }
+@keyframes df-rein { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .df-schritt { animation: none; } .df-fortschritt i { transition: none; } }
+.la h3.df-titel { margin: 0 0 18px; font-family: "Black Ground", sans-serif !important; font-size: clamp(34px, 4.6vw, 54px); line-height: .95; color: var(--schwarz); outline: 0; }
+.la p.df-frage { margin: 26px 0 10px; font-family: "Akko Std Bold", sans-serif !important; font-size: 20px; line-height: 1.25; color: var(--schwarz); }
+.la .df-titel + p.df-frage, .la .df-titel + div > p.df-frage:first-child, .la .df-schild p.df-frage { margin-top: 0; }
+.la .df-klein, .df-klein { font-size: 15px; color: #3d4a2a; }
+.la p.df-klein { margin: 8px 0 0; line-height: 1.45; }
+.df-wert { font-family: "Black Ground", sans-serif; font-size: 30px; margin-left: 8px; color: #3f6b00; }
 
 /* Karten zum Antippen */
 .df-karten { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
-.df-karten-klein { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-.la .df-karte { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 6px; text-align: left; padding: 14px 14px 16px; background: #fff; border: 2px solid transparent; border-bottom: 4px solid rgba(0, 46, 24, .2); color: var(--schwarz); cursor: pointer; transition: transform .2s, border-color .2s, box-shadow .2s; }
-.la .df-karte:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0, 46, 24, .1); }
-.la .df-karte[aria-pressed="true"] { border-color: var(--schwarz); border-bottom-color: var(--gruen); box-shadow: 0 8px 24px rgba(0, 46, 24, .14); }
-.la .df-karte strong { font-family: "Akko Std Bold", sans-serif !important; font-size: 17px; line-height: 1.2; }
-.la .df-karte span { font-size: 14px; line-height: 1.35; color: #4c5a35; }
-.df-karte svg { width: 58px; height: 44px; fill: none; stroke: var(--schwarz); stroke-width: 2.4; stroke-linejoin: round; stroke-linecap: round; }
-.df-karte svg .df-ico-akzent { stroke: var(--gruen); stroke-width: 3; }
+.df-karten-klein { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+.df-karten-bild { grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); }
+.la .df-karte { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 6px; text-align: left; padding: 16px 16px 18px; background: #fff; border: 2px solid rgba(0, 46, 24, .14); border-bottom: 4px solid rgba(0, 46, 24, .22); color: var(--schwarz); cursor: pointer; transition: transform .2s, border-color .2s, box-shadow .2s; }
+.la .df-karte:hover { transform: translateY(-3px); box-shadow: 0 10px 24px rgba(0, 46, 24, .12); border-color: var(--schwarz); }
+.la .df-karte[aria-pressed="true"] { border-color: var(--schwarz); border-bottom-color: var(--gruen); background: #f3f7ea; box-shadow: 0 8px 24px rgba(0, 46, 24, .14); }
+.la .df-karte[hidden] { display: none; }
+.la .df-karte strong { font-family: "Akko Std Bold", sans-serif !important; font-size: 18px; line-height: 1.2; }
+.la .df-karte span { font-size: 14.5px; line-height: 1.35; color: #4c5a35; }
+.df-karte svg { width: 64px; height: 46px; fill: none; stroke: var(--schwarz); stroke-width: 2.4; stroke-linejoin: round; stroke-linecap: round; }
+.df-karte svg .df-ico-akzent { stroke: var(--gruen); stroke-width: 3.4; }
+.df-karte svg .df-frz { font: 38px "Black Ground", sans-serif; fill: var(--gruen); stroke: none; }
+.df-karte svg .df-person-klein { fill: var(--schwarz); stroke: none; opacity: .75; }
 .df-karte[aria-pressed="true"] svg rect { fill: #cfe0b0; }
-.la .df-karte em.df-empf { position: absolute; top: -10px; right: 8px; font-style: normal; background: var(--gruen); color: #fff; font-size: 12px; padding: 2px 8px; transform: rotate(3deg); font-family: "Akko Std Bold", sans-serif !important; }
+.la .df-karte em.df-empf { position: absolute; top: -11px; right: 8px; font-style: normal; background: var(--gruen); color: #fff; font-size: 13px; padding: 2px 9px; transform: rotate(3deg); font-family: "Akko Std Bold", sans-serif !important; }
+.la .df-karte em.df-empf[hidden] { display: none; }
 
-.df-tipp-gaube { margin-top: 14px; background: var(--tief); color: #fff; padding: 18px 20px; border-left: 6px solid var(--gruen); }
+.df-tipp-gaube { margin-top: 16px; background: var(--tief); color: #fff; padding: 18px 20px; border-left: 6px solid var(--gruen); }
+.df-tipp-gaube[hidden] { display: none; }
 .la .df-tipp-gaube p { margin: 0 0 12px; color: #fff; }
 .la .df-tipp-gaube p:last-child { margin: 0; display: flex; flex-wrap: wrap; gap: 14px; align-items: center; }
 .la .df-tipp-gaube .la-link-dunkel { color: #cfe0b0; }
 
-.df-feld { display: grid; gap: 6px; font-family: "Akko Std Bold", sans-serif; font-size: 17px; }
-.df-feld input { font: 20px "Akko Std", sans-serif; letter-spacing: .06em; padding: 12px 14px; border: 2px solid var(--schwarz); background: #fff; text-transform: uppercase; max-width: 360px; }
-#df-code-ok b { color: #3f6b00; }
+/* Typenschild */
+.df-schild { display: grid; grid-template-columns: 190px 1fr; gap: 22px; align-items: center; }
+.df-schild svg { width: 100%; height: auto; }
+.df-sch-rahmen { fill: #e9e6d8; stroke: var(--schwarz); stroke-width: 3; }
+.df-sch-fluegel { fill: #cfe3ea; stroke: var(--schwarz); stroke-width: 3; stroke-linejoin: round; }
+.df-sch-schild { fill: var(--gruen); stroke: var(--schwarz); stroke-width: 1.5; }
+.df-sch-pfeil { fill: none; stroke: var(--gruen); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.df-eingabe { margin-top: 12px; font: 24px "Akko Std", sans-serif; letter-spacing: .06em; padding: 12px 14px; border: 2px solid var(--schwarz); background: #fff; text-transform: uppercase; width: 100%; max-width: 320px; box-sizing: border-box; }
+.df-eingabe::placeholder { color: #b9bda9; }
+.la p.df-code-ok { margin: 8px 0 0; min-height: 22px; font-size: 15px; }
+.df-code-ok b { color: #3f6b00; }
+
+.df-regler { width: 100%; max-width: 520px; accent-color: var(--gruen); height: 34px; }
+
+/* Aufklappbares */
+.df-mehr { margin-top: 18px; border-top: 1px dashed #c9c6b4; padding-top: 12px; }
+.df-mehr summary { cursor: pointer; font-family: "Akko Std Bold", sans-serif; font-size: 16px; color: #3f6b00; text-decoration: underline; text-underline-offset: 3px; list-style: none; }
+.df-mehr summary::-webkit-details-marker { display: none; }
+.df-mehr summary::after { content: " +"; display: inline-block; margin-left: 4px; }
+.df-mehr[open] summary::after { content: " –"; }
+.df-mehr > *:not(summary) { margin-top: 12px; }
 
 /* Groessen als massstaebliche Kacheln */
 .df-groessen { display: grid; grid-template-columns: repeat(auto-fill, minmax(78px, 1fr)); gap: 8px; }
-.la .df-groessen button { position: relative; display: flex; flex-direction: column; align-items: center; padding: 8px 4px 6px; background: #fff; border: 2px solid transparent; cursor: pointer; color: var(--schwarz); }
+.la .df-groessen button { display: flex; flex-direction: column; align-items: center; padding: 8px 4px 6px; background: #fff; border: 2px solid rgba(0, 46, 24, .12); cursor: pointer; color: var(--schwarz); }
 .la .df-groessen button[aria-pressed="true"] { border-color: var(--schwarz); background: #f3f7ea; }
 .df-groessen svg { width: 40px; height: 46px; }
 .df-groessen svg rect { fill: #dfe9cc; stroke: var(--schwarz); stroke-width: 1.6; }
 .df-groessen button[aria-pressed="true"] svg rect { fill: #9fca4a; }
 .la .df-groessen strong { font-family: "Akko Std Bold", sans-serif !important; font-size: 13px; white-space: nowrap; }
-.la .df-groessen small { font-size: 11px; color: #6a7458; }
-.la .df-groessen em { position: absolute; top: -9px; left: 50%; transform: translateX(-50%) rotate(-3deg); font-style: normal; font-size: 11px; background: var(--gruen); color: #fff; padding: 1px 6px; white-space: nowrap; }
 
-.df-zwei { display: flex; flex-wrap: wrap; gap: 10px 40px; align-items: flex-end; }
 .df-zaehler { display: inline-flex; align-items: center; border: 2px solid var(--schwarz); background: #fff; }
-.la .df-zaehler button { width: 46px; height: 46px; border: 0; background: transparent; font-size: 26px; cursor: pointer; color: var(--schwarz); }
+.la .df-zaehler button { width: 52px; height: 52px; border: 0; background: transparent; font-size: 28px; cursor: pointer; color: var(--schwarz); }
 .la .df-zaehler button:hover { background: #e8efd9; }
-.df-zaehler output { min-width: 44px; text-align: center; font-family: "Black Ground", sans-serif; font-size: 30px; }
+.df-zaehler output { min-width: 50px; text-align: center; font-family: "Black Ground", sans-serif; font-size: 34px; }
 
-.df-extras { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
-.la .df-extras button { text-align: left; display: flex; flex-direction: column; gap: 3px; padding: 12px 14px 12px 40px; background: #fff; border: 2px solid transparent; cursor: pointer; position: relative; color: var(--schwarz); }
-.la .df-extras button::before { content: ""; position: absolute; left: 12px; top: 14px; width: 18px; height: 18px; border: 2px solid var(--schwarz); background: #fff; }
-.la .df-extras button[aria-pressed="true"] { border-color: var(--schwarz); }
-.la .df-extras button[aria-pressed="true"]::before { background: var(--gruen) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M4 10l4 4 8-9' fill='none' stroke='white' stroke-width='3'/%3E%3C/svg%3E") center / 14px no-repeat; border-color: var(--gruen); }
-.la .df-extras strong { font-family: "Akko Std Bold", sans-serif !important; font-size: 15px; }
-.la .df-extras span { font-size: 13px; color: #4c5a35; }
-
-/* Rechte Seite */
-.df-seite { position: sticky; top: 100px; display: grid; gap: 18px; }
-.df-blatt { background: #fff; padding: 12px 14px 14px; box-shadow: 0 14px 40px rgba(0, 46, 24, .12); border-top: 6px solid var(--schwarz); }
-.df-ansicht { display: flex; gap: 4px; margin-bottom: 6px; }
-.la .df-ansicht button { flex: 1; padding: 9px 10px; background: #eef2e4; border: 0; cursor: pointer; font-family: "Akko Std Bold", sans-serif; font-size: 15px; color: var(--schwarz); }
-.la .df-ansicht button[aria-selected="true"] { background: var(--schwarz); color: #fff; }
+/* Vorschlag mit Bild */
+.df-vorschlag { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: clamp(18px, 3vw, 36px); align-items: start; }
+.df-bild { margin: 0; background: #fff; border: 2px solid rgba(0, 46, 24, .14); padding: 10px 10px 8px; }
+.df-bild figcaption { font-size: 14px; color: #4c5a35; padding: 6px 4px 2px; }
 .df-svg { display: block; width: 100%; height: auto; }
-.df-svg text { font-family: "Akko Std", sans-serif; font-size: 15px; fill: var(--schwarz); }
-.df-svg .df-mass-stark { font-family: "Akko Std Bold", sans-serif; fill: #3f6b00; }
-.df-svg .df-mass-klein { font-size: 12px; fill: #5a6a3c; }
-.df-svg .df-boden { stroke: var(--schwarz); stroke-width: 3; }
-.df-svg .df-dach { fill: url(#df-schraff); stroke: var(--schwarz); stroke-width: 2; stroke-linejoin: round; }
-.df-svg .df-rahmen { fill: #f6f5ef; stroke: var(--gruen); stroke-width: 3; stroke-linejoin: round; }
-.df-svg .df-glas { stroke: #7fb2c6; stroke-width: 5; stroke-linecap: round; }
-.df-svg .df-licht { fill: #ffe680; opacity: .45; }
-.df-svg .df-person { fill: #002e18; opacity: .78; }
-.df-svg .df-blick { stroke: var(--gruen); stroke-width: 2.4; stroke-dasharray: 6 5; }
-.df-svg .df-blick-nein { stroke: #b0583a; }
-.df-svg .df-mass-linie { stroke: #8a9478; stroke-width: 1; stroke-dasharray: 3 4; }
-.df-svg .df-masspfeil { stroke: #3f6b00; stroke-width: 2; }
-.df-svg .df-eindeck { fill: #779e00; }
-.df-svg .df-rahmen2 { fill: #2b2f2c; }
+.df-svg text.df-mass { font-family: "Akko Std Bold", sans-serif; font-size: 17px; fill: #3f6b00; }
+.df-svg .df-boden { stroke: var(--schwarz); stroke-width: 4; stroke-linecap: round; }
+.df-svg .df-wand { fill: #d9d5c5; stroke: var(--schwarz); stroke-width: 2.4; }
+.df-svg .df-dach { fill: #d9d5c5; stroke: var(--schwarz); stroke-width: 2.4; stroke-linejoin: round; }
+.df-svg .df-fenster { fill: #bfe0ec; stroke: var(--gruen); stroke-width: 4; stroke-linejoin: round; }
+.df-svg .df-punkt { fill: var(--gruen); stroke: #fff; stroke-width: 2; }
+.df-svg .df-licht { fill: #ffe680; opacity: .5; }
+.df-svg .df-person { fill: #002e18; opacity: .82; }
+.df-svg .df-linie { stroke: #779e00; stroke-width: 1.6; stroke-dasharray: 5 5; }
+.la p.df-empfehlung { margin: 0 0 14px; font-family: "Black Ground", sans-serif !important; font-size: clamp(28px, 3.2vw, 40px); line-height: 1; color: var(--schwarz); }
+.la p.df-empfehlung small { display: block; margin-bottom: 8px; font: 14px "Akko Std Bold", sans-serif; letter-spacing: .08em; text-transform: uppercase; color: #3f6b00; }
+.df-warum { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.df-warum li { position: relative; padding: 9px 12px 9px 40px; font-size: 16px; line-height: 1.4; background: #f3f7ea; }
+.df-warum li::before { content: ""; position: absolute; left: 12px; top: 11px; width: 18px; height: 18px; border-radius: 50%; background: var(--gruen) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M5 10l3.5 3.5L15 6' fill='none' stroke='white' stroke-width='2.6'/%3E%3C/svg%3E") center / 16px no-repeat; }
+.df-warum li.df-h-warn { background: #fdf1df; }
+.df-warum li.df-h-warn::before { background: #d9822b; }
+.df-warum li.df-h-info { background: #eef3f5; }
+.df-warum li.df-h-info::before { background: #7fb2c6; }
+.la p.df-rat { margin: 0 0 20px; padding: 14px 16px; font-size: 18px; line-height: 1.4; background: #f3f7ea; border-left: 6px solid var(--gruen); }
 
-.df-hinweise { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 6px; }
-.df-hinweise li { position: relative; padding: 8px 10px 8px 34px; font-size: 14.5px; line-height: 1.4; background: #f3f7ea; }
-.df-hinweise li::before { content: ""; position: absolute; left: 11px; top: 11px; width: 14px; height: 14px; border-radius: 50%; background: var(--gruen); }
-.df-hinweise li.df-h-warn { background: #fdf1df; }
-.df-hinweise li.df-h-warn::before { background: #d9822b; }
-.df-hinweise li.df-h-info::before { background: #7fb2c6; }
+/* Extras */
+.df-extras { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 14px; }
+.la .df-extras button { text-align: left; display: flex; flex-direction: column; gap: 3px; padding: 14px 14px 14px 46px; background: #fff; border: 2px solid rgba(0, 46, 24, .14); cursor: pointer; position: relative; color: var(--schwarz); }
+.la .df-extras button::before { content: ""; position: absolute; left: 14px; top: 16px; width: 20px; height: 20px; border: 2px solid var(--schwarz); background: #fff; }
+.la .df-extras button[aria-pressed="true"] { border-color: var(--schwarz); background: #f3f7ea; }
+.la .df-extras button[aria-pressed="true"]::before { background: var(--gruen) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M4 10l4 4 8-9' fill='none' stroke='white' stroke-width='3'/%3E%3C/svg%3E") center / 15px no-repeat; border-color: var(--gruen); }
+.la .df-extras strong { font-family: "Akko Std Bold", sans-serif !important; font-size: 17px; }
+.la .df-extras span { font-size: 14.5px; color: #4c5a35; }
 
-/* Bauzettel: wie ein Zettel auf der Baustelle */
-.df-zettel { position: relative; background: #fffdf4; padding: 18px 20px 20px; transform: rotate(-.6deg); box-shadow: 0 10px 30px rgba(0, 46, 24, .12); border-left: 6px solid var(--gruen); }
+/* Abschluss: Bauzettel und Anfrage */
+.df-abschluss { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(20px, 3vw, 40px); align-items: start; }
+.df-zettel { position: relative; background: #fff; padding: 20px 20px 16px; transform: rotate(-.6deg); box-shadow: 0 10px 30px rgba(0, 46, 24, .12); border-left: 6px solid var(--gruen); }
 .df-zettel::before { content: ""; position: absolute; top: -12px; left: 50%; width: 90px; height: 24px; margin-left: -45px; background: rgba(159, 202, 74, .55); transform: rotate(2deg); }
-.la p.df-zettel-kopf { margin: 0 0 8px; font-family: "Black Ground", sans-serif !important; font-size: 28px; line-height: 1; }
-.df-zettel dl { margin: 0; display: grid; gap: 0; }
-.df-zettel dl > div { display: grid; grid-template-columns: 104px 1fr; gap: 10px; padding: 7px 0; border-bottom: 1px dashed #c9c6b4; }
+.df-zettel dl { margin: 0; }
+.df-zettel dl > div { display: grid; grid-template-columns: 92px 1fr; gap: 10px; padding: 8px 0; border-bottom: 1px dashed #c9c6b4; }
 .df-zettel dt { font-family: "Akko Std Bold", sans-serif; font-size: 14px; color: #5a6a3c; }
-.df-zettel dd { margin: 0; font-size: 15px; }
-.la a.df-aendern { font-size: 13px; color: #3f6b00; margin-left: 4px; }
-.la p.df-preis { margin: 12px 0 14px; font-family: "Akko Std Bold", sans-serif !important; font-size: 15px; }
-.la .df-zur-anfrage { display: inline-block; }
-.la p.df-foto-tipp { margin: 4px 0 14px; }
+.df-zettel dd { margin: 0; font-size: 16px; line-height: 1.35; }
+.la button.df-aendern { border: 0; background: none; padding: 0; margin-left: 4px; font: 13px "Akko Std", sans-serif; color: #3f6b00; text-decoration: underline; cursor: pointer; }
+.la p.df-preis { margin: 12px 0 0; font-family: "Akko Std Bold", sans-serif !important; font-size: 15px; }
+.df-form { display: grid; gap: 12px; }
+.df-form label { display: grid; gap: 4px; font-family: "Akko Std Bold", sans-serif; font-size: 15px; color: var(--schwarz); }
+.df-form input[type="text"], .df-form textarea { font: 17px "Akko Std", sans-serif; padding: 11px 12px; border: 2px solid rgba(0, 46, 24, .3); background: #fff; width: 100%; box-sizing: border-box; }
+.df-form input[type="text"]:focus, .df-form textarea:focus { border-color: var(--schwarz); outline: 0; }
+.df-form input[type="file"] { font: 15px "Akko Std", sans-serif; }
+.la .df-form p.df-frage { margin: 0; }
+.la .df-form p.df-klein { margin: -6px 0 0; }
+.la .df-form .la-knopf { justify-self: start; }
+.la .df-form p.la-entwurf { margin: 0; }
 
-@media (max-width: 1080px) {
-  .df-planer { grid-template-columns: 1fr; }
-  .df-seite { position: static; order: -1; }
-  .df-zettel { display: none; }
-}
-@media (max-width: 640px) {
-  .df-karten, .df-karten-klein, .df-extras { grid-template-columns: 1fr 1fr; }
-  .df-karten .df-karte:last-child:nth-child(odd) { grid-column: 1 / -1; }
+/* Zurueck und Weiter */
+.df-nav { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-top: 30px; padding-top: 20px; border-top: 2px solid rgba(0, 46, 24, .14); }
+.df-nav[hidden] { display: none; }
+.la button.df-zurueck { white-space: nowrap; border: 0; background: none; padding: 10px 4px; font: 17px "Akko Std Bold", sans-serif; color: var(--schwarz); cursor: pointer; text-decoration: underline; text-underline-offset: 4px; }
+.la .df-nav .la-knopf { margin-left: auto; }
+.la .df-nav .la-knopf[hidden] { display: none; }
+.df-planer .la-danke { margin-top: 0; }
+
+@media (max-width: 760px) {
+  .df-vorschlag, .df-abschluss { grid-template-columns: 1fr; }
+  .df-karten { grid-template-columns: 1fr; }
+  .df-karten-klein, .df-karten-bild { grid-template-columns: 1fr 1fr; }
+  .la .df-karte { padding: 14px; }
+  #df-vorhaben .df-karte { flex-direction: row; flex-wrap: wrap; align-items: center; column-gap: 14px; }
+  #df-vorhaben .df-karte span { flex-basis: 100%; }
+  .df-schild { grid-template-columns: 1fr; }
+  .df-schild svg { max-width: 190px; }
+  .df-extras { grid-template-columns: 1fr; }
   .df-hero-foto { max-width: 92%; }
+  .df-nav { margin-top: 24px; padding-top: 16px; }
+  .la .df-nav .la-knopf { font-size: 22px; padding: 12px 16px; }
 }
-.df-schritt legend span#df-s2-titel { font-size: inherit; line-height: 1; }
-@media (max-width: 1080px) {
-  .df-seite { position: sticky; top: 62px; z-index: 6; }
-  .df-blatt { padding: 6px 8px 8px; box-shadow: 0 8px 18px rgba(0, 46, 24, .22); }
-  .la .df-ansicht button { padding: 6px; font-size: 13px; }
-  .df-svg { max-height: 30vh; margin: 0 auto; }
-  .df-hinweise li { padding: 5px 8px 5px 28px; font-size: 13px; }
-  .df-hinweise li::before { left: 9px; top: 8px; width: 11px; height: 11px; }
-  .df-hinweise li:not(:first-child) { display: none; }
-}
-
-/* Mitlaufende Zeichnung: hidden der Vorlage verhindert sticky, clip schneidet genauso ab */
 .wp-site-blocks:has(.df) { overflow: clip !important; }
-@media (min-width: 1081px) {
-  .df-seite { gap: 14px; top: 92px; }
-  .df-svg { max-height: 36vh; margin: 0 auto; }
-  .df-hinweise li:nth-child(n+3) { display: none; }
-  .df-zettel { padding: 12px 18px 14px; }
-  .la p.df-zettel-kopf { font-size: 24px; margin-bottom: 4px; }
-  .df-zettel dl > div { padding: 4px 0; }
-  .df-zettel dd { font-size: 14px; }
-  .la p.df-preis { margin: 8px 0 10px; }
-  .la .df-zur-anfrage { font-size: 22px; padding: 10px 18px; }
-}
+.la .df-form input[type="text"], .la .df-form textarea, .la .df-eingabe { font-family: "Akko Std", sans-serif !important; }
