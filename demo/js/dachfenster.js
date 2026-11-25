@@ -4,7 +4,12 @@
    Quellen der Zahlen:
    - Einbauhoehen: VELUX Dokument 7063 "Empfohlene Einbaumasse fuer Dachfenster", Stand 17.02.2026
      (Oberkante 200 cm; Unterkante ca. 90 cm bei Griff oben, ca. 120 cm bei Griff unten; Tabelle Dachneigung x Fensterlaenge).
-   - Fensterflaeche: Paragraf 46 Abs. 2 BauO NRW 2018 (Rohbaumass der Fensteroeffnungen mindestens ein Achtel der Raumflaeche). */
+   - Fensterflaeche: Paragraf 46 Abs. 2 BauO NRW 2018 (Rohbaumass der Fensteroeffnungen mindestens ein Achtel der Raumflaeche).
+   - Alte Groessencodes 1991 bis 2000: VELUX Dokument 7099 (Stand 01.12.2020), Tabelle 102 = CK02 bis 810 = UK10, Rahmenaussenmasse identisch.
+   - Fenster vor 1991 (VL, VK, VU, VKU, Codes 021 bis 107): Masse aus der FAKRO-Austauschtabelle (gueltig ab 01.09.2017);
+     VELUX nennt dafuer Austauschfenster in Y-Groessen (im VELUX Austausch-Berater am 25.11.2026 geprueft: VL 045 -> Y45, VK 065 -> Y65).
+   - Preise: VELUX UVP aus dem Konfigurator dachfensterkonfigurator.de, abgelesen am 25.11.2026. Einbau und Wechsel: Angabe Schophuis (Julius, 24.11.2026).
+   - Wechsel: VELUX Dokument 7011 (Stand 01.02.2026): idealer Sparrenabstand = Fensterbreite + 4 bis 6 cm. */
 (function () {
   'use strict';
   function $(s, r) { return (r || document).querySelector(s); }
@@ -25,6 +30,24 @@
   var UNTERKANTE = { 30: [151, 141, 131, 120, 110], 40: [141, 128, 115, 101, 88], 50: [133, 117, 102, 85, 70] };
   var OBEN = 2.0, UNTEN_GRIFF_OBEN = 0.9, UNTEN_GRIFF_UNTEN = 1.2;   // VELUX-Empfehlung in Metern
 
+  /* VELUX Listenpreise (UVP inkl. MwSt., Euro): Einzelfenster, Schwingfenster mit Griff oben, Holz weiss lackiert.
+     T = Thermo (2-fach, Standard), E = Energie (3-fach). */
+  var PREIS = {
+    T: { CK02: 668, CK04: 720, CK06: 746, FK04: 746, FK06: 837, FK08: 876, MK04: 806, MK06: 876, MK08: 940, MK10: 1058, PK06: 985, PK08: 1065, PK10: 1153, SK06: 1085, SK08: 1158, SK10: 1266, UK04: 1085, UK08: 1259, UK10: 1451 },
+    E: { CK02: 784, CK04: 865, CK06: 921, FK04: 921, FK06: 1046, FK08: 1124, MK04: 1009, MK06: 1124, MK08: 1233, MK10: 1393, PK06: 1284, PK08: 1420, PK10: 1558, SK06: 1445, SK08: 1585, SK10: 1755, UK04: 1437, UK08: 1762, UK10: 2026 }
+  };
+  /* Aufpreis gegenueber Griff oben: Klapp-Schwing-Fenster (Griff unten) 337 Euro, Elektro und Solar je 367 Euro (gleiche Quelle). */
+  var AUFPREIS = { 'Griff oben': 0, 'Griff unten': 337, 'Elektrisch': 367, 'Solar': 367 };
+  /* Angabe Schophuis: Einbau rund 400 Euro je Fenster; Wechsel 300 Euro, meist ab 70 bis 80 cm Fensterbreite.
+     Eigene Festlegung: ab 78 cm, weil ein 78er Fenster 82 bis 84 cm lichten Sparrenabstand braucht (VELUX Dokument 7011). */
+  var EINBAU = 400, WECHSEL = 300, WECHSEL_AB = 78, MWST = 1.19;
+
+  /* Fenster vor 1991: Groessencode -> Rahmenaussenmass in cm */
+  var ALT = { '021': [54, 83], '023': [54, 103], '033': [64, 103], '035': [64, 123], '043': [74, 103], '045': [74, 123], '047': [74, 143], '065': [94, 124], '067': [94, 144], '085': [114, 124], '087': [114, 144], '107': [134, 144] };
+  /* Typ -> [Bauart, Material, 1 = Griff unten] */
+  var TYPEN = { GGL: ['Schwingfenster', 'Holz', 0], GGU: ['Schwingfenster', 'Kunststoff', 0], GPL: ['Klapp-Schwing-Fenster', 'Holz', 1], GPU: ['Klapp-Schwing-Fenster', 'Kunststoff', 1],
+    GHL: ['Klapp-Schwing-Fenster', 'Holz', 1], GHU: ['Klapp-Schwing-Fenster', 'Kunststoff', 1], VL: ['Schwingfenster', '', 0], VU: ['Schwingfenster', '', 0], VK: ['Klapp-Schwing-Fenster', '', 1], VKU: ['Klapp-Schwing-Fenster', '', 1] };
+
   var VORHABEN = { austausch: 'Altes Fenster austauschen', neu: 'Neues Fenster einbauen' };
   var NEIGUNGEN = [[30, 'Eher flach', 'um 30°'], [40, 'Mittel', 'um 40°'], [50, 'Steil', 'um 50°'], [0, 'Weiß ich nicht', 'Wir messen nach']];
   var WAENDE = [[0.3, 'Keine oder niedrig', 'bis etwa 50 cm'], [1.0, 'Etwa hüfthoch', 'um 1 m'], [1.4, 'Schulterhoch', 'um 1,40 m']];
@@ -32,7 +55,7 @@
 
   var s = { vorhaben: 'austausch', i: 0, groesse: 'MK06', groesseBekannt: false, codeErkannt: '', anzahl: 1, eigen: false,
     raum: 16, hat: false, neigung: 40, neigungUnklar: false, knie: 0.3, deckung: 'Dachpfannen',
-    bedienung: 'Wie bisher', bedienungEigen: false, extras: ['Innenverkleidung'] };
+    bedienung: 'Wie bisher', bedienungEigen: false, extras: ['Innenverkleidung'], glas: '2-fach', alt: null };
 
   function gr(code) { code = code || s.groesse; for (var i = 0; i < GROESSEN.length; i++) if (GROESSEN[i][0] === code) return GROESSEN[i]; return GROESSEN[7]; }
   function finde(b, h) { for (var i = 0; i < GROESSEN.length; i++) if (GROESSEN[i][1] === b && GROESSEN[i][2] === h) return GROESSEN[i]; return null; }
@@ -127,18 +150,19 @@
   function warum(l) {
     var w = [], g = gr();
     if (l.ho <= 2.1) w.push(['ok', 'Oben endet das Fenster bei ' + m(l.ho) + '. So sehen Sie im Stehen hinaus.']);
-    else w.push(['info', 'Die Wand unter der Schräge ist hoch. Deshalb sitzt das Fenster höher als üblich und endet oben erst bei ' + m(l.ho) + '. Üblich sind 2,00 m.']);
+    else w.push(['tipp', 'Die Wand unter der Schräge ist hoch. Deshalb sitzt das Fenster etwas höher und endet oben bei ' + m(l.ho) + '.']);
     if (l.hu <= 1.05) w.push(['ok', 'Unten beginnt es bei ' + m(l.hu) + '. So sehen Sie auch im Sitzen hinaus.']);
-    else w.push(['info', 'Unten beginnt das Fenster erst bei ' + m(l.hu) + '. Das ist höher als die Augen im Sitzen: Vom Sofa aus sehen Sie Himmel, aber nicht nach draußen in den Garten.' +
-      (l.hu <= s.knie + 0.06 ? ' Tiefer geht es nicht, weil dort die Wand steht.' : (g[2] >= 160 ? ' Tiefer kommt bei diesem Dach auch das längste Fenster nicht.' : ' Ein längeres Fenster beginnt tiefer.'))]);
-    if (s.hat) w.push(['info', 'Der Raum hat schon ein Fenster. Ob beide zusammen genug Licht bringen, rechnen wir vor Ort nach.']);
+    else w.push(['tipp', 'Unten beginnt das Fenster bei ' + m(l.hu) + '. Im Sitzen sehen Sie damit vor allem Himmel.' +
+      (l.hu <= s.knie + 0.06 || g[2] >= 160 ? '' : ' Unser Tipp: Ein längeres Fenster beginnt tiefer.')]);
+    if (s.hat) w.push(['tipp', 'Der Raum hat schon ein Fenster. Ob beide zusammen genug Licht bringen, sehen wir uns vor Ort an.']);
     else {
       var ziel = s.raum / 8, ok = l.flaeche >= ziel - 0.001;
-      w.push([ok ? 'ok' : 'warn', (s.anzahl > 1 ? s.anzahl + ' Fenster ergeben ' : 'Das Fenster hat ') + z(l.flaeche, 1) + ' m². Für ' + s.raum + ' m² Raum sollten es mindestens ' + z(ziel, 1) + ' m² sein' + (ok ? '.' : ': Das ist zu wenig.')]);
+      if (ok) w.push(['ok', (s.anzahl > 1 ? s.anzahl + ' Fenster bringen zusammen ' : 'Das Fenster bringt ') + z(l.flaeche, 1) + ' m² Licht. Das passt gut zu ' + s.raum + ' m² Raum.']);
+      else w.push(['tipp', 'Unser Tipp: Für ' + s.raum + ' m² Raum empfehlen wir etwa ' + z(ziel, 1) + ' m² Fensterfläche. Gewählt sind ' + z(l.flaeche, 1) + ' m². Mit einem weiteren oder größeren Fenster wird der Raum heller.']);
     }
-    if (l.hu > 1.35) w.push(['info', 'Wünschen Sie Ausblick im Sitzen, ist hier eine Gaube die bessere Wahl. Sprechen Sie uns gern an.']);
-    if (g[1] >= 94) w.push(['info', 'Dieses Fenster ist breiter als der übliche Abstand zwischen den Dachbalken. Dann wird ein Balken durchtrennt und neu abgefangen. Das erledigen wir als Zimmerei selbst.']);
-    if (s.neigungUnklar) w.push(['info', 'Die Dachneigung haben wir geschätzt. Wir messen sie bei Ihnen nach.']);
+    if (l.hu > 1.35) w.push(['tipp', 'Unser Tipp: Wünschen Sie Ausblick im Sitzen, passt hier eine Gaube besser. Sprechen Sie uns gern an.']);
+    if (g[1] >= WECHSEL_AB) w.push(['tipp', 'Ab ' + WECHSEL_AB + ' cm Breite wird meist ein Dachbalken versetzt. Das erledigen wir als Zimmerei gleich mit.']);
+    if (s.neigungUnklar) w.push(['tipp', 'Die Dachneigung haben wir geschätzt. Wir messen sie bei Ihnen nach.']);
     return w;
   }
   function bedienText(l) {
@@ -147,6 +171,30 @@
     if (r === 'Griff oben') return 'Ihr Fenster endet oben bei ' + m(l.ho) + '. Den Griff dort erreichen Sie bequem im Stehen. Wir empfehlen: Griff oben.';
     if (r === 'Griff unten') return 'Ihr Fenster beginnt unten erst bei ' + m(l.hu) + '. Dort liegt ein Griff gut in der Hand. Wir empfehlen: Griff unten.';
     return 'Ihr Fenster sitzt hoch: unten ' + m(l.hu) + ', oben ' + m(l.ho) + '. Von Hand kommt man schlecht dran. Wir empfehlen: elektrisch oder Solar.';
+  }
+
+  /* ---------- Preis: Listenpreis VELUX + Einbau + (bei neuen, breiten Fenstern) Wechsel; alles netto ---------- */
+  function bauart() {
+    if (s.bedienung !== 'Wie bisher') return s.bedienung;
+    return s.alt && s.alt.klapp ? 'Griff unten' : 'Griff oben';
+  }
+  function preis() {
+    var g = gr(), neu = s.vorhaben === 'neu';
+    if (!neu && !s.groesseBekannt) return null;
+    var fenster = (PREIS[s.glas === '3-fach' ? 'E' : 'T'][g[0]] + AUFPREIS[bauart()]) / MWST * s.anzahl;
+    var zl = [[s.anzahl > 1 ? s.anzahl + ' Fenster' : 'Fenster', 'Listenpreis von Velux', fenster], ['Einbau', s.anzahl > 1 ? s.anzahl + ' × ' + EINBAU + ' €' : '', EINBAU * s.anzahl]];
+    if (neu && g[1] >= WECHSEL_AB) zl.push(['Dachbalken versetzen', 'wahrscheinlich nötig', WECHSEL * s.anzahl]);
+    var sum = 0; zl.forEach(function (x) { sum += x[2]; });
+    sum = Math.round(sum / 10) * 10;
+    return { zeilen: zl, netto: sum, brutto: Math.round(sum * MWST / 10) * 10 };
+  }
+  function preisHtml() {
+    var p = preis();
+    if (!p) return '<h4>Was kostet das ungefähr?</h4><p class="df-klein">Den Preis nennen wir im Angebot, sobald wir die Größe kennen.</p>';
+    return '<h4>Was kostet das ungefähr?</h4><table>' + p.zeilen.map(function (x) {
+      return '<tr><td>' + x[0] + (x[1] ? ' <small>' + x[1] + '</small>' : '') + '</td><td>' + z(Math.round(x[2])) + ' €</td></tr>';
+    }).join('') + '<tr class="df-summe"><td>Zusammen etwa</td><td>' + z(p.netto) + ' €</td></tr></table>' +
+      '<p class="df-klein">Netto, zzgl. 19 % MwSt. (mit MwSt. etwa ' + z(p.brutto) + ' €). Extras wie Rollladen oder Innenverkleidung kommen dazu. Den festen Preis nennt unser Angebot nach dem Aufmaß.</p>';
   }
 
   /* ---------- Bauzettel ---------- */
@@ -161,9 +209,11 @@
     } else {
       r.push(['Fenster', s.groesseBekannt ? fensterText() + ' (' + g[0] + ')' : s.anzahl + ' Fenster, Größe messen wir vor Ort', 'alt']);
       if (s.codeErkannt) r.push(['Typenschild', s.codeErkannt, 'alt']);
+      if (s.alt && s.alt.ersatz) r.push(['Ersatz', s.alt.ersatz, 'alt']);
       r.push(['Dach', s.deckung === 'Weiß ich nicht' ? 'Eindeckung unbekannt' : s.deckung, 'dach']);
     }
     r.push(['Öffnen', s.bedienung, 'oeffnen']);
+    r.push(['Glas', s.glas + '-Verglasung' + (s.glas === '2-fach' ? ' (Standard)' : ''), 'dazu']);
     r.push(['Dazu', s.extras.length ? s.extras.join(', ') : 'nichts', 'dazu']);
     return r;
   }
@@ -207,6 +257,8 @@
       var e = $('.df-empf', b); if (e) e.hidden = !(neu && (b.dataset.wert === rat || (rat === 'Elektrisch' && b.dataset.wert === 'Solar')));
     });
     $('#df-bed-text').textContent = bedienText(l);
+    $$('#df-glas button').forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.wert === s.glas ? 'true' : 'false'); });
+    $('#df-preis').innerHTML = preisHtml();
     $('#df-zettel').innerHTML = zettel().map(function (x) { return '<div><dt>' + x[0] + '</dt><dd>' + esc(x[1]) + ' <button type="button" class="df-aendern" data-zu="' + x[2] + '">ändern</button></dd></div>'; }).join('');
     $('#df-foto-tipp').textContent = neu ? 'Hilfreich: der Raum mit der Schräge und das Dach von außen' : 'Hilfreich: das Fenster innen, das Dach außen, das Typenschild';
   }
@@ -219,23 +271,47 @@
   function geheZu(name) { var i = folge().indexOf(name); if (i >= 0) gehe(i); }
 
   /* ---------- Typenschild lesen ---------- */
-  function leseCode(t) {
-    t = String(t || '').toUpperCase().replace(/[^A-Z0-9 ]/g, ' ');
-    var w = t.split(/\s+/);
-    for (var i = 0; i < w.length; i++) {
-      var r = /^([CFMPSU])K?0?(\d{1,2})$/.exec(w[i]);
-      // aeltere Schilder bis etwa 2000: drei Ziffern, z. B. 306 = M06 = MK06 (erste Ziffer Breite, letzte zwei Hoehe)
-      var alt = /^([123468])(0[2468]|10)$/.exec(w[i]);
-      if (alt) r = [0, { 1: 'C', 2: 'F', 3: 'M', 4: 'P', 6: 'S', 8: 'U' }[alt[1]], alt[2]];
-      if (r) { var c = r[1] + 'K' + ('0' + r[2]).slice(-2); for (var j = 0; j < GROESSEN.length; j++) if (GROESSEN[j][0] === c) return c; }
+  /* Vier Schilder-Generationen (so zeigt sie auch VELUX im Austausch-Berater):
+     seit 2013 "GGL MK08 2050" | etwa 2001 bis 2013 "GGL M08 3059" | 1991 bis 2000 "GGL 308 3059" | 1972 bis 1991 "VK 065.100" */
+  function leseSchild(t) {
+    var u = String(t || '').toUpperCase().replace(/[^A-Z0-9]+/g, ' ');
+    u = u.replace(/\b(G[A-Z]{2}|VKU|VL|VU|VK)(?=[0-9]|[CFMPSU]K?[0-9]{2}\b)/g, '$1 ').trim();
+    var w = u ? u.split(/\s+/) : [], r = { typ: '', bau: null, code: '', alt: '', zeit: '', roh: '', fremd: '' }, i, m, j;
+    for (i = 0; i < w.length; i++) if (TYPEN[w[i]]) { r.typ = w[i]; r.bau = TYPEN[w[i]]; break; }
+    if (!r.typ) for (i = 0; i < w.length; i++) if (/^(G[A-Z]{2}|V[A-Z]{1,2})$/.test(w[i])) { r.typ = w[i]; break; }
+    for (i = 0; i < w.length; i++) {
+      var c = '';
+      if ((m = /^([CFMPSU])K(\d\d)$/.exec(w[i]))) { c = m[1] + 'K' + m[2]; r.zeit = 'ab 2013'; }
+      else if ((m = /^([CFMPSU])(\d\d)$/.exec(w[i]))) { c = m[1] + 'K' + m[2]; r.zeit = 'etwa 2001 bis 2013'; }
+      else if ((m = /^([123468])(0[2468]|10)$/.exec(w[i]))) { c = { 1: 'C', 2: 'F', 3: 'M', 4: 'P', 6: 'S', 8: 'U' }[m[1]] + 'K' + m[2]; r.zeit = '1991 bis 2000'; }
+      else if (ALT[w[i]]) { r.alt = w[i]; r.zeit = 'vor 1991'; r.roh = w[i]; break; }
+      if (c) { for (j = 0; j < GROESSEN.length; j++) if (GROESSEN[j][0] === c) { r.code = c; r.roh = w[i]; } if (r.code) break; r.zeit = ''; r.fremd = w[i]; }
     }
-    return '';
+    return r;
   }
-
-  /* Bauart aus den ersten Buchstaben: GG = Schwingfenster (Griff oben), GP = Klapp-Schwing-Fenster (Griff unten); L = Holz, U = Kunststoff */
-  function leseTyp(t) {
-    var r = /\bG([GP])([LU])\b/.exec(String(t || '').toUpperCase().replace(/[^A-Z0-9 ]/g, ' '));
-    return r ? (r[1] === 'G' ? 'Schwingfenster' : 'Klapp-Schwing-Fenster') + (r[2] === 'L' ? ' aus Holz' : ' aus Kunststoff') : '';
+  /* Was wir dem Kunden dazu sagen: erkannt, heutiger Name der Groesse, passender Ersatz */
+  function schildText(r, roh) {
+    var name = 'Velux ' + [r.typ, r.roh].filter(Boolean).join(' ');
+    var bau = r.bau ? r.bau[0] + (r.bau[1] ? ' aus ' + r.bau[1] : '') : '';
+    var klapp = !!(r.bau && r.bau[2]), holz = klapp ? 'GPL' : 'GGL', kunst = klapp ? 'GPU' : 'GGU', g, t;
+    if (r.code) {
+      g = gr(r.code);
+      t = '<b>Erkannt: ' + esc(name) + ', gebaut ' + r.zeit + '.</b> ' + (bau ? bau + ', ' : '') + 'Rahmen ' + g[1] + ' × ' + g[2] + ' cm.';
+      if (r.roh !== r.code) t += ' Diese Größe heißt heute <b>' + r.code + '</b>.';
+      var welches = r.typ && !r.bau ? 'ein Velux-Fenster in Größe ' + r.code + '. Die Bauart klären wir vor Ort.' : 'Velux ' + holz + ' ' + r.code + ' (Holz) oder ' + kunst + ' ' + r.code + ' (Kunststoff).';
+      t += '<span class="df-ersatz"><b>Passender Ersatz:</b> ' + welches + ' Gleiche Größe, passt in die vorhandene Öffnung.' +
+        (r.zeit === '1991 bis 2000' ? ' Der neue Rahmen sitzt etwas tiefer im Dach, die Innenverkleidung passen wir dabei an.' : '') + '</span>';
+      return { html: t, ersatz: (r.typ && !r.bau ? 'Velux-Fenster in Größe ' + r.code : 'Velux ' + holz + ' oder ' + kunst + ' ' + r.code) + ', gleiche Größe', klapp: klapp };
+    }
+    if (r.alt) {
+      g = ALT[r.alt];
+      t = '<b>Erkannt: ' + esc(name) + ', gebaut ' + r.zeit + '.</b> ' + (bau ? bau + ', ' : '') + 'Rahmen etwa ' + g[0] + ' × ' + g[1] + ' cm. Diese Größe gibt es im normalen Programm nicht mehr.' +
+        '<span class="df-ersatz"><b>Passender Ersatz:</b> Velux baut dafür eigene Austauschfenster in der alten Größe' + (r.alt === '107' ? '' : ' (Y' + r.alt.slice(1) + ')') + '. Sie passen in die vorhandene Öffnung.</span>';
+      return { html: t, ersatz: 'Velux-Austauschfenster in der alten Größe' + (r.alt === '107' ? '' : ' (Y' + r.alt.slice(1) + ')'), klapp: klapp };
+    }
+    if (r.fremd) return { html: '<b>Erkannt: ' + (bau ? bau + ', ' : '') + 'Größe ' + r.fremd + '.</b> Das ist eine seltene Größe. Welches Fenster heute dazu passt, schlagen wir für Sie nach.', ersatz: '', klapp: klapp };
+    if (r.bau) return { html: '<b>Erkannt: ' + bau + ' (' + r.typ + ').</b> Die Größe steht direkt dahinter, zum Beispiel MK06, M06, 306 oder 045.', ersatz: '', klapp: klapp };
+    return { html: roh.length > 3 ? 'Diesen Code schlagen wir selbst nach. Sie können einfach weitergehen.' : '', ersatz: '', klapp: false };
   }
 
   /* ---------- Schalter ---------- */
@@ -265,17 +341,18 @@
     $('#df-zettel').addEventListener('click', function (e) { var b = e.target.closest('[data-zu]'); if (b) geheZu(b.dataset.zu); });
 
     $('#df-code').addEventListener('input', function () {
-      var c = leseCode(this.value), typ = leseTyp(this.value), g, ok = $('#df-code-ok');
+      var r = leseSchild(this.value), x = schildText(r, this.value.trim());
       s.codeErkannt = this.value.trim();
-      if (c) { s.groesse = c; s.groesseBekannt = true; g = gr(); ok.innerHTML = '<b>Erkannt: ' + (typ ? typ + ', ' : '') + g[1] + ' × ' + g[2] + ' cm.</b> Mehr brauchen wir zur Größe nicht.'; }
-      else if (typ) ok.innerHTML = '<b>Erkannt: ' + typ + '.</b> Die Größe steht direkt dahinter, zum Beispiel MK06.';
-      else ok.textContent = this.value.trim().length > 3 ? 'Diesen Code schlagen wir selbst nach. Sie können einfach weitergehen.' : '';
+      s.alt = { klapp: x.klapp, ersatz: x.ersatz };
+      if (r.code) { s.groesse = r.code; s.groesseBekannt = true; }
+      else if (r.alt) s.groesseBekannt = false;
+      $('#df-code-ok').innerHTML = x.html;
       zeige();
     });
     $$('[data-groessen]').forEach(function (box) {
       wahl(box, function (b) {
         s.groesse = b.dataset.code;
-        if (s.vorhaben === 'neu') s.eigen = true; else { s.groesseBekannt = true; if (!leseCode($('#df-code').value)) $('#df-code-ok').textContent = ''; }
+        if (s.vorhaben === 'neu') s.eigen = true; else { s.groesseBekannt = true; if (!leseSchild($('#df-code').value).code) $('#df-code-ok').textContent = ''; }
       });
     });
     $$('[data-zahl]').forEach(function (b) {
@@ -288,13 +365,12 @@
     wahl($('#df-knie'), function (b) { s.knie = +b.dataset.wert; });
     wahl($('#df-deckung'), function (b) { s.deckung = b.dataset.wert; $$('#df-deckung button').forEach(function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); }); });
     wahl($('#df-bedienung'), function (b) { s.bedienung = b.dataset.wert; s.bedienungEigen = true; });
-    [$('#df-extras'), $('#df-extras2')].forEach(function (box) {
-      box.addEventListener('click', function (e) {
-        var b = e.target.closest('button'); if (!b) return;
-        b.setAttribute('aria-pressed', b.getAttribute('aria-pressed') === 'true' ? 'false' : 'true');
-        s.extras = $$('.df-extras button[aria-pressed="true"]').map(function (x) { return x.dataset.wert; }); zeige();
-      });
+    $('#df-extras').addEventListener('click', function (e) {
+      var b = e.target.closest('button'); if (!b) return;
+      b.setAttribute('aria-pressed', b.getAttribute('aria-pressed') === 'true' ? 'false' : 'true');
+      s.extras = $$('#df-extras button[aria-pressed="true"]').map(function (x) { return x.dataset.wert; }); zeige();
     });
+    wahl($('#df-glas'), function (b) { s.glas = b.dataset.wert; });
     form();
     var q = new URLSearchParams(location.search).get('vorhaben');
     if (VORHABEN[q]) { setzeVorhaben(q); gehe(1, true); } else zeige();
@@ -335,6 +411,7 @@
       $('#df-fehler').hidden = !!kontakt;
       if (!kontakt) { f.kontakt.focus(); return; }
       var zl = zettel().map(function (x) { return [x[0], esc(x[1])]; });
+      var pr = preis(); if (pr) zl.push(['Preis etwa', z(pr.netto) + ' € netto, zzgl. MwSt. (Schätzung der Website)']);
       if (f.name.value) zl.push(['Name', esc(f.name.value)]);
       if (f.ort.value) zl.push(['Ort', esc(f.ort.value)]);
       zl.push(['Rückmeldung an', esc(kontakt)]);

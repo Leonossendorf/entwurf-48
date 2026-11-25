@@ -102,10 +102,9 @@
 .df-warum { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
 .df-warum li { position: relative; padding: 9px 12px 9px 40px; font-size: 16px; line-height: 1.4; background: #f3f7ea; }
 .df-warum li::before { content: ""; position: absolute; left: 12px; top: 11px; width: 18px; height: 18px; border-radius: 50%; background: var(--gruen) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M5 10l3.5 3.5L15 6' fill='none' stroke='white' stroke-width='2.6'/%3E%3C/svg%3E") center / 16px no-repeat; }
-.df-warum li.df-h-warn { background: #fdf1df; }
-.df-warum li.df-h-warn::before { background: #d9822b; }
-.df-warum li.df-h-info { background: #eef3f5; }
-.df-warum li.df-h-info::before { background: #7fb2c6; }
+/* Empfehlungen: ruhig, kein Warnton. Gleicher Grund wie die Haken, davor ein kleines i */
+.df-warum li.df-h-tipp { background: #fff; box-shadow: inset 0 0 0 2px #dfe8c8; }
+.df-warum li.df-h-tipp::before { background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Ccircle cx='10' cy='5.6' r='1.5' fill='%23779e00'/%3E%3Cpath d='M10 9v6' stroke='%23779e00' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E") center / 18px no-repeat; box-shadow: inset 0 0 0 2px var(--gruen); }
 .la p.df-rat { margin: 0 0 20px; padding: 14px 16px; font-size: 18px; line-height: 1.4; background: #f3f7ea; border-left: 6px solid var(--gruen); }
 
 /* Extras */
@@ -126,7 +125,20 @@
 .df-zettel dt { font-family: "Akko Std Bold", sans-serif; font-size: 14px; color: #5a6a3c; }
 .df-zettel dd { margin: 0; font-size: 16px; line-height: 1.35; }
 .la button.df-aendern { border: 0; background: none; padding: 0; margin-left: 4px; font: 13px "Akko Std Regular", sans-serif; color: #3f6b00; text-decoration: underline; cursor: pointer; }
-.la p.df-preis { margin: 12px 0 0; font-family: "Akko Std Bold", sans-serif !important; font-size: 15px; }
+/* Preis auf dem Bauzettel */
+.df-preis { margin-top: 16px; padding-top: 14px; border-top: 3px solid var(--schwarz); }
+.la .df-preis h4 { margin: 0 0 8px; font-family: "Akko Std Bold", sans-serif !important; font-size: 18px; text-transform: none; letter-spacing: 0; color: var(--schwarz); }
+.df-preis table { width: 100%; border-collapse: collapse; }
+.df-preis td { padding: 6px 0; font-size: 16px; line-height: 1.3; border-bottom: 1px dashed #c9c6b4; vertical-align: baseline; }
+.df-preis td:last-child { text-align: right; white-space: nowrap; padding-left: 10px; font-family: "Akko Std Bold", sans-serif; }
+.df-preis td small { display: block; font-size: 13.5px; color: #5a6a3c; }
+.df-preis tr.df-summe td { border-bottom: 0; padding-top: 10px; font-family: "Akko Std Bold", sans-serif; font-size: 20px; color: #3f6b00; }
+.la .df-preis p.df-klein { margin: 6px 0 0; font-size: 14px; }
+.df-zettel .df-mehr { margin-top: 12px; }
+/* Ersatz-Vorschlag beim Typenschild */
+.df-code-ok .df-ersatz { display: block; margin-top: 8px; padding: 10px 12px; background: #f3f7ea; border-left: 6px solid var(--gruen); font-size: 15.5px; line-height: 1.4; }
+/* Glas-Auswahl */
+.df-glas { margin-bottom: 6px; }
 .df-form { display: grid; gap: 12px; }
 .df-form label { display: grid; gap: 4px; font-family: "Akko Std Bold", sans-serif; font-size: 15px; color: var(--schwarz); }
 .df-form input[type="text"], .df-form textarea { font: 17px "Akko Std Regular", sans-serif; padding: 11px 12px; border: 2px solid rgba(0, 46, 24, .3); background: #fff; width: 100%; box-sizing: border-box; }

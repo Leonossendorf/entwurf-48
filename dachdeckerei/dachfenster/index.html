@@ -191,11 +191,11 @@ background: none;
         :root :where(.is-layout-constrained) > * {
             margin-block-start: 0 !important;
         }
-    </style><link rel="stylesheet" href="/demo/css/demo.css?v=11241439">
-<link rel="stylesheet" href="/demo/css/la.css?v=11241439">
-<link rel="stylesheet" href="/demo/css/ds.css?v=11241439">
-<link rel="stylesheet" href="/demo/css/wege.css?v=11241439">
-<link rel="stylesheet" href="/demo/css/handy.css?v=11241439">
+    </style><link rel="stylesheet" href="/demo/css/demo.css?v=11251936">
+<link rel="stylesheet" href="/demo/css/la.css?v=11251936">
+<link rel="stylesheet" href="/demo/css/ds.css?v=11251936">
+<link rel="stylesheet" href="/demo/css/wege.css?v=11251936">
+<link rel="stylesheet" href="/demo/css/handy.css?v=11251936">
 </head>
 
 <body data-rsssl=1 data-cmplz=1 class="wp-singular page-template page-template-blank page page-id-495 wp-custom-logo wp-embed-responsive wp-theme-twentytwentytwo wp-child-theme-schophuis">
@@ -248,7 +248,7 @@ background: none;
 
 <div class="entry-content wp-block-post-content is-layout-constrained wp-block-post-content-is-layout-constrained">
 <div class="la df">
-<link rel="stylesheet" href="/demo/css/df.css?v=5">
+<link rel="stylesheet" href="/demo/css/df.css?v=6">
 
 <!-- ================= Kopf ================= -->
 <section class="la-hero la-hero-klein" aria-label="Dachfenster">
@@ -318,7 +318,7 @@ background: none;
           </svg>
           <div>
             <p class="df-frage">Was steht auf dem Typenschild?</p>
-            <p class="df-klein">Fenster öffnen. Oben rechts am Flügel, hinter der Lüftungsklappe, sitzt ein kleines Schild. Dort steht ein Code, zum Beispiel <b>GGL MK06</b>. Daran erkennen wir Bauart und Größe.</p>
+            <p class="df-klein">Fenster öffnen. Oben rechts am Flügel, hinter der Lüftungsklappe, sitzt ein kleines Schild. Dort steht ein Code, zum Beispiel <b>GGL MK06</b>. Ältere Schilder sehen anders aus, etwa <b>GGL 306</b> oder <b>VL 045</b>. Wir erkennen alle und sagen Ihnen, welches Fenster heute dazu passt.</p>
             <input type="text" id="df-code" class="df-eingabe" placeholder="GGL MK06" autocomplete="off" spellcheck="false" aria-label="Code vom Typenschild">
             <p class="df-code-ok" id="df-code-ok" role="status"></p>
           </div>
@@ -390,6 +390,7 @@ background: none;
               <summary>Woher kommen die Zahlen?</summary>
               <p class="df-klein"><b>Höhe im Raum:</b> Der Hersteller Velux empfiehlt die Oberkante bei etwa 2,00 m und die Unterkante bei etwa 90 cm. So sieht man im Stehen und im Sitzen hinaus und kommt gut an den Griff.</p>
               <p class="df-klein"><b>Fläche:</b> Für Wohn- und Schlafräume nennt die Landesbauordnung NRW Fensteröffnungen von mindestens einem Achtel der Raumfläche. Fenster, die es schon gibt, zählen mit.</p>
+              <p class="df-klein"><b>Breite:</b> Zwischen zwei Dachbalken braucht ein Fenster seine Breite plus 4 bis 6 cm Platz. So gibt es Velux an. Ab etwa 78 cm Breite wird deshalb meist ein Balken versetzt.</p>
               <p class="df-klein">Das ist ein Vorschlag. Vor dem Angebot messen wir bei Ihnen nach.</p>
             </details>
           </div>
@@ -418,14 +419,13 @@ background: none;
           <button type="button" aria-pressed="false" data-wert="Verdunkelung innen"><strong>Verdunkelung innen</strong><span>Für Schlaf- und Kinderzimmer</span></button>
           <button type="button" aria-pressed="false" data-wert="Insektenschutz"><strong>Insektenschutz</strong><span>Lüften ohne Mücken</span></button>
           <button type="button" aria-pressed="true" data-wert="Innenverkleidung"><strong>Innenverkleidung</strong><span>Sauberer Abschluss rund ums Fenster</span></button>
+          <button type="button" aria-pressed="false" data-wert="Schallschutzglas"><strong>Schallschutzglas</strong><span>Leiser bei Regen und Verkehr</span></button>
         </div>
-        <details class="df-mehr">
-          <summary>Mehr zum Glas</summary>
-          <div class="df-extras" id="df-extras2">
-            <button type="button" aria-pressed="false" data-wert="3-fach-Verglasung"><strong>3-fach-Verglasung</strong><span>Wärmer im Winter</span></button>
-            <button type="button" aria-pressed="false" data-wert="Schallschutz"><strong>Schallschutz</strong><span>Leiser bei Regen und Verkehr</span></button>
-          </div>
-        </details>
+        <p class="df-frage">Welches Glas?</p>
+        <div class="df-karten df-karten-klein df-glas" id="df-glas">
+          <button type="button" class="df-karte" aria-pressed="true" data-wert="2-fach"><strong>2-fach-Verglasung</strong><span>Der Standard. Reicht für die meisten Räume</span><em class="df-empf">Standard</em></button>
+          <button type="button" class="df-karte" aria-pressed="false" data-wert="3-fach"><strong>3-fach-Verglasung</strong><span>Hält im Winter mehr Wärme im Raum</span></button>
+        </div>
       </section>
 
       <!-- Abschluss: Bauzettel und Anfrage -->
@@ -434,7 +434,14 @@ background: none;
         <div class="df-abschluss">
           <div class="df-zettel">
             <dl id="df-zettel"></dl>
-            <p class="df-preis">Preisrahmen mit Einbau <em class="demo-offen" title="Preise für Fenster und Einbau liefert Schophuis">Angabe folgt</em></p>
+            <div class="df-preis" id="df-preis"></div>
+            <details class="df-mehr df-woher">
+              <summary>Wie kommt der Preis zustande?</summary>
+              <p class="df-klein"><b>Fenster:</b> der Listenpreis von Velux für diese Größe, in Holz, weiß lackiert.</p>
+              <p class="df-klein"><b>Einbau:</b> ein fester Betrag je Fenster für Ausbau, Einbau und den dichten Anschluss ans Dach.</p>
+              <p class="df-klein"><b>Dachbalken versetzen:</b> Ein Fenster braucht zwischen zwei Dachbalken seine Breite plus 4 bis 6 cm Platz. Ab etwa 78 cm Breite reicht der Abstand meist nicht. Dann trennen wir einen Balken durch und fangen ihn neu ab. Beim Austausch in gleicher Größe fällt das nicht an.</p>
+              <p class="df-klein">Das ist eine Schätzung. Den festen Preis nennen wir nach dem Aufmaß.</p>
+            </details>
           </div>
           <form class="df-form" id="df-form" novalidate>
             <p class="df-frage">Wohin dürfen wir das Angebot schicken?</p>
@@ -541,7 +548,7 @@ var njt_wa = {"gdprStatus":"","accounts":[{"accountId":935,"accountName":"Steffe
 <script id="nta-js-popup-js" src="/wp-content/plugins/wp-whatsapp/assets/js/whatsapp-popup.js?ver=3.8.2"></script>
 
 
-<script src="/demo/js/dachfenster.js?v=11241439"></script>
-<script src="/demo/js/seite.js?v=11241439"></script>
+<script src="/demo/js/dachfenster.js?v=11251936"></script>
+<script src="/demo/js/seite.js?v=11251936"></script>
 </body>
 </html>
