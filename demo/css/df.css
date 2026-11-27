@@ -11,17 +11,17 @@
 .df-karton[hidden] { display: none; }
 .df-fortschritt { position: absolute; left: 0; right: 0; top: -8px; height: 8px; background: var(--schwarz); }
 .df-fortschritt i { display: block; height: 100%; width: 0; background: var(--hell); transition: width .45s cubic-bezier(.2, .7, .2, 1); }
-.la p.df-wo { margin: 0 0 6px; min-height: 20px; font-family: "Akko Std Bold", sans-serif !important; font-size: 14px; letter-spacing: .08em; text-transform: uppercase; color: #5a6a3c; }
+.la p.df-wo { margin: 0 0 6px; min-height: 20px; font-family: "Schophuis Text Bold", sans-serif !important; font-size: 14px; letter-spacing: .08em; text-transform: uppercase; color: #5a6a3c; }
 .df-schritt { animation: df-rein .35s both cubic-bezier(.2, .7, .2, 1); }
 .df-schritt[hidden] { display: none; }
 @keyframes df-rein { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) { .df-schritt { animation: none; } .df-fortschritt i { transition: none; } }
-.la h3.df-titel { margin: 0 0 18px; font-family: "Black Ground", sans-serif !important; font-size: clamp(34px, 4.6vw, 54px); line-height: .95; color: var(--schwarz); outline: 0; }
-.la p.df-frage { margin: 26px 0 10px; font-family: "Akko Std Bold", sans-serif !important; font-size: 20px; line-height: 1.25; color: var(--schwarz); }
+.la h3.df-titel { margin: 0 0 18px; font-family: "Schophuis Titel", sans-serif !important; font-size: clamp(34px, 4.6vw, 54px); line-height: .95; color: var(--schwarz); outline: 0; }
+.la p.df-frage { margin: 26px 0 10px; font-family: "Schophuis Text Bold", sans-serif !important; font-size: 20px; line-height: 1.25; color: var(--schwarz); }
 .la .df-titel + p.df-frage, .la .df-titel + div > p.df-frage:first-child, .la .df-schild p.df-frage { margin-top: 0; }
 .la .df-klein, .df-klein { font-size: 15px; color: #3d4a2a; }
 .la p.df-klein { margin: 8px 0 0; line-height: 1.45; }
-.df-wert { font-family: "Black Ground", sans-serif; font-size: 30px; margin-left: 8px; color: #3f6b00; }
+.df-wert { font-family: "Schophuis Titel", sans-serif; font-size: 30px; margin-left: 8px; color: #3f6b00; }
 
 /* Karten zum Antippen */
 .df-karten { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
@@ -31,14 +31,14 @@
 .la .df-karte:hover { transform: translateY(-3px); box-shadow: 0 10px 24px rgba(0, 46, 24, .12); border-color: var(--schwarz); }
 .la .df-karte[aria-pressed="true"] { border-color: var(--schwarz); border-bottom-color: var(--gruen); background: #f3f7ea; box-shadow: 0 8px 24px rgba(0, 46, 24, .14); }
 .la .df-karte[hidden] { display: none; }
-.la .df-karte strong { font-family: "Akko Std Bold", sans-serif !important; font-size: 18px; line-height: 1.2; }
+.la .df-karte strong { font-family: "Schophuis Text Bold", sans-serif !important; font-size: 18px; line-height: 1.2; }
 .la .df-karte span { font-size: 14.5px; line-height: 1.35; color: #4c5a35; }
 .df-karte svg { width: 64px; height: 46px; fill: none; stroke: var(--schwarz); stroke-width: 2.4; stroke-linejoin: round; stroke-linecap: round; }
 .df-karte svg .df-ico-akzent { stroke: var(--gruen); stroke-width: 3.4; }
-.df-karte svg .df-frz { font: 38px "Black Ground", sans-serif; fill: var(--gruen); stroke: none; }
+.df-karte svg .df-frz { font: 38px "Schophuis Titel", sans-serif; fill: var(--gruen); stroke: none; }
 .df-karte svg .df-person-klein { fill: var(--schwarz); stroke: none; opacity: .75; }
 .df-karte[aria-pressed="true"] svg rect { fill: #cfe0b0; }
-.la .df-karte em.df-empf { position: absolute; top: -11px; right: 8px; font-style: normal; background: var(--gruen); color: #fff; font-size: 13px; padding: 2px 9px; transform: rotate(3deg); font-family: "Akko Std Bold", sans-serif !important; }
+.la .df-karte em.df-empf { position: absolute; top: -11px; right: 8px; font-style: normal; background: var(--gruen); color: #fff; font-size: 13px; padding: 2px 9px; transform: rotate(3deg); font-family: "Schophuis Text Bold", sans-serif !important; }
 .la .df-karte em.df-empf[hidden] { display: none; }
 
 .df-tipp-gaube { margin-top: 16px; background: var(--tief); color: #fff; padding: 18px 20px; border-left: 6px solid var(--gruen); }
@@ -54,7 +54,7 @@
 .df-sch-fluegel { fill: #cfe3ea; stroke: var(--schwarz); stroke-width: 3; stroke-linejoin: round; }
 .df-sch-schild { fill: var(--gruen); stroke: var(--schwarz); stroke-width: 1.5; }
 .df-sch-pfeil { fill: none; stroke: var(--gruen); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
-.df-eingabe { margin-top: 12px; font: 24px "Akko Std Regular", sans-serif; letter-spacing: .06em; padding: 12px 14px; border: 2px solid var(--schwarz); background: #fff; text-transform: uppercase; width: 100%; max-width: 320px; box-sizing: border-box; }
+.df-eingabe { margin-top: 12px; font: 24px "Schophuis Text", sans-serif; letter-spacing: .06em; padding: 12px 14px; border: 2px solid var(--schwarz); background: #fff; text-transform: uppercase; width: 100%; max-width: 320px; box-sizing: border-box; }
 .df-eingabe::placeholder { color: #b9bda9; }
 .la p.df-code-ok { margin: 8px 0 0; min-height: 22px; font-size: 15px; }
 .df-code-ok b { color: #3f6b00; }
@@ -63,7 +63,7 @@
 
 /* Aufklappbares */
 .df-mehr { margin-top: 18px; border-top: 1px dashed #c9c6b4; padding-top: 12px; }
-.df-mehr summary { cursor: pointer; font-family: "Akko Std Bold", sans-serif; font-size: 16px; color: #3f6b00; text-decoration: underline; text-underline-offset: 3px; list-style: none; }
+.df-mehr summary { cursor: pointer; font-family: "Schophuis Text Bold", sans-serif; font-size: 16px; color: #3f6b00; text-decoration: underline; text-underline-offset: 3px; list-style: none; }
 .df-mehr summary::-webkit-details-marker { display: none; }
 .df-mehr summary::after { content: " +"; display: inline-block; margin-left: 4px; }
 .df-mehr[open] summary::after { content: " –"; }
@@ -76,19 +76,19 @@
 .df-groessen svg { width: 40px; height: 46px; }
 .df-groessen svg rect { fill: #dfe9cc; stroke: var(--schwarz); stroke-width: 1.6; }
 .df-groessen button[aria-pressed="true"] svg rect { fill: #9fca4a; }
-.la .df-groessen strong { font-family: "Akko Std Bold", sans-serif !important; font-size: 13px; white-space: nowrap; }
+.la .df-groessen strong { font-family: "Schophuis Text Bold", sans-serif !important; font-size: 13px; white-space: nowrap; }
 
 .df-zaehler { display: inline-flex; align-items: center; border: 2px solid var(--schwarz); background: #fff; }
 .la .df-zaehler button { width: 52px; height: 52px; border: 0; background: transparent; font-size: 28px; cursor: pointer; color: var(--schwarz); }
 .la .df-zaehler button:hover { background: #e8efd9; }
-.df-zaehler output { min-width: 50px; text-align: center; font-family: "Black Ground", sans-serif; font-size: 34px; }
+.df-zaehler output { min-width: 50px; text-align: center; font-family: "Schophuis Titel", sans-serif; font-size: 34px; }
 
 /* Vorschlag mit Bild */
 .df-vorschlag { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: clamp(18px, 3vw, 36px); align-items: start; }
 .df-bild { margin: 0; background: #fff; border: 2px solid rgba(0, 46, 24, .14); padding: 10px 10px 8px; }
 .df-bild figcaption { font-size: 14px; color: #4c5a35; padding: 6px 4px 2px; }
 .df-svg { display: block; width: 100%; height: auto; }
-.df-svg text.df-mass { font-family: "Akko Std Bold", sans-serif; font-size: 17px; fill: #3f6b00; }
+.df-svg text.df-mass { font-family: "Schophuis Text Bold", sans-serif; font-size: 17px; fill: #3f6b00; }
 .df-svg .df-boden { stroke: var(--schwarz); stroke-width: 4; stroke-linecap: round; }
 .df-svg .df-wand { fill: #d9d5c5; stroke: var(--schwarz); stroke-width: 2.4; }
 .df-svg .df-dach { fill: #d9d5c5; stroke: var(--schwarz); stroke-width: 2.4; stroke-linejoin: round; }
@@ -97,8 +97,8 @@
 .df-svg .df-licht { fill: #ffe680; opacity: .5; }
 .df-svg .df-person { fill: #002e18; opacity: .82; }
 .df-svg .df-linie { stroke: #779e00; stroke-width: 1.6; stroke-dasharray: 5 5; }
-.la p.df-empfehlung { margin: 0 0 14px; font-family: "Black Ground", sans-serif !important; font-size: clamp(28px, 3.2vw, 40px); line-height: 1; color: var(--schwarz); }
-.la p.df-empfehlung small { display: block; margin-bottom: 8px; font: 14px "Akko Std Bold", sans-serif; letter-spacing: .08em; text-transform: uppercase; color: #3f6b00; }
+.la p.df-empfehlung { margin: 0 0 14px; font-family: "Schophuis Titel", sans-serif !important; font-size: clamp(28px, 3.2vw, 40px); line-height: 1; color: var(--schwarz); }
+.la p.df-empfehlung small { display: block; margin-bottom: 8px; font: 14px "Schophuis Text Bold", sans-serif; letter-spacing: .08em; text-transform: uppercase; color: #3f6b00; }
 .df-warum { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
 .df-warum li { position: relative; padding: 9px 12px 9px 40px; font-size: 16px; line-height: 1.4; background: #f3f7ea; }
 .df-warum li::before { content: ""; position: absolute; left: 12px; top: 11px; width: 18px; height: 18px; border-radius: 50%; background: var(--gruen) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M5 10l3.5 3.5L15 6' fill='none' stroke='white' stroke-width='2.6'/%3E%3C/svg%3E") center / 16px no-repeat; }
@@ -113,7 +113,7 @@
 .la .df-extras button::before { content: ""; position: absolute; left: 14px; top: 16px; width: 20px; height: 20px; border: 2px solid var(--schwarz); background: #fff; }
 .la .df-extras button[aria-pressed="true"] { border-color: var(--schwarz); background: #f3f7ea; }
 .la .df-extras button[aria-pressed="true"]::before { background: var(--gruen) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M4 10l4 4 8-9' fill='none' stroke='white' stroke-width='3'/%3E%3C/svg%3E") center / 15px no-repeat; border-color: var(--gruen); }
-.la .df-extras strong { font-family: "Akko Std Bold", sans-serif !important; font-size: 17px; }
+.la .df-extras strong { font-family: "Schophuis Text Bold", sans-serif !important; font-size: 17px; }
 .la .df-extras span { font-size: 14.5px; color: #4c5a35; }
 
 /* Abschluss: Bauzettel und Anfrage */
@@ -122,17 +122,17 @@
 .df-zettel::before { content: ""; position: absolute; top: -12px; left: 50%; width: 90px; height: 24px; margin-left: -45px; background: rgba(159, 202, 74, .55); transform: rotate(2deg); }
 .df-zettel dl { margin: 0; }
 .df-zettel dl > div { display: grid; grid-template-columns: 92px 1fr; gap: 10px; padding: 8px 0; border-bottom: 1px dashed #c9c6b4; }
-.df-zettel dt { font-family: "Akko Std Bold", sans-serif; font-size: 14px; color: #5a6a3c; }
+.df-zettel dt { font-family: "Schophuis Text Bold", sans-serif; font-size: 14px; color: #5a6a3c; }
 .df-zettel dd { margin: 0; font-size: 16px; line-height: 1.35; }
-.la button.df-aendern { border: 0; background: none; padding: 0; margin-left: 4px; font: 13px "Akko Std Regular", sans-serif; color: #3f6b00; text-decoration: underline; cursor: pointer; }
+.la button.df-aendern { border: 0; background: none; padding: 0; margin-left: 4px; font: 13px "Schophuis Text", sans-serif; color: #3f6b00; text-decoration: underline; cursor: pointer; }
 /* Preis auf dem Bauzettel */
 .df-preis { margin-top: 16px; padding-top: 14px; border-top: 3px solid var(--schwarz); }
-.la .df-preis h4 { margin: 0 0 8px; font-family: "Akko Std Bold", sans-serif !important; font-size: 18px; text-transform: none; letter-spacing: 0; color: var(--schwarz); }
+.la .df-preis h4 { margin: 0 0 8px; font-family: "Schophuis Text Bold", sans-serif !important; font-size: 18px; text-transform: none; letter-spacing: 0; color: var(--schwarz); }
 .df-preis table { width: 100%; border-collapse: collapse; }
 .df-preis td { padding: 6px 0; font-size: 16px; line-height: 1.3; border-bottom: 1px dashed #c9c6b4; vertical-align: baseline; }
-.df-preis td:last-child { text-align: right; white-space: nowrap; padding-left: 10px; font-family: "Akko Std Bold", sans-serif; }
+.df-preis td:last-child { text-align: right; white-space: nowrap; padding-left: 10px; font-family: "Schophuis Text Bold", sans-serif; }
 .df-preis td small { display: block; font-size: 13.5px; color: #5a6a3c; }
-.df-preis tr.df-summe td { border-bottom: 0; padding-top: 10px; font-family: "Akko Std Bold", sans-serif; font-size: 20px; color: #3f6b00; }
+.df-preis tr.df-summe td { border-bottom: 0; padding-top: 10px; font-family: "Schophuis Text Bold", sans-serif; font-size: 20px; color: #3f6b00; }
 .la .df-preis p.df-klein { margin: 6px 0 0; font-size: 14px; }
 .df-zettel .df-mehr { margin-top: 12px; }
 /* Ersatz-Vorschlag beim Typenschild */
@@ -140,10 +140,10 @@
 /* Glas-Auswahl */
 .df-glas { margin-bottom: 6px; }
 .df-form { display: grid; gap: 12px; }
-.df-form label { display: grid; gap: 4px; font-family: "Akko Std Bold", sans-serif; font-size: 15px; color: var(--schwarz); }
-.df-form input[type="text"], .df-form textarea { font: 17px "Akko Std Regular", sans-serif; padding: 11px 12px; border: 2px solid rgba(0, 46, 24, .3); background: #fff; width: 100%; box-sizing: border-box; }
+.df-form label { display: grid; gap: 4px; font-family: "Schophuis Text Bold", sans-serif; font-size: 15px; color: var(--schwarz); }
+.df-form input[type="text"], .df-form textarea { font: 17px "Schophuis Text", sans-serif; padding: 11px 12px; border: 2px solid rgba(0, 46, 24, .3); background: #fff; width: 100%; box-sizing: border-box; }
 .df-form input[type="text"]:focus, .df-form textarea:focus { border-color: var(--schwarz); outline: 0; }
-.df-form input[type="file"] { font: 15px "Akko Std Regular", sans-serif; }
+.df-form input[type="file"] { font: 15px "Schophuis Text", sans-serif; }
 .la .df-form p.df-frage { margin: 0; }
 .la .df-form p.df-klein { margin: -6px 0 0; }
 .la .df-form .la-knopf { justify-self: start; }
@@ -152,7 +152,7 @@
 /* Zurueck und Weiter */
 .df-nav { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-top: 30px; padding-top: 20px; border-top: 2px solid rgba(0, 46, 24, .14); }
 .df-nav[hidden] { display: none; }
-.la button.df-zurueck { white-space: nowrap; border: 0; background: none; padding: 10px 4px; font: 17px "Akko Std Bold", sans-serif; color: var(--schwarz); cursor: pointer; text-decoration: underline; text-underline-offset: 4px; }
+.la button.df-zurueck { white-space: nowrap; border: 0; background: none; padding: 10px 4px; font: 17px "Schophuis Text Bold", sans-serif; color: var(--schwarz); cursor: pointer; text-decoration: underline; text-underline-offset: 4px; }
 .la .df-nav .la-knopf { margin-left: auto; }
 .la .df-nav .la-knopf[hidden] { display: none; }
 .df-planer .la-danke { margin-top: 0; }
@@ -172,7 +172,7 @@
   .la .df-nav .la-knopf { font-size: 22px; padding: 12px 16px; }
 }
 .wp-site-blocks:has(.df) { overflow: clip !important; }
-.la .df-form input[type="text"], .la .df-form textarea, .la .df-eingabe { font-family: "Akko Std Regular", sans-serif !important; }
+.la .df-form input[type="text"], .la .df-form textarea, .la .df-eingabe { font-family: "Schophuis Text", sans-serif !important; }
 
 /* Fotos dazulegen: wie das Ablagefeld im Lohnabbund, nur kleiner und auf hellem Grund */
 .la .df-form label.df-drop { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; padding: 18px 16px 16px; border: 3px dashed #9fca4a; background: #f3f7ea; cursor: pointer; text-align: center; transition: background-color .25s, border-color .25s, transform .25s; }
@@ -181,9 +181,9 @@
 .la .df-form label.df-drop input { position: absolute; opacity: 0; width: 1px; height: 1px; }
 .df-drop svg { width: 46px; height: 38px; fill: none; stroke: var(--schwarz); stroke-width: 2.4; stroke-linejoin: round; stroke-linecap: round; margin-bottom: 4px; }
 .df-drop svg .df-ico-akzent { stroke: var(--gruen); stroke-width: 3.4; }
-.la .df-form label.df-drop strong { font-family: "Black Ground", sans-serif !important; font-weight: normal; font-size: clamp(24px, 2.6vw, 30px); line-height: 1; color: var(--schwarz); }
-.la .df-form label.df-drop span { font: 15px "Akko Std Regular", sans-serif; color: #3d4a2a; }
-.la .df-form label.df-drop small { margin-top: 8px; font: 13px "Akko Std Regular", sans-serif; color: #5a6a3c; }
+.la .df-form label.df-drop strong { font-family: "Schophuis Titel", sans-serif !important; font-weight: normal; font-size: clamp(24px, 2.6vw, 30px); line-height: 1; color: var(--schwarz); }
+.la .df-form label.df-drop span { font: 15px "Schophuis Text", sans-serif; color: #3d4a2a; }
+.la .df-form label.df-drop small { margin-top: 8px; font: 13px "Schophuis Text", sans-serif; color: #5a6a3c; }
 .la .df-form label.df-drop.df-drop-voll { flex-direction: row; flex-wrap: wrap; gap: 4px 12px; padding: 10px 14px; }
 .df-drop.df-drop-voll svg { width: 34px; height: 28px; margin: 0; }
 .la .df-form label.df-drop.df-drop-voll strong { font-size: 22px; }
@@ -194,6 +194,6 @@
 .df-foto-liste li:nth-child(odd) { transform: rotate(-1.2deg); }
 .df-foto-liste li:nth-child(even) { transform: rotate(1deg); }
 .df-foto-liste img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; }
-.df-foto-liste span { display: block; margin-top: 3px; font: 12px "Akko Std Regular", sans-serif; color: #3d4a2a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.df-foto-liste span { display: block; margin-top: 3px; font: 12px "Schophuis Text", sans-serif; color: #3d4a2a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .la .df-foto-liste button { position: absolute; top: -8px; right: -8px; width: 26px; height: 26px; border: 0; border-radius: 50%; background: var(--schwarz); color: #fff; font-size: 18px; line-height: 1; cursor: pointer; }
 .la .df-foto-liste button:hover { background: #b0583a; }

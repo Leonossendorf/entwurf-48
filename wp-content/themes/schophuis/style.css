@@ -11,36 +11,33 @@ Template: twentytwentytwo
 /*== General SCSS ==*/
 /*== General ==*/
 @font-face {
-  font-family: "Black Ground";
-  src: url("assets/fonts/BlackGround.eot") format("embedded-opentype");
-  src: url("assets/fonts/BlackGround.woff") format("woff"), url("assets/fonts/BlackGround.woff2") format("woff2");
+  font-family: "Schophuis Titel";
+  src: url("/demo/fonts/SchophuisTitel.woff2") format("woff2");
   font-weight: 600;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
-  font-family: "Akko Std Regular";
-  src: url("assets/fonts/AkkoStd-Regular.eot") format("embedded-opentype");
-  src: url("assets/fonts/AkkoStd-Regular.woff") format("woff"), url("assets/fonts/AkkoStd-Regular.woff2") format("woff2");
+  font-family: "Schophuis Text";
+  src: url("/demo/fonts/SchophuisText-Regular.woff2") format("woff2");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
-  font-family: "Akko Std Bold";
-  src: url("assets/fonts/AkkoStd-Bold.eot") format("embedded-opentype");
-  src: url("assets/fonts/AkkoStd-Bold.woff") format("woff"), url("assets/fonts/AkkoStd-Bold.woff2") format("woff2");
+  font-family: "Schophuis Text Bold";
+  src: url("/demo/fonts/SchophuisText-Bold.woff2") format("woff2");
   font-weight: 600;
   font-style: normal;
   font-display: swap;
 }
 h1, h2, h3, h4, h5, h6, rs-layer {
-  font-family: "Black Ground", sans-serif !important;
+  font-family: "Schophuis Titel", sans-serif !important;
   font-weight: 600;
   letter-spacing: unset !important;
 }
 p, span, a, li, div {
-  font-family: "Akko Std Regular", sans-serif !important;
+  font-family: "Schophuis Text", sans-serif !important;
   font-weight: 400;
   letter-spacing: unset !important;
   -webkit-hyphens: auto;
@@ -65,7 +62,7 @@ a {
   text-decoration: none !important;
 }
 strong {
-  font-family: "Akko Std Bold", sans-serif !important;
+  font-family: "Schophuis Text Bold", sans-serif !important;
   font-weight: 600;
   letter-spacing: unset !important;
   -webkit-hyphens: auto;
@@ -353,7 +350,7 @@ footer a, footer p {
   bottom: 25px;
 }
 .homepoints-declare a {
-  font-family: "Black Ground", sans-serif !important;
+  font-family: "Schophuis Titel", sans-serif !important;
   font-weight: 600;
   letter-spacing: unset !important;
   font-size: 50px;
@@ -417,14 +414,14 @@ footer a, footer p {
 }
 h2 span {
   color: var(--secondary) !important;
-  font-family: "Black Ground", sans-serif !important;
+  font-family: "Schophuis Titel", sans-serif !important;
   font-weight: 600;
   letter-spacing: unset !important;
   font-size: inherit;
 }
 h2 span a {
   color: var(--secondary) !important;
-  font-family: "Black Ground", sans-serif !important;
+  font-family: "Schophuis Titel", sans-serif !important;
   font-weight: 600;
   letter-spacing: unset !important;
   font-size: inherit;

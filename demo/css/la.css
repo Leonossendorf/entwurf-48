@@ -7,15 +7,15 @@
 .la p, .la li, .la span, .la a, .la div, .la label, .la button, .la input, .la textarea, .la td, .la th, .la small, .la em, .la output, .la summary,
 .ds p, .ds li, .ds span, .ds a, .ds div, .ds button, .ds td, .ds th, .ds small, .ds em, .ds figcaption { font-size: 18px; line-height: 1.5; hyphens: manual; -webkit-hyphens: manual; }
 .la h1, .la h2, .la h3, .ds h1, .ds h2, .ds h3 { margin: 0; line-height: 1.05; }
-.la button, .la input, .la textarea, .ds button { font-family: "Akko Std Regular", sans-serif; }
-.la strong, .la b, .ds strong, .ds b { font-family: "Akko Std Bold", sans-serif !important; font-weight: 600; }
+.la button, .la input, .la textarea, .ds button { font-family: "Schophuis Text", sans-serif; }
+.la strong, .la b, .ds strong, .ds b { font-family: "Schophuis Text Bold", sans-serif !important; font-weight: 600; }
 
 /* Offene Angaben, die der Betrieb noch liefert */
-.la em.demo-offen, .ds em.demo-offen { display: inline-block; font-style: normal; font-size: 12px !important; line-height: 1.3; padding: 2px 8px; margin-left: 4px; background: #ffe680; color: #3a3000; border: 1px dashed #8a7400; border-radius: 3px; vertical-align: middle; font-family: "Akko Std Bold", sans-serif !important; }
+.la em.demo-offen, .ds em.demo-offen { display: inline-block; font-style: normal; font-size: 12px !important; line-height: 1.3; padding: 2px 8px; margin-left: 4px; background: #ffe680; color: #3a3000; border: 1px dashed #8a7400; border-radius: 3px; vertical-align: middle; font-family: "Schophuis Text Bold", sans-serif !important; }
 
 /* Schilder und Knoepfe im Stil der Seite */
 .la a.la-knopf, .la button.la-knopf, .ds a.la-knopf, .ds button.la-knopf {
-  display: inline-block; font-family: "Black Ground", sans-serif !important; font-size: clamp(22px, 2.2vw, 30px) !important; line-height: 1; letter-spacing: 0;
+  display: inline-block; font-family: "Schophuis Titel", sans-serif !important; font-size: clamp(22px, 2.2vw, 30px) !important; line-height: 1; letter-spacing: 0;
   color: #fff !important; background: var(--schwarz); border: 0; padding: .55em .8em .5em; text-decoration: none; cursor: pointer; transform: rotate(-1.5deg);
   transition: transform .25s ease, background-color .25s ease; clip-path: polygon(0 6%, 100% 0, 98.5% 100%, 1% 94%);
 }
@@ -32,11 +32,11 @@
 .la-hero::before { content: ""; position: absolute; inset: 0; background: url("/wp-content/uploads/2022/08/1-SCH_grounge.png") center / cover no-repeat; opacity: .9; pointer-events: none; }
 .la-hero-innen { position: relative; z-index: 2; max-width: 1500px; margin: 0 auto; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); align-items: center; gap: 10px; padding: 130px 4vw 170px; min-height: min(86vh, 820px); }
 .la h1.la-schild { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; font-size: clamp(46px, 6.6vw, 112px); }
-.la h1.la-schild span { display: inline-block; font-family: "Black Ground", sans-serif !important; font-size: inherit; line-height: .95; background: #fff; color: var(--schwarz); padding: .16em .3em .1em; clip-path: polygon(0 5%, 100% 0, 98.5% 100%, 1.5% 95%); }
+.la h1.la-schild span { display: inline-block; font-family: "Schophuis Titel", sans-serif !important; font-size: inherit; line-height: .95; background: #fff; color: var(--schwarz); padding: .16em .3em .1em; clip-path: polygon(0 5%, 100% 0, 98.5% 100%, 1.5% 95%); }
 .la h1.la-schild .la-s1 { transform: rotate(-3deg); animation: la-rein .7s .1s both cubic-bezier(.2, .7, .2, 1); }
 .la h1.la-schild .la-s2 { transform: rotate(-1.5deg); margin-left: .35em; animation: la-rein .7s .28s both cubic-bezier(.2, .7, .2, 1); }
 .la h1.la-schild i { font-style: normal; font-family: inherit !important; font-size: inherit; color: var(--gruen); }
-.la p.la-unterzeile { display: inline-block; margin: 26px 0 0; background: #fff; color: var(--gruen); font-family: "Akko Std Bold", sans-serif !important; font-size: clamp(18px, 2vw, 30px); padding: .3em .7em; white-space: nowrap; transform: rotate(-2deg); animation: la-rein .7s .45s both cubic-bezier(.2, .7, .2, 1); }
+.la p.la-unterzeile { display: inline-block; margin: 26px 0 0; background: #fff; color: var(--gruen); font-family: "Schophuis Text Bold", sans-serif !important; font-size: clamp(18px, 2vw, 30px); padding: .3em .7em; white-space: nowrap; transform: rotate(-2deg); animation: la-rein .7s .45s both cubic-bezier(.2, .7, .2, 1); }
 .la p.la-knoepfe { display: flex; flex-wrap: wrap; gap: 18px; margin: 34px 0 0; animation: la-rein .7s .6s both cubic-bezier(.2, .7, .2, 1); }
 .la-hero-3d { height: min(62vh, 620px); min-height: 360px; cursor: grab; }
 .la-hero-kante { position: absolute; left: 0; bottom: -2px; width: 100%; height: clamp(70px, 12vw, 190px); z-index: 3; pointer-events: none; display: block; object-fit: fill; }
@@ -54,15 +54,15 @@
 
 .la-wege { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin-top: 54px; }
 .la-weg { position: relative; background: var(--papier); padding: 34px 30px 26px; border-bottom: 8px solid var(--gruen); }
-.la p.la-weg-nr { position: absolute; top: -18px; left: 22px; margin: 0; font-family: "Black Ground", sans-serif !important; font-size: 24px; line-height: 1; background: var(--gruen); color: #fff; padding: .3em .55em .22em; transform: rotate(-3deg); }
+.la p.la-weg-nr { position: absolute; top: -18px; left: 22px; margin: 0; font-family: "Schophuis Titel", sans-serif !important; font-size: 24px; line-height: 1; background: var(--gruen); color: #fff; padding: .3em .55em .22em; transform: rotate(-3deg); }
 .la-weg h3 { font-size: clamp(28px, 2.8vw, 40px); margin-bottom: 12px; }
 .la-weg p { margin: 0 0 10px; }
-.la p.la-weg-fuss { font-family: "Akko Std Bold", sans-serif !important; color: var(--tief); margin: 14px 0 0; }
+.la p.la-weg-fuss { font-family: "Schophuis Text Bold", sans-serif !important; color: var(--tief); margin: 14px 0 0; }
 
 .la ol.la-ablauf { list-style: none; padding: 0; margin-top: 60px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
 .la ol.la-ablauf li { position: relative; padding-top: 12px; border-top: 6px solid var(--schwarz); }
-.la ol.la-ablauf b { display: block; font-family: "Black Ground", sans-serif !important; font-size: 72px; line-height: .9; color: var(--gruen); }
-.la ol.la-ablauf span { display: block; font-family: "Akko Std Bold", sans-serif !important; font-size: 19px; margin-top: 6px; }
+.la ol.la-ablauf b { display: block; font-family: "Schophuis Titel", sans-serif !important; font-size: 72px; line-height: .9; color: var(--gruen); }
+.la ol.la-ablauf span { display: block; font-family: "Schophuis Text Bold", sans-serif !important; font-size: 19px; margin-top: 6px; }
 
 /* ---------- Werkzeug: Datei pruefen ---------- */
 .la-werkzeug { position: relative; background: var(--tief); color: #fff; padding: clamp(50px, 7vw, 100px) 22px; overflow: hidden; }
@@ -75,7 +75,7 @@
 .la label.la-drop:hover, .la label.la-drop.la-drueber, .la label.la-drop:focus-within { background: rgba(159, 202, 74, .18); border-color: #fff; }
 .la label.la-drop.la-drueber { transform: scale(1.01); }
 .la label.la-drop input { position: absolute; opacity: 0; width: 1px; height: 1px; }
-.la label.la-drop strong { font-family: "Black Ground", sans-serif !important; font-size: clamp(30px, 3.4vw, 48px); line-height: 1; }
+.la label.la-drop strong { font-family: "Schophuis Titel", sans-serif !important; font-size: clamp(30px, 3.4vw, 48px); line-height: 1; }
 .la label.la-drop span { color: #dbe8c4; }
 .la label.la-drop small { margin-top: 14px; font-size: 15px; color: #a9c47a; letter-spacing: .02em; }
 .la-oder { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 18px; padding: 10px 0 10px 10px; }
@@ -97,7 +97,7 @@
 .la-gruppe { display: inline-flex; border: 1px solid #5d7d3a; }
 .la .la-gruppe button, .la .la-reiter button { background: transparent; color: #e6efd5; border: 0; padding: 7px 12px; font-size: 15px; cursor: pointer; }
 .la .la-gruppe button + button { border-left: 1px solid #5d7d3a; }
-.la .la-gruppe button[aria-pressed="true"] { background: #9fca4a; color: #06200f; font-family: "Akko Std Bold", sans-serif; }
+.la .la-gruppe button[aria-pressed="true"] { background: #9fca4a; color: #06200f; font-family: "Schophuis Text Bold", sans-serif; }
 .la .la-gruppe button:hover { background: rgba(159, 202, 74, .3); }
 .la label.la-regler { display: inline-flex; align-items: center; gap: 10px; font-size: 15px; color: #e6efd5; }
 .la input[type="range"] { accent-color: #9fca4a; }
@@ -106,7 +106,7 @@
 
 .la-kpi { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
 .la-kpi div { background: rgba(255, 255, 255, .08); padding: 12px 14px 10px; display: flex; flex-direction: column; }
-.la-kpi b { font-family: "Black Ground", sans-serif !important; font-size: clamp(26px, 2.4vw, 36px); line-height: 1; color: #fff; white-space: nowrap; }
+.la-kpi b { font-family: "Schophuis Titel", sans-serif !important; font-size: clamp(26px, 2.4vw, 36px); line-height: 1; color: #fff; white-space: nowrap; }
 .la-kpi span { font-size: 14px; color: #cfe0b0; margin-top: 4px; }
 .la-kpi small { font-size: 12px; color: #9db57a; }
 .la-kpi-hell div { background: #fff; border-bottom: 4px solid var(--gruen); }
@@ -120,12 +120,12 @@
 .la-pruefung li.la-p-offen::before { background: transparent; border: 2px dashed #ffe680; }
 .la-reiter { display: flex; flex-wrap: wrap; gap: 0; margin-top: 18px; border-bottom: 2px solid #9fca4a; }
 .la .la-reiter button { padding: 9px 14px; font-size: 16px; }
-.la .la-reiter button[aria-selected="true"] { background: #9fca4a; color: #06200f; font-family: "Akko Std Bold", sans-serif; }
+.la .la-reiter button[aria-selected="true"] { background: #9fca4a; color: #06200f; font-family: "Schophuis Text Bold", sans-serif; }
 .la-reiter-inhalt { max-height: 380px; overflow: auto; background: rgba(0, 0, 0, .22); position: relative; }
 .la-reiter-inhalt[hidden], .la .la-reiter button[hidden] { display: none; }
 .la table.la-tabelle { width: 100%; border-collapse: collapse; }
 .la .la-tabelle th, .la .la-tabelle td { font-size: 14px; text-align: left; padding: 7px 10px; border-bottom: 1px solid rgba(255, 255, 255, .1); vertical-align: top; }
-.la .la-tabelle th { position: sticky; top: 0; background: #0b3a20; color: #cfe0b0; font-family: "Akko Std Bold", sans-serif; z-index: 1; }
+.la .la-tabelle th { position: sticky; top: 0; background: #0b3a20; color: #cfe0b0; font-family: "Schophuis Text Bold", sans-serif; z-index: 1; }
 .la .la-tabelle .r { text-align: right; white-space: nowrap; }
 .la .la-tabelle tbody tr[data-zeile] { cursor: pointer; }
 .la .la-tabelle tbody tr.la-hover, .la .la-tabelle tbody tr[data-zeile]:hover { background: rgba(159, 202, 74, .18); }
@@ -155,22 +155,22 @@
 /* ---------- Formulare ---------- */
 .la form.la-form { margin-top: 44px; padding: 30px; background: rgba(255, 255, 255, .07); border-top: 8px solid #9fca4a; }
 .la form.la-form h3 { font-size: clamp(28px, 3vw, 42px); margin-bottom: 8px; }
-.la p.la-form-zeile-titel { margin: 20px 0 8px; font-family: "Akko Std Bold", sans-serif !important; font-size: 17px; }
+.la p.la-form-zeile-titel { margin: 20px 0 8px; font-family: "Schophuis Text Bold", sans-serif !important; font-size: 17px; }
 .la-chips { display: flex; flex-wrap: wrap; gap: 10px; }
 .la .la-chips button { background: transparent; color: #fff; border: 2px solid #8fb04f; padding: 9px 16px; font-size: 17px; cursor: pointer; transition: background-color .2s, color .2s, transform .2s; }
 .la .la-chips button:hover { background: rgba(159, 202, 74, .25); }
-.la .la-chips button[aria-pressed="true"] { background: #9fca4a; border-color: #9fca4a; color: #06200f; font-family: "Akko Std Bold", sans-serif; }
+.la .la-chips button[aria-pressed="true"] { background: #9fca4a; border-color: #9fca4a; color: #06200f; font-family: "Schophuis Text Bold", sans-serif; }
 .la .la-chips-dunkel button { color: var(--schwarz); border-color: var(--schwarz); }
 .la .la-chips-dunkel button:hover { background: rgba(119, 158, 0, .18); }
 .la .la-chips-dunkel button[aria-pressed="true"] { background: var(--schwarz); border-color: var(--schwarz); color: #fff; }
 .la-felder { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px 18px; margin: 24px 0 22px; }
-.la-felder label { display: flex; flex-direction: column; gap: 6px; font-family: "Akko Std Bold", sans-serif; font-size: 16px; }
+.la-felder label { display: flex; flex-direction: column; gap: 6px; font-family: "Schophuis Text Bold", sans-serif; font-size: 16px; }
 .la-felder label.la-breit { grid-column: 1 / -1; }
-.la-felder label.la-pflicht::after { content: "Pflichtfeld"; font-family: "Akko Std Regular", sans-serif; font-size: 13px; color: #a9c47a; }
+.la-felder label.la-pflicht::after { content: "Pflichtfeld"; font-family: "Schophuis Text", sans-serif; font-size: 13px; color: #a9c47a; }
 .la .la-felder input, .la .la-felder textarea { font-size: 17px; padding: 11px 12px; border: 2px solid transparent; background: #fff; color: #111; border-radius: 0; width: 100%; }
 .la .la-felder input::placeholder, .la .la-felder textarea::placeholder { color: #6b6b6b; }
 .la .la-felder input:focus, .la .la-felder textarea:focus { border-color: #9fca4a; outline: 0; box-shadow: 0 0 0 3px rgba(159, 202, 74, .5); }
-.la p.la-fehler { color: #ffcf8f; font-family: "Akko Std Bold", sans-serif !important; margin: 0 0 14px; }
+.la p.la-fehler { color: #ffcf8f; font-family: "Schophuis Text Bold", sans-serif !important; margin: 0 0 14px; }
 .la p.la-fehler[hidden] { display: none; }
 .la p.la-entwurf { margin: 14px 0 0; font-size: 14px; color: #a9c47a; }
 .la p.la-entwurf-gross { font-size: 16px; color: #ffe680; margin: 8px 0 18px; }
@@ -194,15 +194,15 @@
 /* ---------- Bausatz-Planer ---------- */
 .bs { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); gap: 34px; margin-top: 48px; text-align: left; align-items: start; }
 .bs-regler { display: grid; gap: 14px; margin: 26px 0 22px; }
-.bs-regler label { display: grid; grid-template-columns: 1fr auto; align-items: baseline; gap: 4px 12px; font-family: "Akko Std Bold", sans-serif; font-size: 17px; }
+.bs-regler label { display: grid; grid-template-columns: 1fr auto; align-items: baseline; gap: 4px 12px; font-family: "Schophuis Text Bold", sans-serif; font-size: 17px; }
 .bs-regler label > span { font-family: inherit !important; font-size: 17px; }
-.la .bs-regler output { font-family: "Black Ground", sans-serif !important; font-size: 28px; line-height: 1; color: var(--gruen); }
+.la .bs-regler output { font-family: "Schophuis Titel", sans-serif !important; font-size: 28px; line-height: 1; color: var(--gruen); }
 .bs-regler label > span output { margin-left: 8px; }
 .la-hellgrund .bs-regler output { color: #002e18; }
 .bs-regler input[type="range"] { grid-column: 1 / -1; width: 100%; accent-color: var(--gruen); height: 28px; }
 .bs-buehne { background: radial-gradient(ellipse at 50% 38%, #ffffff 0%, #e8efd9 60%, #cfdcb4 100%); height: clamp(340px, 42vw, 580px); border-bottom: 8px solid var(--gruen); }
 .la details.bs-liste { margin-top: 18px; }
-.la details.bs-liste summary { cursor: pointer; font-family: "Akko Std Bold", sans-serif; padding: 8px 0; }
+.la details.bs-liste summary { cursor: pointer; font-family: "Schophuis Text Bold", sans-serif; padding: 8px 0; }
 .la details.bs-liste > div { max-height: 300px; overflow: auto; background: var(--tief); color: #fff; }
 .la #la-form-privat { margin-top: 54px; }
 
@@ -242,7 +242,7 @@
 .la-preis-hell .la-preis-ergebnis { background: #fff; border-left-color: var(--gruen); }
 .la p.la-preis-spanne { margin: 0 0 10px; display: flex; flex-direction: column; }
 .la-preis-spanne span { font-size: 14px; opacity: .8; }
-.la .la-preis-spanne b { font-family: "Black Ground", sans-serif !important; font-size: clamp(26px, 2.6vw, 38px); line-height: 1.1; }
+.la .la-preis-spanne b { font-family: "Schophuis Titel", sans-serif !important; font-size: clamp(26px, 2.6vw, 38px); line-height: 1.1; }
 .la-preis-spanne small { font-size: 13px; opacity: .75; }
 .la-preis-tab { width: 100%; border-collapse: collapse; font-size: 14px; }
 .la-preis-tab td { padding: 5px 0; border-top: 1px solid rgba(127, 127, 127, .3); }
@@ -251,7 +251,7 @@
 
 /* ---------- Erweiterte Optionen im Planer ---------- */
 .la details.bs-mehr { margin: 22px 0 8px; border-top: 2px solid rgba(0, 46, 24, .2); border-bottom: 2px solid rgba(0, 46, 24, .2); }
-.la details.bs-mehr summary { cursor: pointer; font-family: "Akko Std Bold", sans-serif; font-size: 17px; padding: 12px 0; }
+.la details.bs-mehr summary { cursor: pointer; font-family: "Schophuis Text Bold", sans-serif; font-size: 17px; padding: 12px 0; }
 .la details.bs-mehr summary span { font-family: inherit; font-weight: normal; opacity: .7; font-size: 15px; }
 .bs-mehr-innen { padding: 0 0 16px; }
 .bs-mehr-innen p.la-form-zeile-titel { margin-top: 12px; }
@@ -263,11 +263,11 @@
 
 /* Holzstaerken: helle Karte wie die Preisschaetzung */
 .la .bs-staerken { margin: 16px 0 0; padding: 16px 20px 14px; background: #fff; border-left: 6px solid var(--gruen, #779e00); color: #0d0d0d; box-shadow: 0 8px 22px rgba(0, 46, 24, .1); }
-.la p.bs-staerken-titel { margin: 0 0 6px; font-family: "Akko Std Bold", sans-serif !important; font-size: 21px; line-height: 1.2; color: #0d0d0d; }
+.la p.bs-staerken-titel { margin: 0 0 6px; font-family: "Schophuis Text Bold", sans-serif !important; font-size: 21px; line-height: 1.2; color: #0d0d0d; }
 .la .bs-staerken ul { list-style: none; margin: 0; padding: 0; }
 .la .bs-staerken li { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; padding: 9px 0; border-bottom: 1px solid #dfe3d4; font-size: 18px; line-height: 1.25; color: #0d0d0d; }
 .la .bs-staerken li span { color: #0d0d0d; }
-.la .bs-staerken li b { font-family: "Akko Std Bold", sans-serif; font-weight: normal; font-size: 19px; white-space: nowrap; color: #002e18; }
+.la .bs-staerken li b { font-family: "Schophuis Text Bold", sans-serif; font-weight: normal; font-size: 19px; white-space: nowrap; color: #002e18; }
 .la .bs-staerken li em { font-style: normal; font-size: 13px; background: var(--hell, #80b245); color: #0d0d0d; padding: 2px 7px; margin-left: 8px; }
 .la .bs-staerken li.bs-neu { animation: bsNeu 1.6s ease-out; }
 @keyframes bsNeu { 0% { background: rgba(128, 178, 69, .45); } 100% { background: transparent; } }

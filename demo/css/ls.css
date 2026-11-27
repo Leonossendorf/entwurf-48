@@ -9,7 +9,7 @@
 /* ---------- Wann brauche ich das? ---------- */
 .ls ul.ls-anlass { list-style: none; padding: 0; margin-top: 70px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 34px; text-align: left; }
 .ls ul.ls-anlass li { position: relative; padding: 34px 0 0; border-top: 6px solid var(--schwarz); }
-.ls ul.ls-anlass b { position: absolute; top: -24px; left: 0; display: inline-block; font-family: "Black Ground", sans-serif !important; font-weight: 400; font-size: clamp(24px, 2.5vw, 36px); line-height: 1; background: var(--gruen); color: #fff; padding: .28em .5em .18em; transform: rotate(-2.5deg); clip-path: polygon(0 6%, 100% 0, 98.5% 100%, 1% 94%); white-space: nowrap; }
+.ls ul.ls-anlass b { position: absolute; top: -24px; left: 0; display: inline-block; font-family: "Schophuis Titel", sans-serif !important; font-weight: 400; font-size: clamp(24px, 2.5vw, 36px); line-height: 1; background: var(--gruen); color: #fff; padding: .28em .5em .18em; transform: rotate(-2.5deg); clip-path: polygon(0 6%, 100% 0, 98.5% 100%, 1% 94%); white-space: nowrap; }
 .ls ul.ls-anlass li:nth-child(2) b { transform: rotate(1.5deg); background: var(--schwarz); }
 .ls ul.ls-anlass li:nth-child(3) b { transform: rotate(-1deg); }
 .ls ul.ls-anlass span { display: block; font-size: clamp(18px, 1.5vw, 21px); line-height: 1.45; }
@@ -21,14 +21,14 @@
 .ls-modell-raster { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 36px; align-items: start; }
 .ls .ls-buehne { height: clamp(360px, 44vw, 590px); cursor: grab; }
 .ls .ls-buehne:active { cursor: grabbing; }
-.ls p.ls-von { margin: 0 0 12px; font-family: "Akko Std Bold", sans-serif !important; font-size: 14px; letter-spacing: .1em; text-transform: uppercase; color: #a6d04a; }
+.ls p.ls-von { margin: 0 0 12px; font-family: "Schophuis Text Bold", sans-serif !important; font-size: 14px; letter-spacing: .1em; text-transform: uppercase; color: #a6d04a; }
 .ls ol.ls-schichten { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
 .ls ol.ls-schichten button { width: 100%; display: grid; grid-template-columns: 16px 30px 1fr 22px; align-items: center; gap: 12px; text-align: left; background: rgba(255, 255, 255, .08); border: 0; color: #fff; padding: 11px 14px 11px 0; cursor: pointer; transition: background-color .2s; }
 .ls ol.ls-schichten button:hover { background: rgba(159, 202, 74, .22); }
 .ls ol.ls-schichten button i { display: block; width: 16px; align-self: stretch; min-height: 36px; margin: -11px 0; box-shadow: inset -1px 0 0 rgba(0, 0, 0, .25); }
-.ls ol.ls-schichten button b { font-family: "Black Ground", sans-serif !important; font-weight: 400; font-size: 28px; line-height: 1; color: #a6d04a; text-align: center; }
-.ls ol.ls-schichten button span { font-family: "Akko Std Bold", sans-serif !important; font-size: 19px; line-height: 1.2; }
-.ls ol.ls-schichten button::after { content: "+"; font-family: "Akko Std Bold", sans-serif; font-size: 24px; line-height: 1; color: #a6d04a; text-align: center; }
+.ls ol.ls-schichten button b { font-family: "Schophuis Titel", sans-serif !important; font-weight: 400; font-size: 28px; line-height: 1; color: #a6d04a; text-align: center; }
+.ls ol.ls-schichten button span { font-family: "Schophuis Text Bold", sans-serif !important; font-size: 19px; line-height: 1.2; }
+.ls ol.ls-schichten button::after { content: "+"; font-family: "Schophuis Text Bold", sans-serif; font-size: 24px; line-height: 1; color: #a6d04a; text-align: center; }
 .ls ol.ls-schichten button[aria-expanded="true"] { background: #fff; color: var(--schwarz); }
 .ls ol.ls-schichten button[aria-expanded="true"] b { color: var(--gruen); }
 .ls ol.ls-schichten button[aria-expanded="true"]::after { content: "–"; color: var(--gruen); }
@@ -40,8 +40,8 @@
 .ls-wahl-feld.ls-mit-muster { grid-template-columns: 280px minmax(0, 1fr); align-items: stretch; }
 .ls-muster { display: grid; grid-template-rows: 1fr 1fr; min-height: 250px; box-shadow: 0 14px 30px rgba(0, 0, 0, .35); transform: rotate(-1.5deg); }
 .ls-muster div { position: relative; }
-.ls .ls-muster span { position: absolute; left: 0; bottom: 0; background: var(--schwarz); color: #fff; font-family: "Akko Std Bold", sans-serif !important; font-size: 14px; padding: 3px 10px; }
-.ls .ls-wahl-text p.ls-wahl-kurz { margin: 0 0 12px; font-family: "Akko Std Bold", sans-serif !important; font-size: clamp(24px, 2.6vw, 36px); line-height: 1.12; color: #a6d04a; }
+.ls .ls-muster span { position: absolute; left: 0; bottom: 0; background: var(--schwarz); color: #fff; font-family: "Schophuis Text Bold", sans-serif !important; font-size: 14px; padding: 3px 10px; }
+.ls .ls-wahl-text p.ls-wahl-kurz { margin: 0 0 12px; font-family: "Schophuis Text Bold", sans-serif !important; font-size: clamp(24px, 2.6vw, 36px); line-height: 1.12; color: #a6d04a; }
 .ls .ls-wahl-text p { margin: 0 0 16px; color: #f1f6e4; font-size: clamp(18px, 1.5vw, 21px); }
 .ls .ls-wahl-text ul { list-style: none; margin: 0 0 22px; padding: 0; display: grid; gap: 8px; }
 .ls .ls-wahl-text li { position: relative; padding-left: 34px; color: #fff; }
@@ -51,13 +51,13 @@
 /* Dach-Check */
 .ls ol.ls-check-fragen { list-style: none; counter-reset: frage; max-width: 940px; margin: 0 auto; padding: 0; display: grid; gap: 10px; text-align: left; }
 .ls ol.ls-check-fragen li { counter-increment: frage; display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; align-items: center; gap: 14px; background: rgba(255, 255, 255, .08); padding: 12px 16px; }
-.ls ol.ls-check-fragen li::before { content: counter(frage); font-family: "Black Ground", sans-serif; font-size: 34px; line-height: 1; color: #a6d04a; text-align: center; }
+.ls ol.ls-check-fragen li::before { content: counter(frage); font-family: "Schophuis Titel", sans-serif; font-size: 34px; line-height: 1; color: #a6d04a; text-align: center; }
 .ls ol.ls-check-fragen li > span { color: #fff; font-size: clamp(18px, 1.5vw, 21px); line-height: 1.3; }
 .ls ol.ls-check-fragen .la-chips { flex-wrap: nowrap; }
 .ls ol.ls-check-fragen .la-chips button { min-width: 74px; }
 .ls-check-ergebnis { max-width: 940px; margin: 26px auto 0; background: #fff; color: var(--schwarz); padding: 28px 30px; border-left: 12px solid var(--gruen); text-align: left; min-height: 120px; }
 .ls p.ls-check-leer { margin: 0; color: #4c5a35; }
-.ls p.ls-check-wort { margin: 0 0 10px; font-family: "Black Ground", sans-serif !important; font-size: clamp(34px, 4.4vw, 60px); line-height: 1; color: var(--schwarz); }
+.ls p.ls-check-wort { margin: 0 0 10px; font-family: "Schophuis Titel", sans-serif !important; font-size: clamp(34px, 4.4vw, 60px); line-height: 1; color: var(--schwarz); }
 .ls .ls-check-ergebnis p { margin: 0 0 18px; color: var(--schwarz); font-size: clamp(18px, 1.5vw, 21px); }
 .ls .ls-check-ergebnis p:last-child { margin: 0; }
 .ls .ls-check-ergebnis a.la-knopf-hell { background: var(--schwarz); color: #fff !important; }
@@ -67,14 +67,14 @@
 .ls-leistung-raster { display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); gap: 56px; margin-top: 56px; text-align: left; align-items: start; }
 .ls figure.ls-foto { margin: 10px 0 0; background: #fff; padding: 12px 12px 0; box-shadow: 0 18px 44px rgba(0, 46, 24, .2); transform: rotate(-1.6deg); }
 .ls figure.ls-foto img { display: block; width: 100%; height: auto; aspect-ratio: 5 / 5.4; object-fit: cover; }
-.ls figure.ls-foto figcaption { padding: 10px 2px 12px; font-family: "Akko Std Bold", sans-serif !important; font-size: 16px; }
+.ls figure.ls-foto figcaption { padding: 10px 2px 12px; font-family: "Schophuis Text Bold", sans-serif !important; font-size: 16px; }
 .ls .ls-foto-leer { min-height: 360px; }
 .ls ul.ls-leistung { list-style: none; margin: 0; padding: 0; }
 .ls ul.ls-leistung li { position: relative; padding: 15px 0 15px 40px; border-bottom: 1px dashed #c0bda9; font-size: clamp(17px, 1.4vw, 19px); line-height: 1.4; }
 .ls ul.ls-leistung li::before { top: 19px; }
 .ls ul.ls-leistung strong { display: block; font-size: clamp(20px, 1.8vw, 24px); line-height: 1.2; margin-bottom: 2px; }
 .ls details.ls-detail { margin-top: 26px; background: var(--papier); border-left: 8px solid var(--schwarz); }
-.ls details.ls-detail summary { cursor: pointer; padding: 15px 18px; font-family: "Akko Std Bold", sans-serif !important; font-size: 18px; }
+.ls details.ls-detail summary { cursor: pointer; padding: 15px 18px; font-family: "Schophuis Text Bold", sans-serif !important; font-size: 18px; }
 .ls details.ls-detail ul { margin: 0; padding: 0 18px 16px 38px; }
 .ls details.ls-detail li { font-size: 16px; line-height: 1.4; margin-bottom: 6px; }
 
@@ -84,7 +84,7 @@
 .ls-schluss::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0, 46, 24, .62), rgba(0, 46, 24, .82)); }
 .ls-schluss-innen { position: relative; z-index: 2; max-width: 1180px; margin: 0 auto; }
 .ls p.ls-schluss-wort { display: flex; flex-direction: column; align-items: center; gap: 8px; margin: 0; font-size: clamp(48px, 8vw, 132px); }
-.ls p.ls-schluss-wort span { display: inline-block; font-family: "Black Ground", sans-serif !important; font-size: inherit; line-height: .95; background: #fff; color: var(--schwarz); padding: .16em .3em .1em; clip-path: polygon(0 5%, 100% 0, 98.5% 100%, 1.5% 95%); transform: rotate(-3deg); }
+.ls p.ls-schluss-wort span { display: inline-block; font-family: "Schophuis Titel", sans-serif !important; font-size: inherit; line-height: .95; background: #fff; color: var(--schwarz); padding: .16em .3em .1em; clip-path: polygon(0 5%, 100% 0, 98.5% 100%, 1.5% 95%); transform: rotate(-3deg); }
 .ls p.ls-schluss-wort span + span { transform: rotate(-1.5deg); margin-left: .5em; }
 .ls p.ls-schluss-wort i { font-style: normal; font-family: inherit !important; font-size: inherit; color: var(--gruen); }
 .ls p.ls-schluss-text { margin: 38px auto 40px; max-width: 660px; font-size: clamp(20px, 1.8vw, 26px); line-height: 1.4; color: #fff; }

@@ -1,0 +1,7 @@
+Schriften dieser Website
+
+SchophuisTitel.woff2: veraenderte Fassung von Londrina Solid Black (Copyright 2011 The Londrina Solid Authors),
+  SIL Open Font License 1.1 (OFL-LondrinaSolid.txt). Aenderung: Kleinbuchstaben zeigen Grossbuchstaben.
+  Wegen des geschuetzten Namens "Londrina Solid" heisst die veraenderte Fassung "Schophuis Titel".
+SchophuisText-Regular.woff2, SchophuisText-Bold.woff2: Barlow (Copyright 2017 The Barlow Project Authors),
+  SIL Open Font License 1.1 (OFL-Barlow.txt), nur ins Format WOFF2 umgewandelt und umbenannt.

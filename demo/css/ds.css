@@ -39,23 +39,23 @@
 /* ---------- Fragen ---------- */
 .ds-fragen { max-width: 860px; margin-top: 40px; text-align: left; }
 .ds-fragen details { background: #fff; border-left: 8px solid var(--gruen); margin-bottom: 12px; }
-.ds .ds-fragen summary { cursor: pointer; padding: 16px 20px; font-family: "Akko Std Bold", sans-serif; font-size: 20px; list-style-position: inside; }
+.ds .ds-fragen summary { cursor: pointer; padding: 16px 20px; font-family: "Schophuis Text Bold", sans-serif; font-size: 20px; list-style-position: inside; }
 .ds .ds-fragen details p { margin: 0; padding: 0 20px 18px; font-size: 18px; }
-.ds .ds-fragen a { font-size: inherit; color: var(--tief); font-family: "Akko Std Bold", sans-serif !important; }
+.ds .ds-fragen a { font-size: inherit; color: var(--tief); font-family: "Schophuis Text Bold", sans-serif !important; }
 .ds #ds-form { max-width: 1180px; margin-top: 60px; }
 
 /* ---------- Kachel Startseite ---------- */
 .demo-kachel-la { position: relative; background: #80b245 !important; cursor: pointer; overflow: hidden; }
 .demo-kachel-la::before { content: ""; position: absolute; inset: 0; background: url("/wp-content/uploads/2022/08/1-SCH_grounge.png") center / cover no-repeat; opacity: .9; pointer-events: none; }
 .demo-kachel-3d { position: absolute; inset: 0; pointer-events: none; }
-p.demo-kachel-zeile { position: absolute; top: 28px; left: 25px; margin: 0; z-index: 2; background: #fff; color: #779e00; font-family: "Akko Std Bold", sans-serif !important; font-size: clamp(16px, 1.6vw, 24px); padding: .3em .7em; transform: rotate(-2deg); }
+p.demo-kachel-zeile { position: absolute; top: 28px; left: 25px; margin: 0; z-index: 2; background: #fff; color: #779e00; font-family: "Schophuis Text Bold", sans-serif !important; font-size: clamp(16px, 1.6vw, 24px); padding: .3em .7em; transform: rotate(-2deg); }
 .demo-kachel-la .wp-block-cover__inner-container { position: static; }
 
 /* ---------- Hinweis auf der Zimmerei-Seite ---------- */
 .demo-teaser { padding: 60px 0 10px; }
 .demo-teaser-innen { max-width: 1180px; margin: 0 auto; background: #002e18; color: #fff; padding: 34px 38px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 24px; }
 .la.demo-teaser h3 { font-size: clamp(30px, 3.2vw, 46px); color: #fff; }
-.la.demo-teaser h3 span { font-family: "Black Ground", sans-serif !important; font-size: inherit; line-height: inherit; color: #a6d04a; }
+.la.demo-teaser h3 span { font-family: "Schophuis Titel", sans-serif !important; font-size: inherit; line-height: inherit; color: #a6d04a; }
 .la.demo-teaser p { margin: 10px 0 0; max-width: 640px; color: #dfe9c8; }
 .la.demo-teaser a.la-knopf { background: #fff; color: #0d0d0d !important; }
 .la.demo-teaser a.la-knopf:hover { background: #a6d04a; }
