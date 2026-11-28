@@ -63,7 +63,7 @@
       '<tr><td>Holz: ' + z(p.m3, 2) + ' m³ mit Verschnitt × ' + euro(p.eurM3) + '</td><td class="r">' + euro(p.holz) + '</td></tr>' +
       '<tr><td>Abbund: ' + z(p.lfm, 0) + ' m × ' + z(p.eurLfm, 2) + ' €</td><td class="r">' + euro(p.abbund) + '</td></tr>' +
       '</tbody></table>' +
-      '<p class="la-klein">Nicht enthalten: ' + (extra || 'Verbindungsmittel, Lieferung') + '. Unverbindliche Schätzung aus der Holzmenge, das genaue Angebot macht Schophuis. <em class="demo-offen" title="Werte aus zwei Angeboten von Schophuis abgeleitet">Faustwerte: mit Schophuis abstimmen</em></p>';
+      '<p class="la-klein">Nicht enthalten: ' + (extra || 'Verbindungsmittel, Lieferung') + '. Unverbindliche Schätzung aus der Holzmenge, das genaue Angebot macht Schophuis. <em class="demo-offen" title="Werte aus zwei Angeboten abgeleitet">Faustwerte noch zu bestätigen</em></p>';
   }
   function preisText(p) { return euro(p.von) + ' bis ' + euro(p.bis) + ' netto ab Werk (unverbindliche Schätzung)'; }
   /* Kasten mit Knopf "Preisschätzung kalkulieren"; rechne() liefert {p, extra} oder null */
